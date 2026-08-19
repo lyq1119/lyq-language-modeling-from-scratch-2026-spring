@@ -1,0 +1,115 @@
+{
+  "input": "data/owt_train.txt",
+  "vocab_size": 32000,
+  "merge_count": 31744,
+  "elapsed_seconds": 24822.225309392437,
+  "peak_rss_gib": 99.15481185913086,
+  "longest_token": {
+    "bytes": "b'\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82'",
+    "utf8": "ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
+    "byte_length": 64
+  },
+  "twenty_longest_tokens": [
+    {
+      "bytes": "b'\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82'",
+      "utf8": "ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
+      "byte_length": 64
+    },
+    {
+      "bytes": "b'----------------------------------------------------------------'",
+      "utf8": "----------------------------------------------------------------",
+      "byte_length": 64
+    },
+    {
+      "bytes": "b'\\xe2\\x80\\x94\\xe2\\x80\\x94\\xe2\\x80\\x94\\xe2\\x80\\x94\\xe2\\x80\\x94\\xe2\\x80\\x94\\xe2\\x80\\x94\\xe2\\x80\\x94\\xe2\\x80\\x94\\xe2\\x80\\x94\\xe2\\x80\\x94\\xe2\\x80\\x94\\xe2\\x80\\x94\\xe2\\x80\\x94\\xe2\\x80\\x94\\xe2\\x80\\x94'",
+      "utf8": "————————————————",
+      "byte_length": 48
+    },
+    {
+      "bytes": "b'\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82\\xc3\\x83\\xc3\\x82'",
+      "utf8": "ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
+      "byte_length": 32
+    },
+    {
+      "bytes": "b'________________________________'",
+      "utf8": "________________________________",
+      "byte_length": 32
+    },
+    {
+      "bytes": "b'================================'",
+      "utf8": "================================",
+      "byte_length": 32
+    },
+    {
+      "bytes": "b'................................'",
+      "utf8": "................................",
+      "byte_length": 32
+    },
+    {
+      "bytes": "b'--------------------------------'",
+      "utf8": "--------------------------------",
+      "byte_length": 32
+    },
+    {
+      "bytes": "b'********************************'",
+      "utf8": "********************************",
+      "byte_length": 32
+    },
+    {
+      "bytes": "b'\\xe2\\x80\\x94\\xe2\\x80\\x94\\xe2\\x80\\x94\\xe2\\x80\\x94\\xe2\\x80\\x94\\xe2\\x80\\x94\\xe2\\x80\\x94\\xe2\\x80\\x94'",
+      "utf8": "————————",
+      "byte_length": 24
+    },
+    {
+      "bytes": "b' telecommunications'",
+      "utf8": " telecommunications",
+      "byte_length": 19
+    },
+    {
+      "bytes": "b' disproportionately'",
+      "utf8": " disproportionately",
+      "byte_length": 19
+    },
+    {
+      "bytes": "b' environmentalists'",
+      "utf8": " environmentalists",
+      "byte_length": 18
+    },
+    {
+      "bytes": "b' unconstitutional'",
+      "utf8": " unconstitutional",
+      "byte_length": 17
+    },
+    {
+      "bytes": "b' responsibilities'",
+      "utf8": " responsibilities",
+      "byte_length": 17
+    },
+    {
+      "bytes": "b' misunderstanding'",
+      "utf8": " misunderstanding",
+      "byte_length": 17
+    },
+    {
+      "bytes": "b' disproportionate'",
+      "utf8": " disproportionate",
+      "byte_length": 17
+    },
+    {
+      "bytes": "b' cryptocurrencies'",
+      "utf8": " cryptocurrencies",
+      "byte_length": 17
+    },
+    {
+      "bytes": "b' counterterrorism'",
+      "utf8": " counterterrorism",
+      "byte_length": 17
+    },
+    {
+      "bytes": "b' characterization'",
+      "utf8": " characterization",
+      "byte_length": 17
+    }
+  ],
+  "mean_token_byte_length": 6.33403125
+}

@@ -1,0 +1,26 @@
+{
+  "tinystories_train": {
+    "input": "data/TinyStoriesV2-GPT4-train.txt",
+    "output": "artifacts/tokenized/tinystories_train.uint16.bin",
+    "dtype": "uint16",
+    "token_count": 540796778
+  },
+  "tinystories_valid": {
+    "input": "data/TinyStoriesV2-GPT4-valid.txt",
+    "output": "artifacts/tokenized/tinystories_valid.uint16.bin",
+    "dtype": "uint16",
+    "token_count": 5461210
+  },
+  "owt_train": {
+    "input": "data/owt_train.txt",
+    "output": "artifacts/tokenized/owt_train.uint16.bin",
+    "dtype": "uint16",
+    "token_count": 2730253427
+  },
+  "owt_valid": {
+    "input": "data/owt_valid.txt",
+    "output": "artifacts/tokenized/owt_valid.uint16.bin",
+    "dtype": "uint16",
+    "token_count": 66477875
+  }
+}

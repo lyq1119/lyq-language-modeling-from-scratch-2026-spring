@@ -1,0 +1,10 @@
+{
+  "input": "tests/fixtures/tinystories_sample_5M.txt",
+  "vocab_size": 1000,
+  "merge_count": 743,
+  "elapsed_seconds": 5.8937889682129025,
+  "peak_rss_gib": 0.038501739501953125,
+  "longest_token_bytes": "b' unexpected'",
+  "longest_token_utf8": " unexpected",
+  "longest_token_byte_length": 11
+}
