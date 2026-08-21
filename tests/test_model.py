@@ -173,6 +173,44 @@ def test_transformer_block(numpy_snapshot, ts_state_dict, in_embeddings, d_model
     )
 
 
+def test_post_norm_transformer_block_matches_post_norm_equations():
+    from cs336_basics.model import TransformerBlock
+
+    torch.manual_seed(0)
+    block = TransformerBlock(
+        d_model=8,
+        num_heads=2,
+        d_ff=16,
+        max_seq_len=4,
+        theta=10_000,
+        norm_first=False,
+    )
+    inputs = torch.randn(2, 4, 8)
+    positions = torch.arange(4)
+
+    attention_output = block.attn(inputs, positions)
+    after_attention = block.ln1(inputs + attention_output)
+    expected = block.ln2(after_attention + block.ffn(after_attention))
+
+    torch.testing.assert_close(block(inputs, positions), expected)
+
+
+def test_transformer_block_can_disable_rope():
+    from cs336_basics.model import TransformerBlock
+
+    block = TransformerBlock(8, 2, 16, 4, 10_000, use_rope=False)
+    assert block.attn.rope is None
+    assert block(torch.randn(2, 4, 8)).shape == (2, 4, 8)
+
+
+def test_silu_feed_forward_matches_formula():
+    from cs336_basics.model import SiLUFeedForward, silu
+
+    ffn = SiLUFeedForward(8, 32)
+    inputs = torch.randn(2, 4, 8)
+    torch.testing.assert_close(ffn(inputs), ffn.w2(silu(ffn.w1(inputs))))
+
+
 def test_rmsnorm(numpy_snapshot, ts_state_dict, in_embeddings):
     state_dict, _ = ts_state_dict
     reference_weights = state_dict["layers.1.ln1.weight"]

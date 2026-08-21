@@ -4,8 +4,13 @@ from __future__ import annotations
 
 import math
 from collections.abc import Callable, Iterable
+from os import PathLike
+from typing import BinaryIO
 
 import torch
+
+
+CheckpointDestination = str | PathLike[str] | BinaryIO
 
 
 def get_batch(
@@ -38,6 +43,45 @@ def get_batch(
          for start in starts.tolist()]
     )
     return inputs.to(device), targets.to(device)
+
+
+def save_checkpoint(
+    model: torch.nn.Module,
+    optimizer: torch.optim.Optimizer,
+    iteration: int,
+    out: CheckpointDestination,
+) -> None:
+    """Serialize all state required to resume a training run."""
+    if iteration < 0:
+        raise ValueError("iteration must be non-negative")
+    torch.save(
+        {
+            "model": model.state_dict(),
+            "optimizer": optimizer.state_dict(),
+            "iteration": int(iteration),
+        },
+        out,
+    )
+
+
+def load_checkpoint(
+    src: CheckpointDestination,
+    model: torch.nn.Module,
+    optimizer: torch.optim.Optimizer,
+) -> int:
+    """Restore model and optimizer state and return the saved iteration."""
+    try:
+        device = next(model.parameters()).device
+    except StopIteration:
+        device = torch.device("cpu")
+    checkpoint = torch.load(src, map_location=device)
+    required_keys = {"model", "optimizer", "iteration"}
+    missing_keys = required_keys - checkpoint.keys()
+    if missing_keys:
+        raise ValueError(f"checkpoint is missing required keys: {sorted(missing_keys)}")
+    model.load_state_dict(checkpoint["model"])
+    optimizer.load_state_dict(checkpoint["optimizer"])
+    return int(checkpoint["iteration"])
 
 
 def cross_entropy(logits: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:

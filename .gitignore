@@ -161,6 +161,8 @@ cython_debug/
 
 .ruff_cache/
 *.zip
+wandb/
+runs/
 
 # Downloaded training corpora and generated token arrays are too large for GitHub.
 data/
