@@ -2,6 +2,11 @@
 cs336-spring2024-assignment-2-submission.zip
 test_results.xml
 
+# Local-only scratch / large downloaded tools
+.tools/
+profiles/
+_sec678_tmp.txt
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

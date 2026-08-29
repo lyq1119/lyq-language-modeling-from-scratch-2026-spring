@@ -199,6 +199,7 @@ forward_backward          173.185       18.282
 optimizer                  26.249        0.143
 full_step                 199.434       18.203
 ```
+
 **答案：** 实验中预热 1、2 和 5 次时，完整训练步骤分别耗时 $193.858\pm18.784$ ms、$199.434\pm18.203$ ms 和 $201.189\pm3.741$ ms；均值接近，但预热 1--2 次时的标准差约为预热 5 次时的 5 倍，说明较少的预热不足以获得同样稳定的计时。不预热时，CUDA 上下文与内核初始化、内存分配及 AdamW 状态的惰性初始化都会进入测量，使初始步骤偏慢且波动更大；增加预热次数可让 GPU 频率、缓存和分配器状态逐渐稳定。（当前实验记录未包含 0 次预热的数值，因此这里不对其影响作定量比较。）
 
 #### 2.1.4 Nsight 系统分析器
@@ -301,6 +302,7 @@ Generated:
 Report: profiles/small_ctx512_forward.nsys-rep
 Summary: profiles/small_ctx512_forward_stats.txt
 ```
+
 **答案：** 在 RTX 4090 上分析 small 模型（FP32、batch size 4、context length 512）时，`benchmark` NVTX 范围内的 CUDA kernel 累计耗时约为 $50.49$ ms，而基准脚本使用 CUDA 同步得到的单次前向传播时间为 $55.28$ ms。两者相差约 $4.79$ ms（$8.7\%$）；结果大致相符，差值主要来自 kernel launch、CUDA API 调用及 kernel 之间未包含在 GPU kernel 累计时间内的间隔。
 
 **(b)** 哪个 CUDA 内核在前向传播过程中占用最多的累积 GPU 时间？在模型的单次前向传播过程中，该内核被调用了多少次？当您进行向前和反向传播时，是否是占用最多运行时间的同一个内核？ （
@@ -465,12 +467,53 @@ torch.cuda.memory._record_memory_history(enabled=None)
 分析表 1 中上下文窗口长度为 128 和 2048 的 xl 模型的前向传播、反向传播和优化器步骤的完整训练步骤。
 
 **(a)** 在分析脚本中添加一个选项，以通过内存分析器运行模型。重用以前的一些基础设施可能会有所帮助（例如，激活混合精度、加载特定模型规模等）。然后，运行脚本以在仅进行推理（仅前向传播）或完整训练步骤时获取 xl 模型的内存性能分析结果。你的内存时间线是什么样的？您能根据您看到的峰值判断正在运行哪个阶段吗？
+```
+lanyuqi@ubuntu:~/assignment2-systems$ uv run python benchmark.py \
+  --device cuda:7 \
+  --model-size xl \
+  --context-length 128 \
+  --mode forward \
+  --warmup-steps 2 \
+  --measurement-steps 1 \
+  --memory-snapshot profiles/memory/xl_ctx128_forward.pickle \
+  --json
+{
+  "configuration": {
+    "d_model": 2560,
+    "d_ff": 10240,
+    "num_layers": 32,
+    "num_heads": 32,
+    "vocab_size": 10000,
+    "context_length": 128,
+    "batch_size": 4,
+    "device": "cuda:7",
+    "dtype": "float32",
+    "mixed_precision": false,
+    "mode": "forward",
+    "warmup_steps": 2,
+    "measurement_steps": 1,
+    "parameters": 3406809600
+  },
+  "timings": {
+    "forward": {
+      "mean_ms": 106.74454271793365,
+      "std_ms": 0.0
+    }
+  },
+  "memory": {
+    "peak_allocated_bytes": 13859870720,
+    "peak_reserved_bytes": 13889437696,
+    "peak_allocated_mib": 13217.802734375,
+    "peak_reserved_mib": 13246.0,
+    "snapshot": "profiles/memory/xl_ctx128_forward.pickle"
+  }
+}
+```
+![xl 模型仅前向传播的活动内存时间线](./profiles/memory/xl_ctx128_forward_fp32_traced.png)
 
-![xl 模型仅前向传播的活动内存时间线](./profiles/memory/xl_ctx128_forward_fp32.png)
+![xl 模型完整训练步骤的活动内存时间线（反向传播期间 OOM）](./profiles/memory/xl_ctx128_full_fp32_traced.png)
 
-![xl 模型完整训练步骤的活动内存时间线（反向传播期间 OOM）](./profiles/memory/xl_ctx128_full_fp32_oom.png)
-
-**答案：** 基准脚本现支持 `--memory-snapshot PATH`，会记录测量区间、输出 PyTorch 内存快照并报告峰值；仅前向传播时参数占据约 12.8 GiB 的稳定基线，每层的临时分配形成较小且周期性的尖峰。完整步骤中，forward 为 backward 保存的张量持续累积，随后梯度张量使显存继续上升；在本机 24 GB RTX 4090 上，xl/context 128 于 backward 阶段达到约 23.44 GiB 后 OOM，因而第二张图是失败点之前的真实时间线，未能进入 AdamW 阶段。
+**答案：** 基准脚本现支持 `--memory-snapshot PATH`；为保留可追溯调用栈，记录在 warm-up 前以 `enabled="all", context="all", stacks="all"` 开启，而峰值统计会在 warm-up 后重置。仅前向传播时参数占据约 12.8 GiB 的稳定基线，每层的临时分配形成较小且周期性的尖峰。完整步骤中，forward 为 backward 保存的张量持续累积，随后梯度张量使显存继续上升；在本机 24 GB RTX 4090 上，xl/context 128 于 backward 阶段达到约 23.44 GiB 后 OOM，因而第二张图是失败点之前的真实时间线，未能进入 AdamW 阶段。
 
 <!-- 原 PDF 第 10 页 -->
 
@@ -487,7 +530,7 @@ torch.cuda.memory._record_memory_history(enabled=None)
 
 **答案：** context 128 的仅前向峰值由 FP32 的 13217.8 MiB 增至 BF16 autocast 的 19604.1 MiB；这里混合精度没有节省显存，反而因为 FP32 参数仍被保留且 autocast 缓存了 BF16 权重副本而增加约 6.24 GiB。完整步骤以及 context 2048 在两种精度下均 OOM，因此无法在当前 24 GB GPU 上定量比较；autocast 不会像直接把模型参数转为 BF16 那样将参数、梯度和优化器状态全部减半。
 
-**(d)** 考虑 xl 模型。给定我们的参考超参数，Transformer 残差流中激活张量的大小是多少（单精度）？以 MiB 为单位给出此大小（即将字节数除以 10242 ）。
+**(d)** 考虑 xl 模型。给定我们的参考超参数，Transformer 残差流中激活张量的大小是多少（单精度）？以 MiB 为单位给出此大小（即将字节数除以 $1024^2$）。
 
 **答案：** 残差流张量的形状为 $(B,S,d_{\text{model}})=(4,S,2560)$，FP32 每个元素占 4 字节，因此大小为 $4\times S\times2560\times4/1024^2$ MiB。context 128 时为 5 MiB，context 2048 时为 80 MiB。
 
@@ -734,17 +777,25 @@ grad_fn=<torch.autograd.function.CompiledFunctionBackward ...>
 
 在上面的示例中，重新计算得到的残差内存显然占主导地位（部分原因是检查点本身很小），因此，让检查点内存多承担一些占用会更有利。也就是说，我们希望缩小每个检查点块的范围。检查点块变大或变小并不会影响重新计算的计算成本；不过，我们还可以使用递归检查点进一步降低内存需求，但代价是增加计算量。递归检查点即在其他检查点调用内部继续嵌套检查点调用。
 
-### 题目：`gradient_checkpointing`——内存优化梯度检查点（4 分）
+##### 题目：`gradient_checkpointing`——内存优化梯度检查点（4 分）
 
 考虑一个由 $N$ 个相同块顺序堆叠而成的 Transformer。在不使用检查点时，全部 $N$ 个块的残差会同时保持活动状态，因此峰值激活内存为 $O(N)$。我们可以自由地用 `checkpoint` 包装前向传播的任意子集，也可以相互嵌套检查点调用。
 
 **(a)** 忽略计算成本时，哪种检查点策略可以最小化峰值激活内存？请描述如何安排检查点调用（给出代码草图即可），并给出该策略关于 $N$ 的渐近峰值激活内存和计算量。假设单个块保存的残差远大于每个检查点的簿记开销。
 
-**交付内容：** 用 3–5 句话描述该策略及其渐近峰值内存，并给出简短的代码草图。
+**答案：**将连续 block 递归二分；每个半区间都用 `checkpoint` 包装，直到递归到单个 block。forward 只保存递归路径上的检查点输入；backward 时按需要重新计算子区间。该递归策略将峰值激活内存从不检查点时的 O(N) 降至 O(log N)，代价是每一层递归都会产生重新计算，总计算量为 O(N log N)。
 
+```python
+def recurse(blocks, x):
+    if len(blocks) == 1:
+        return blocks[0](x)
+    middle = len(blocks) // 2
+    x = checkpoint(lambda z: recurse(blocks[:middle], z), x, use_reentrant=False)
+    return checkpoint(lambda z: recurse(blocks[middle:], z), x, use_reentrant=False)
+```
 **(b)** 考虑上述批大小为 4、序列长度为 2048 的 xl 模型配置。如果时间或计算预算只允许执行一轮重新计算（即不能嵌套检查点调用），那么降低峰值内存的最佳检查点策略是什么？请分析运行时的峰值内存以验证假设，并与相邻的更小和更大检查点块大小进行比较。
 
-**交付内容：** 用 3–5 句话说明推理，并给出所选策略测得的峰值内存。
+**答案：**不允许嵌套时，将 32 个 block 分为每段 k 个 block 的 checkpoint。每个 checkpoint 输入的残差流为 80 MiB，而重新计算一段时需物化约 k * 3651.31 MiB 的 block 残差；估算峰值为 ceil(32/k) * 80 + k * 3651.31 MiB。连续最优点约为 sqrt(32 * 80 / 3651.31) = 0.84，因此整数最优段长为 k=1，即每个 block 单独 checkpoint。估算 k=1 为 6211.31 MiB；邻近 k=2 和 k=3 分别为 8582.62 MiB 与 11632.11 MiB，均更高，因为单个 block 残差远大于一个 80 MiB checkpoint 输入。
 
 ## 4 GPU 内核
 
@@ -764,7 +815,7 @@ $$
 
 <!-- 原 PDF 第 16 页 -->
 
-### 题目：`pytorch_attention`——PyTorch Attention 基准测试（2 分）
+##### 题目：`pytorch_attention`——PyTorch Attention 基准测试（2 分）
 
 **(a)** 对不同规模的注意力实现进行基准测试。编写一个满足以下要求的脚本：
 
@@ -777,11 +828,40 @@ $$
 
 根据所用 GPU，其中一些配置预计会耗尽内存。请报告这些配置的计时结果（或 OOM 错误）。发生 OOM 时的配置规模是多少？对于最小的 OOM 配置之一，请计算注意力操作的内存用量（可以使用作业 1 中 Transformer 的内存用量公式）。为反向传播保存的内存如何随序列长度变化？您会采取什么措施消除这部分内存成本？
 
-**交付内容：** 一张表格，其中包含您的时间安排、内存使用情况的计算结果以及 1-2 段的响应。
+**答案：** 在 RTX 4090（24 GB）上，batch size=8、FP32、单头因果 attention 测得如下。每个配置先预热 5 次；随后分别执行 100 次前向和 100 次反向。计时边界均调用 `torch.cuda.synchronize()`；“反向前显存”是前向完成后、调用 `backward()` 前的 `max_memory_allocated()` 峰值。
+
+| d_model | 序列长度 S | 前向 (ms) | 反向 (ms) | 反向前显存 (MiB) |
+|---:|---:|---:|---:|---:|
+| 16 | 256 | 0.241 | 0.496 | 20.9 |
+| 16 | 1024 | 0.443 | 0.947 | 83.8 |
+| 16 | 4096 | 6.214 | 9.994 | 1066.2 |
+| 16 | 8192 | 24.695 | 39.002 | 4200.2 |
+| 16 | 16384 | OOM | OOM | OOM |
+| 32 | 256 | 0.563 | 1.053 | 37.3 |
+| 32 | 1024 | 0.574 | 1.073 | 86.2 |
+| 32 | 4096 | 6.208 | 10.029 | 1076.2 |
+| 32 | 8192 | 24.716 | 39.108 | 4224.2 |
+| 32 | 16384 | OOM | OOM | OOM |
+| 64 | 256 | 0.205 | 0.857 | 54.3 |
+| 64 | 1024 | 0.294 | 0.828 | 91.2 |
+| 64 | 4096 | 6.267 | 10.048 | 1096.2 |
+| 64 | 8192 | 24.969 | 39.496 | 4272.2 |
+| 64 | 16384 | OOM | OOM | OOM |
+| 128 | 256 | 0.309 | 0.885 | 88.3 |
+| 128 | 1024 | 0.543 | 1.004 | 101.2 |
+| 128 | 4096 | 6.599 | 10.506 | 1136.2 |
+| 128 | 8192 | 26.270 | 41.027 | 4368.2 |
+| 128 | 16384 | OOM | OOM | OOM |
+
+最小的 OOM 配置是 `d_model=16, S=16384`。注意力分数矩阵的形状为 `(B,S,S)=(8,16384,16384)`；仅一个 FP32 分数矩阵就需要 `8 * 16384^2 * 4 / 1024^3 = 8 GiB`。朴素实现还会同时产生 mask 后分数、softmax 概率、输出和 autograd 为反向保存的张量，因此实际峰值超过 24 GB。
+
+显存和时间在长序列时主要随 `S^2` 增长：例如 `d_model=64` 从 `S=4096` 到 `8192`，反向前显存从 1096.2 MiB 到 4272.2 MiB（约 3.9 倍），接近序列长度翻倍带来的 4 倍。`d_model` 只线性影响 Q/K/V 和输出，而巨大的分数/概率矩阵与 `d_model` 无关，所以在长序列中差别很小。反向比前向慢，因为它需要读取保存的中间结果并计算 Q、K、V 的梯度。
+
+消除这项主要成本的方法是使用 FlashAttention：以分块方式计算矩阵乘法和 online softmax，不具体化完整的 `(B,S,S)` 分数矩阵或概率矩阵；反向时按需重算局部结果。这样把主要激活内存从二次规模降到近似线性规模。
 
 ### 4.2 对 JIT 编译的注意力进行基准测试
 
-从 2.0 版开始，PyTorch 还附带了一个强大的即时编译器，它会自动尝试对 PyTorch 函数应用许多优化：有关介绍，请参阅 https://pytorch.org/tutorials/intermediate/torch_compile_tutorial.html。特别是，它将尝试通过动态分析您的计算图来自动生成融合的 Triton 内核。使用 PyTorch 编译器的界面非常简单。例如，如果我们想将其应用到模型的单层，我们可以使用：
+从 2.0 版开始，PyTorch 还附带了一个强大的即时编译器，它会自动尝试对 PyTorch 函数应用许多优化：有关介绍，请参阅 https://pytorch.org/tutorials/intermediate/torch_compile_tutorial.html 。特别是，它将尝试通过动态分析您的计算图来自动生成融合的 Triton 内核。使用 PyTorch 编译器的界面非常简单。例如，如果我们想将其应用到模型的单层，我们可以使用：
 
 ```python
 layer = SomePyTorchModule(...)
@@ -790,19 +870,50 @@ compiled_layer = torch.compile(layer)
 
 此后，`compiled_layer` 在功能上与 `layer` 相同（例如，同样支持前向和反向传播）。我们还可以使用 `torch.compile(model)` 编译整个 PyTorch 模型，甚至可以编译调用 PyTorch 操作的普通 Python 函数。
 
-### 题目：`torch_compile`——Torch 编译（2 分）
+##### 题目：`torch_compile`——Torch 编译（2 分）
 
-(a) 扩展注意力基准测试脚本以包含 PyTorch 注意力实现的编译版本，并将其性能与具有与上述 pytorch_attention 问题相同配置的未编译版本进行比较。
+**(a)** 扩展注意力基准测试脚本，使其包含 PyTorch 注意力实现的编译版本；在与上一题 `pytorch_attention` 相同的所有配置下，将其性能与未编译版本比较。
 
-<!-- 原 PDF 第 17 页 -->
+**答案：** 在 lcpu 集群 RTX 5090（32 GB）上，batch size 8、FP32、因果单头 attention；两版均预热 5 次、测量 100 次。表中为平均 `前向 / 反向` 毫秒。
 
-**交付内容：** 一张表格，将编译后的注意力模块的前向和反向传播时间与上述 pytorch_attention 问题的未编译版本进行比较。
+| d_model | S | eager | compiled |
+|---:|---:|---:|---:|
+| 16 | 256 | 0.210 / 0.453 | 0.349 / 0.655 |
+| 16 | 1024 | 0.227 / 0.463 | 0.388 / 0.672 |
+| 16 | 4096 | 3.734 / 5.974 | 1.869 / 3.266 |
+| 16 | 8192 | 14.878 / 23.194 | 8.582 / 12.642 |
+| 16 | 16384 | OOM | 26.481 / 41.274 |
+| 32 | 256 | 0.230 / 0.525 | 0.176 / 0.292 |
+| 32 | 1024 | 0.223 / 0.472 | 0.191 / 0.334 |
+| 32 | 4096 | 3.814 / 6.204 | 2.367 / 3.566 |
+| 32 | 8192 | 15.050 / 23.335 | 9.969 / 13.537 |
+| 32 | 16384 | OOM | 26.863 / 41.721 |
+| 64 | 256 | 0.265 / 0.777 | 0.185 / 0.318 |
+| 64 | 1024 | 0.245 / 0.511 | 0.247 / 0.394 |
+| 64 | 4096 | 3.972 / 6.394 | 1.942 / 3.261 |
+| 64 | 8192 | 15.673 / 24.115 | 7.368 / 11.669 |
+| 64 | 16384 | OOM | 30.047 / 45.648 |
+| 128 | 256 | 0.205 / 0.463 | 0.183 / 0.302 |
+| 128 | 1024 | 0.269 / 0.568 | 0.316 / 0.522 |
+| 128 | 4096 | 4.896 / 7.987 | 2.922 / 4.964 |
+| 128 | 8192 | 19.482 / 30.531 | 11.647 / 18.903 |
+| 128 | 16384 | OOM | 47.516 / 74.944 |
 
-**(b)** 现在，在端到端基准测试脚本中编译整个 Transformer 模型。前向传播的性能如何变化？组合的前向和反向传播以及优化器步骤怎么样？
+短序列可能受编译固定开销影响；S>=4096 时 compiled 明显更快。例如 d_model=64、S=8192 前向从 15.673 ms 降至 7.368 ms，反向从 24.115 ms 降至 11.669 ms。d_model=64、S=8192 的 forward 后峰值从 4272.2 MiB 降到 2224.2 MiB，因此 eager 在 S=16384 OOM，而 compiled 可以完成（8656.2 MiB）。Inductor 融合 mask、softmax 等逐元素操作，减少中间张量，但仍不是 FlashAttention，计算量仍为二次。
 
-**交付内容：** 比较原始 Transformer 模型和编译后的 Transformer 模型的表格。
+**(b)** 在端到端基准测试脚本中编译整个 Transformer 模型。前向传播性能如何变化？前向加反向传播、以及包含优化器步骤的完整训练步骤又如何变化？
 
-考虑到我们所看到的关于序列长度的缩放行为，我们需要进行重大改进来处理大型序列。即使使用 torch.compile，当前的实现在长序列长度下也会遇到非常糟糕的内存访问模式。为此，我们将编写 FlashAttention-2 的 Triton 实现，在这里我们可以更好地控制内存的访问方式以及何时计算什么。
+**答案：** small Transformer（12 层，d_model=768）、batch size 4、context 512、FP32，同一张 RTX 5090，预热 5 次、测量 10 次；编译耗时在预热中，不计入表内。
+
+| 阶段 | eager (ms) | torch.compile (ms) | 加速比 |
+|---|---:|---:|---:|
+| 仅前向 | 17.680 | 18.050 | 0.98x |
+| 完整步骤中的前向 | 20.334 | 17.348 | 1.17x |
+| 前向 + 反向 | 54.419 | 43.152 | 1.26x |
+| AdamW | 7.891 | 7.695 | 1.03x |
+| 完整训练步骤 | 62.310 | 50.847 | 1.23x |
+
+仅前向几乎没有改善；完整训练步骤快约 23%，主要来自反向逐元素操作融合，减少 kernel launch 与中间张量读写。AdamW 变化很小，因为它不在模型前向/反向图中同样可融合的部分。以上是 RTX 5090 数据，不能与 RTX 4090 的绝对时间直接比较。
 
 #### 4.2.1 示例：加权和
 
@@ -1284,7 +1395,7 @@ kernel_fn[(launch_grid_d1, launch_grid_d2, ...)](...args...)
 
 - 使用 `block_ptr = block_ptr.advance(...)` 推进块指针。
 
-### 题目：`flash_forward`——FlashAttention-2 前向传播（15 分）
+##### 题目：`flash_forward`——FlashAttention-2 前向传播（15 分）
 
 **(a)** 编写一个纯 PyTorch（不使用 Triton）的 `autograd.Function`，实现 FlashAttention-2 前向传播。该实现会比普通 PyTorch 实现慢得多，但有助于调试 Triton 内核。实现接收 $Q$、$K$、$V$ 和 `is_causal` 标志，生成输出 $O$ 与 logsumexp 值 $L$；本小题可以忽略 `is_causal`。前向方法应保存 $L,Q,K,V,O$ 供反向传播使用，并返回 $O$，接口为：
 
@@ -1293,9 +1404,9 @@ def forward(ctx, Q, K, V, is_causal=False):
     ...
 ```
 
-`autograd.Function` 仍须定义反向方法，但目前可以只抛出 `NotImplementedError`。请自行选择块大小，并确保至少为 $16\times16$。测试只会使用不小于 16 的二次幂尺寸，因此无需处理越界访问。
+`autograd.Function` 仍须定义反向方法，但目前可以只抛出 `NotImplementedError`。请自行选择块大小，并确保至少为 $16\times16$。测试只会使用不小于 16 的二次幂尺寸，因此无需处理越界访问。实现该 `torch.autograd.Function` 子类及 `adapters.get_flashattention_autograd_function_pytorch`，然后运行 `uv run pytest -k test_flash_forward_pass_pytorch`。
 
-**交付内容：** 实现该 `torch.autograd.Function` 子类及 `adapters.get_flashattention_autograd_function_pytorch`，然后运行 `uv run pytest -k test_flash_forward_pass_pytorch`。
+**答案** 在 `tests/adapters.py` 中实现了 `FlashAttentionPytorch`。它以 `32x32` 图块遍历 Q 与 K/V，维护每个查询行的运行最大值 `m`、归一化分母 `l` 和 FP32 累加器 `acc`；每完成一个 K 图块，就用 `alpha=exp(m_old-m_new)` 重缩放旧状态，再加入当前块的 `exp(S-m_new)`。最终输出为 `acc/l`，并保存 `L=m+log(l)`、`Q,K,V,O`。该版本没有物化完整注意力矩阵。
 
 **(b)** 按照算法 1 编写 FlashAttention-2 前向传播的 Triton 内核。然后再编写一个 `torch.autograd.Function` 子类，在前向传播中调用该融合内核。
 
@@ -1344,13 +1455,15 @@ def flash_fwd_kernel(
 
 - 片上缓冲区（$O_i$、$l$、$m$）应使用 `tl.float32`。向输出缓冲区累积时，使用 `acc` 参数：`acc = tl.dot(..., acc=acc)`。
 
-- 在相乘前把 $\widetilde P_i^{(j)}$ 转换为 $V^{(j)}$ 的数据类型；写入全局内存前，再把 $O_i$ 转换为适当类型。使用 `tensor.to(...)` 转换，使用 `tensor.dtype` 或 `block_ptr.type.element_ty` 获取数据类型。
+- 在相乘前把 $\widetilde P_i^{(j)}$ 转换为 $V^{(j)}$ 的数据类型；写入全局内存前，再把 $O_i$ 转换为适当类型。使用 `tensor.to(...)` 转换，使用 `tensor.dtype` 或 `block_ptr.type.element_ty` 获取数据类型。实现使用 Triton 内核完成前向传播的 `torch.autograd.Function` 子类及 `adapters.get_flash_autograd_function_triton`，然后运行 `uv run pytest -k test_flash_forward_pass_triton`。
 
-**交付内容：** 实现使用 Triton 内核完成前向传播的 `torch.autograd.Function` 子类及 `adapters.get_flash_autograd_function_triton`，然后运行 `uv run pytest -k test_flash_forward_pass_triton`。
+**答案** 实现了融合的 Triton `flash_fwd_kernel`，其 grid 为 `(ceil(NQ/32), batch_size)`。一个 program 处理一个查询图块，循环读取所有 K/V 图块，使用 `tl.dot`、FP32 的 `m/l/acc` 和在线 softmax 写回 `O,L`。`FlashAttentionTriton` 的 forward 调用该 kernel。
 
-**(c)** 在 `autograd.Function` 实现的最后增加一个用于因果掩码的布尔参数。Triton 内核应增加参数 `is_causal: tl.constexpr`。在 Triton 中分别构造查询与键的索引向量，比较二者形成 $B_q\times B_k$ 的掩码；对被屏蔽元素，在注意力分数 $S_i^{(j)}$ 的对应位置加上常量 `-1e6`。使用 `ctx.is_causal = is_causal` 保存供反向传播使用的掩码标志。
+**(c)** 在 `autograd.Function` 实现的最后增加一个用于因果掩码的布尔参数。Triton 内核应增加参数 `is_causal: tl.constexpr`。在 Triton 中分别构造查询与键的索引向量，比较二者形成 $B_q\times B_k$ 的掩码；对被屏蔽元素，在注意力分数 $S_i^{(j)}$ 的对应位置加上常量 `-1e6`。使用 `ctx.is_causal = is_causal` 保存供反向传播使用的掩码标志。`torch.autograd.Function` 子类的一个附加标志，它使用 Triton 内核实现带有因果屏蔽的 FlashAttention-2 前向传播。确保该标志是可选的并且默认为 False，以便前面的测试仍然通过。
 
-**交付内容：** torch.autograd.Function 子类的一个附加标志，它使用 Triton 内核实现带有因果屏蔽的 FlashAttention-2 前向传播。确保该标志是可选的并且默认为 False，以便前面的测试仍然通过。
+**答案** 两种实现均支持可选 `is_causal=False` 参数；Triton 中以查询、键的全局索引 `q_index >= k_index` 构造掩码，并把禁止位置的 score 设为 `-1e6`。该标志保存在 `ctx.is_causal` 中，供反向使用。
+
+验证结果：`uv run pytest -k test_flash_forward_pass_pytorch` 通过；在 RTX 5090 上，`uv run pytest -k test_flash_forward_pass_triton` 的 causal=False 与 causal=True 两项均通过。
 
 <!-- 原 PDF 第 28 页 -->
 
@@ -1358,15 +1471,15 @@ def flash_fwd_kernel(
 
 与公式 7–11 中的标准反向传播不同，公式 13–19 利用重新计算避免了反向传播中的 softmax。因此，可以用简单内核完成反向传播，无需在线 softmax 技巧。本部分允许在普通 PyTorch 函数（而非 Triton）上调用 `torch.compile` 来实现反向传播。
 
-### 题目：`flash_backward`——FlashAttention-2 反向传播（5 分）
+##### 题目：`flash_backward`——FlashAttention-2 反向传播（5 分）
 
-使用 PyTorch（而非 Triton）和 `torch.compile` 实现 FlashAttention-2 `autograd.Function` 的反向传播。实现应接收 $Q,K,V,O,dO,L$，返回 $dQ,dK,dV$。请记得计算并使用向量 $D$；可直接按照公式 13–19 计算。
+使用 PyTorch（而非 Triton）和 `torch.compile` 实现 FlashAttention-2 `autograd.Function` 的反向传播。实现应接收 $Q,K,V,O,dO,L$，返回 $dQ,dK,dV$。请记得计算并使用向量 $D$；可直接按照公式 13–19 计算。运行 `uv run pytest -k test_flash_backward` 测试实现。
 
-**交付内容：** 运行 `uv run pytest -k test_flash_backward` 测试实现。
+**答案** 反向传播实现为 `_backward = torch.compile(_backward_impl)`。它按公式 13--19 从保存的 `Q,K,V,O,L` 重算 `S` 和 `P=exp(S-L)`，计算 `D=rowsum(O*dO)`，再得到 `dV=P^T dO`、`dP=dO V^T`、`dS=P*(dP-D)`、`dQ=dS K/sqrt(d)`、`dK=dS^T Q/sqrt(d)`。中间计算使用 FP32，最后转回输入 dtype。CPU 上 `test_flash_backward_pytorch` 通过；RTX 5090 上 Triton 前向配合该重算反向的 causal=False/True 两项也均通过。
 
 现在，我们将 FlashAttention-2 的（部分）Triton 实现与常规 Attention 的 PyTorch 实现的性能进行比较。
 
-### 题目：`flash_benchmarking`——FlashAttention-2 基准测试（5 分）
+##### 题目：`flash_benchmarking`——FlashAttention-2 基准测试（5 分）
 
 **(a)** 使用 `triton.testing.do_bench` 编写基准测试脚本，对比 FlashAttention-2 的（部分）Triton 实现与普通 PyTorch 注意力实现。报告两种实现的前向、反向以及端到端前向—反向传播延迟。提前随机生成所有输入，并在单块 B200 上测试；始终使用批大小 1 和因果掩码。遍历以下配置的笛卡尔积：
 
@@ -1374,9 +1487,11 @@ def flash_fwd_kernel(
 - 嵌入维度：从 16 到 128 的所有二次幂；
 - 精度：`torch.bfloat16` 和 `torch.float32`。
 
-可能需要根据输入大小调整块大小。
+可能需要根据输入大小调整块大小。使用上述设置并报告前向、后向和端到端延迟，将 FlashAttention-2 实现与 PyTorch 实现进行比较的结果表。
 
-**交付内容：** 使用上述设置并报告前向、后向和端到端延迟，将 FlashAttention-2 实现与 PyTorch 实现进行比较的结果表。
+**答案** 新增 `flash_benchmark.py`，使用 `triton.testing.do_bench`，提前生成 batch size 1 的输入，遍历题目指定的 sequence length、d_model 与 BF16/FP32，并输出 eager attention 与 FlashAttention 的 forward、forward+backward、由两者相减得到的 backward 延迟及峰值显存。脚本默认覆盖到 65536；可用 `--max-seq` 缩小调试范围。
+
+本环境能使用的是 RTX 5090（32 GB），而非题目规定的 B200，因此没有把 5090 的绝对时间伪装成 B200 结果。在 5090 的因果 FP32 小规模验证中，d_model=128 时：S=256，eager/Flash 前向分别为 0.028/0.014 ms；S=512 为 0.039/0.023 ms；S=1024 为 0.059/0.040 ms。Flash 内核的前向已经更快；但本作业要求的反向是 PyTorch 重算，会重新物化 `S/P`，所以超长序列的反向仍保留二次内存瓶颈。完整 FlashAttention 的长序列优势需要 4.2.3 的 Triton 反向 kernel 才能实现。
 
 #### 4.2.3 可选：Triton 反向传播
 
@@ -1412,632 +1527,619 @@ def flash_fwd_kernel(
 
 ### 5.1 PyTorch 中的单节点分布式通信
 
-让我们首先看一下 PyTorch 中的一个简单的分布式应用程序，其目标是生成四个随机整数张量并计算它们的总和。在下面的分布式情况下，我们将生成四个工作进程，每个进程都会生成一个随机整数张量。为了对工作进程中的这些张量求和，我们将调用全归约集体通信操作，它将每个进程上的原始数据张量替换为全归约结果（即总和）。现在让我们看一些代码。
+让我们首先看一下 PyTorch 中的一个简单的分布式应用程序，其目标是生成四个随机整数张量并计算它们的总和。在下面的分布式情况下，我们将生成四个工作进程，每个进程都会生成一个随机整数张量。为了对工作进程中的这些张量求和，我们将调用全归约（all-reduce）集体通信操作，它将每个进程上的原始数据张量替换为全归约结果（即总和）。现在让我们看一些代码。
 
-```text
-import os import torch import torch.distributed as dist import torch.multiprocessing as mp
-```
+```python
+import os
+import torch
+import torch.distributed as dist
+import torch.multiprocessing as mp
 
-```text
-def setup(rank, world_size): os.environ["MASTER_ADDR"] = "localhost" os.environ["MASTER_PORT"] = "29500" dist.init_process_group("gloo", rank=rank, world_size=world_size)
-```
 
-```text
-def distributed_demo(rank, world_size): setup(rank, world_size) data = torch.randint(0, 10, (3,)) print(f"rank {rank} data (before all-reduce): {data}") dist.all_reduce(data, async_op=False) print(f"rank {rank} data (after all-reduce): {data}")
-```
+def setup(rank, world_size):
+    os.environ["MASTER_ADDR"] = "localhost"
+    os.environ["MASTER_PORT"] = "29500"
+    dist.init_process_group("gloo", rank=rank, world_size=world_size)
 
-```text
-if __name__ == "__main__": world_size = 4 mp.spawn(fn=distributed_demo, args=(world_size, ), nprocs=world_size, join=True)
+
+def distributed_demo(rank, world_size):
+    setup(rank, world_size)
+    data = torch.randint(0, 10, (3,))
+    print(f"rank {rank} data (before all-reduce): {data}")
+    dist.all_reduce(data, async_op=False)
+    print(f"rank {rank} data (after all-reduce): {data}")
+
+
+if __name__ == "__main__":
+    world_size = 4
+    mp.spawn(fn=distributed_demo, args=(world_size,), nprocs=world_size, join=True)
 ```
 
 运行上面的脚本后，我们得到下面的输出。正如预期的那样，每个工作进程最初持有不同的数据张量。在对所有工作进程的张量进行求和的 all-reduce 操作之后，每个工作进程上的数据都会被就地修改以保存 all-reduce 结果。2
 
-```text
-$ uv run python distributed_hello_world.py rank 3 data (before all-reduce): tensor([3, 7, 8]) rank 0 data (before all-reduce): tensor([4, 4, 7]) rank 2 data (before all-reduce): tensor([6, 0, 7]) rank 1 data (before all-reduce): tensor([9, 5, 3]) rank 1 data (after all-reduce): tensor([22, 16, 25]) rank 0 data (after all-reduce): tensor([22, 16, 25]) rank 3 data (after all-reduce): tensor([22, 16, 25]) rank 2 data (after all-reduce): tensor([22, 16, 25])
+```console
+$ uv run python distributed_hello_world.py
+rank 3 data (before all-reduce): tensor([3, 7, 8])
+rank 0 data (before all-reduce): tensor([4, 4, 7])
+rank 2 data (before all-reduce): tensor([6, 0, 7])
+rank 1 data (before all-reduce): tensor([9, 5, 3])
+rank 1 data (after all-reduce): tensor([22, 16, 25])
+rank 0 data (after all-reduce): tensor([22, 16, 25])
+rank 3 data (after all-reduce): tensor([22, 16, 25])
+rank 2 data (after all-reduce): tensor([22, 16, 25])
 ```
 
-现在让我们更仔细地回顾一下上面的脚本。命令 mp.spawn 会生成使用提供的参数运行 fn 的 nprocs 进程。另外，函数fn被称为fn(rank, *args)，其中rank是工作进程的索引（0到nprocs-1之间的值）。因此，我们的distributed_demo函数
+> **注 2：** 如果多次运行此脚本，您会注意到打印输出的顺序不确定。由于该应用程序在分布式设置中运行，我们无法控制命令运行的确切顺序——我们唯一的保证是，在 all-reduce 操作完成后，各个进程将保存按位相同的结果张量。
 
-2 如果多次运行此脚本，您会注意到打印输出的顺序不确定。由于该应用程序在分布式设置中运行，因此我们无法控制命令运行的确切顺序 - 我们唯一的保证是在 all-reduce 操作完成后，单独的进程将保存按位相同的结果张量。
+现在让我们更仔细地回顾一下上面的脚本。命令 `mp.spawn` 会生成使用提供的参数运行 `fn` 的 `nprocs` 个进程。另外，函数 `fn` 以 `fn(rank, *args)` 的形式被调用，其中 `rank` 是工作进程的索引（0 到 `nprocs-1` 之间的值）。因此，我们的 `distributed_demo` 函数必须接受该整数等级作为其第一个位置参数。另外，我们传入 `world_size`，它指的是工作进程总数。
 
 <!-- 原 PDF 第 31 页 -->
 
-必须接受该整数等级作为其第一个位置参数。另外，我们传入world_size，它指的是工作进程总数。每个工作进程都属于一个进程组，该进程组通过 dist.init_process_group 进行初始化。进程组代表多个工作进程，它们将通过共享主进程进行协调和通信。主站由其 IP 地址和端口定义，主站运行等级为 0 的进程。像 all-reduce 这样的集体通信操作对进程组中的每个进程进行操作。在本例中，我们使用“gloo”后端初始化进程组，但其他后端也可用。特别是，“nccl”后端将使用 NVIDIA NCCL 集体通信库，该库通常对于 CUDA 张量来说性能更高。但是，NCCL 只能在具有 GPU 的计算机上使用，而 Gloo 可以在仅具有 CPU 的计算机上运行。您应该始终使用 NCCL 进行分布式 GPU 训练，并且仅在没有可用 GPU 的情况下使用 Gloo 进行本地开发。我们在此示例中使用 Gloo，因为它可以在仅使用 CPU 的计算机上进行本地执行和开发。运行多GPU作业时，请确保不同的Rank使用不同的GPU。一种方法是在setup函数中调用torch.cuda.set_device(rank)，这样tensor.to("cuda")就会自动将其移动到指定的设备。或者，您可以显式创建每个rank 设备字符串（例如，device = f"cuda:{rank}"），然后使用此设备字符串作为任何数据移动的目标设备（例如，tensor.to(f"cuda:{rank}")）。
+每个工作进程都属于一个进程组，该进程组通过 `dist.init_process_group` 进行初始化。进程组代表多个工作进程，它们将通过共享主进程进行协调和通信。主进程由其 IP 地址和端口定义，主进程运行等级为 0 的进程。像 all-reduce 这样的集体通信操作对进程组中的每个进程进行操作。在本例中，我们使用 `"gloo"` 后端初始化进程组，但其他后端也可用。特别是，`"nccl"` 后端将使用 NVIDIA NCCL 集体通信库，该库通常对于 CUDA 张量来说性能更高。但是，NCCL 只能在具有 GPU 的计算机上使用，而 Gloo 可以在仅具有 CPU 的计算机上运行。您应该始终使用 NCCL 进行分布式 GPU 训练，并且仅在没有可用 GPU 的情况下使用 Gloo 进行本地开发。我们在此示例中使用 Gloo，因为它可以在仅使用 CPU 的计算机上进行本地执行和开发。运行多 GPU 作业时，请确保不同的等级（rank）使用不同的 GPU。一种方法是在 `setup` 函数中调用 `torch.cuda.set_device(rank)`，这样 `tensor.to("cuda")` 就会自动将其移动到指定的设备。或者，您可以显式创建每个 rank 的设备字符串（例如，`device = f"cuda:{rank}"`），然后使用此设备字符串作为任何数据移动的目标设备（例如，`tensor.to(f"cuda:{rank}")`）。
 
-术语 在作业的其余部分（以及您可能在网上看到的各种其他资源），您可能会在 PyTorch 分布式通信的上下文中遇到以下术语。尽管我们在本次作业中将重点关注单节点、多进程分布式训练，但该术语对于总体理解分布式训练很有用。请参见图 3 的直观表示。节点网络上的一台机器。
+**术语** 在作业的其余部分（以及您可能在网上看到的各种其他资源）中，您可能会在 PyTorch 分布式通信的上下文中遇到以下术语。尽管我们在本次作业中将重点关注单节点、多进程分布式训练，但这些术语对于从整体上理解分布式训练很有用。参见图 3 的直观表示。
 
-worker 是参与分布式训练的程序的实例。在此作业中，每个工作人员将有一个进程，因此我们将互换使用工作人员、进程和工作进程。然而，工作人员可能会使用多个进程（例如，加载数据进行训练），因此这些术语在实践中并不总是等效的。 world size 进程组中的工人总数。
-
-全局等级 唯一标识进程组中的工作线程的整数 ID（0 到 world_size-1 之间）。例如，对于 2 的世界大小，一个进程的全局等级为 0（主进程），另一个进程的等级为 1。 本地世界大小 当跨不同节点运行应用程序时，本地世界大小是在给定节点上本地运行的工作线程数量。例如，如果我们有一个应用程序，每个应用程序在 2 个节点上生成 4 个工作线程，则世界大小将为 8，本地世界大小将为 4。请注意，在单个节点上运行时，工作线程的本地世界大小等于（全局）世界大小。 localrank 一个整数ID（0到local_world_size-1之间），唯一标识机器上本地worker的索引。例如，如果我们有一个应用程序，每个进程在 2 个节点上生成 4 个进程，则每个节点将具有本地等级为 0、1、2 和 3 的工作人员。请注意，运行单节点多进程分布式应用程序时，进程的本地等级相当于其全局等级。
+- **节点（node）**：网络上的一台机器。
+- **工作进程（worker）**：参与分布式训练的程序实例。在本次作业中，每个工作进程将只有一个进程，因此我们将互换使用"工作进程"、"进程"和"工作进程"这几个词。然而，一个工作进程可能会使用多个进程（例如，加载数据进行训练），因此这些术语在实践中并不总是等价的。
+- **世界大小（world size）**：进程组中的工作进程总数。
+- **全局等级（global rank）**：唯一标识进程组中工作进程的整数 ID（0 到 `world_size-1` 之间）。例如，对于世界大小为 2 的情况，一个进程的全局等级为 0（主进程），另一个进程的全局等级为 1。
+- **本地世界大小（local world size）**：当应用程序跨不同节点运行时，本地世界大小是在给定节点上本地运行的工作进程数量。例如，如果我们有一个应用程序在 2 个节点上各生成 4 个工作进程，则世界大小将为 8，本地世界大小将为 4。请注意，在单个节点上运行时，工作进程的本地世界大小等于（全局）世界大小。
+- **本地等级（local rank）**：唯一标识机器上本地工作进程索引的整数 ID（0 到 `local_world_size-1` 之间）。例如，如果我们有一个应用程序在 2 个节点上各生成 4 个进程，则每个节点将具有本地等级为 0、1、2 和 3 的工作进程。请注意，运行单节点多进程分布式应用程序时，进程的本地等级相当于其全局等级。
 
 <!-- 原 PDF 第 32 页 -->
 
-*图 3：在世界大小为 8 的 2 个节点上运行的分布式应用程序的示意图。每个工作进程均由全局排名（从 0 到 7）和本地排名（从 0 到 3）标识。图取自https://lightning.ai/docs/fabric/stable/advanced/distributed_communication.html*
+*图 3：在世界大小为 8 的 2 个节点上运行的分布式应用程序的示意图。每个工作进程均由全局排名（从 0 到 7）和本地排名（从 0 到 3）标识。图取自 <https://lightning.ai/docs/fabric/stable/advanced/distributed_communication.html>*
 
 #### 5.1.1 分布式应用程序基准测试的最佳实践
 
 在作业的这一部分中，您将对分布式应用程序进行基准测试，以更好地了解通信的开销。以下是一些最佳实践：
 
 - 只要有可能，就在同一台机器上运行基准测试，以便于进行受控比较。
-
-- 在计时感兴趣的操作之前执行几个预热步骤。这对于 NCCL 通信呼叫尤其重要。 5 次预热迭代通常就足够了。
-
-- 在GPU 上进行基准测试时，调用torch.cuda.synchronize() 等待CUDA 操作完成。请注意，即使在使用 async_op=False 调用通信操作时，这也是必要的，该操作在 GPU 上排队时返回（而不是通信实际完成时）。3
-
-- 不同rank 之间的时序可能会略有不同，因此通常会聚合跨rank 的测量值以改进估计。您可能会发现 all-gather 集体（特别是 dist.all_gather_object 函数）对于收集所有等级的结果非常有用。
-
-- 一般来说，在CPU 上使用Gloo 进行本地调试，然后根据给定问题的需要，在GPU 上使用NCCL 进行基准测试。后端之间的切换应该像修改 init_process_group 调用和张量设备转换一样简单。
-
-### 题目：`distributed_communication_single_node`——分布式通信（单节点）（5 分）
-
-编写一个脚本来对单节点多进程设置中的 all-reduce 操作的运行时间进行基准测试。上面的示例代码可以提供一个合理的起点。尝试改变以下设置：all-reduce 数据大小 float32 数据张量范围超过 1MB、10MB、100MB、1GB。
-
-GPU/进程数量 2、4 或 6。
-
-资源要求：最多 6 个 GPU。每次基准测试运行时间不应超过 5 分钟。
-
-**交付内容：** 比较各种设置的图和/或表格，用 2-3 句话评论您的结果以及对各种因素如何相互作用的想法。
+- 在计时感兴趣的操作之前执行几个预热步骤。这对于 NCCL 通信调用尤其重要。5 次预热迭代通常就足够了。
+- 在 GPU 上进行基准测试时，调用 `torch.cuda.synchronize()` 等待 CUDA 操作完成。请注意，即使在使用 `async_op=False` 调用通信操作时，这也是必要的——该操作在 GPU 上排队时返回（而不是通信实际完成时）。3
+- 不同 rank 之间的时序可能会略有不同，因此通常会聚合跨 rank 的测量值以改进估计。您可能会发现 all-gather 集体操作（特别是 `dist.all_gather_object` 函数）对于收集所有等级的结果非常有用。
+- 一般来说，在 CPU 上使用 Gloo 进行本地调试，然后根据给定问题的需要，在 GPU 上使用 NCCL 进行基准测试。后端之间的切换应该像修改 `init_process_group` 调用和张量设备转换一样简单。
 
 > **注 3：** 更多细节参见 <https://github.com/pytorch/pytorch/issues/68112#issuecomment-965932386>。
 
+##### 题目：`distributed_communication_single_node`——分布式通信（单节点）（5 分）
+
+编写一个脚本来对单节点多进程设置中的 all-reduce 操作的运行时间进行基准测试。上面的示例代码可以提供一个合理的起点。尝试改变以下设置：
+
+- **all-reduce 数据大小**：float32 数据张量，范围覆盖 1MB、10MB、100MB、1GB。
+- **GPU/进程数量**：2、4 或 6。
+- **资源要求**：最多 6 个 GPU。每次基准测试运行时间不应超过 5 分钟。
+
+**交付内容：** 比较各种设置的图和/或表格，用 2-3 句话评论您的结果以及对各种因素如何相互作用的想法。
+
+**答案：** 已在 [`distributed_comm_benchmark.py`](./distributed_comm_benchmark.py) 中实现该基准测试脚本。该脚本对每组配置运行 5 次 warmup，随后在 NCCL 后端上对 20 次迭代计时；为减小 rank 间的抖动，使用 `dist.all_gather` 收集所有 rank 的耗时并对 (world_size × iterations) 维度求平均。测量结果保存到 `results_allreduce.json`，并绘制下图。共运行了 12 组配置 (world_size ∈ {2, 4, 6} × size ∈ {1MB, 10MB, 100MB, 1GB})，单组最长不超过 5 分钟。
+
+| GPU 进程数 | 1 MB | 10 MB | 100 MB | 1 GB |
+|---:|---:|---:|---:|---:|
+| 2  | 3.6 ± 1.1 | 2.3 ± 1.6 | 26.9 ± 1.9 | 256.1 ± 16.8 |
+| 4  | 3.2 ± 1.0 | 9.4 ± 3.0 | 62.3 ± 12.0 | 616.2 ± 44.3 |
+| 6  | 8.7 ± 6.5 | 15.2 ± 5.7 | 82.6 ± 11.0 | 794.2 ± 47.3 |
+
+*表 2：单次 all-reduce 的平均时延 ± 标准差（毫秒，20 次迭代）。*
+
+![单节点 NCCL all-reduce 延迟](./figures/allreduce_comm_time.png)
+
+数据规模从 100 MB 起呈近线性增长，反映出通信量是主要瓶颈（由 GPU 间 PCIe 带宽主导）；但 world_size = 2 时 1 MB (3.6 ms) 反而略高于 10 MB (2.3 ms)，说明在 1–10 MB 量级时延迟被 GPU 上的内核排队和 NCCL 启动开销主导，与数据规模几乎无关。规模相同时，更多 rank 倾向于增加耗时：环形 all-reduce 下每个 rank 的发送/接收量随 n 增长 (2(n−1)/n)，同时还有额外的 hop 延迟；在 1 GB 处从 2 增至 6 个进程大约使耗时从 256 ms 升至 794 ms。需要注意的是，由于所有 GPU 上的排队都被拖慢，小数据规模下的标准差尤其大、4/6 GPU 的耗时显著高于仅由环形算法增长所预期的值。
+
+
 <!-- 原 PDF 第 33 页 -->
 
-5.2 分布式数据并行训练的简单实现现在我们已经了解了在 PyTorch 中编写分布式应用程序的基础知识，让我们构建分布式数据并行（DDP）训练的最小实现。数据并行性将批次拆分到多个设备（例如 GPU）上，从而能够对不适合单个设备的大批量进行训练。例如，给定四个设备，每个设备可以处理最大批大小为 32，数据并行训练将实现有效批大小为 128。以下是简单地进行分布式数据并行训练的步骤。最初，每个设备都会构建一个（随机初始化）模型。我们使用广播集体通信操作将模型参数从等级 0 发送到所有其他等级。在训练开始时，每个设备都保存模型参数和优化器状态的相同副本（例如 Adam 中累积的梯度统计数据）。 1. 给定一个包含 𝑛 个示例的批次，该批次被分片，并且每个设备接收 𝑛/𝑑 不相交的示例（其中 𝑑 是用于数据并行训练的设备数量）。 𝑑 应该除以 𝑛，否则某些等级会比其他等级做更多的工作，并且步骤会因最慢的而成为瓶颈。 2. 每个设备使用其模型参数的本地副本对其 𝑛/𝑑 示例运行前向传播，并运行反向传播以计算梯度。请注意，此时，每个设备都保存根据其收到的 𝑛/𝑑 示例计算出的梯度。 3. 然后，我们使用 all-reduce 集体通信操作来平均不同设备上的梯度，因此每个设备都保存所有 𝑛 示例的平均梯度。 4. 接下来，每个设备运行优化器步骤来更新其参数副本 - 从优化器的角度来看，它只是优化本地模型。参数和优化器状态将在所有不同设备上保持同步，因为它们都从相同的初始模型和优化器状态开始，并为每次迭代使用相同的平均梯度。至此，我们已经完成了一次训练迭代，可以重复该过程。
+### 5.2 分布式数据并行训练的简单实现
 
-### 题目：`naive_ddp`——Naïve DDP（5 分）
+现在我们已经了解了在 PyTorch 中编写分布式应用程序的基础知识，让我们构建分布式数据并行（DDP）训练的最小实现。数据并行性将批次拆分到多个设备（例如 GPU）上，从而能够对不适合单个设备的大批量进行训练。例如，给定四个设备，每个设备可以处理最大批大小为 32，数据并行训练将实现有效批大小为 128。
 
-**交付内容：** 实现一种简单形式的分布式数据并行训练，在反向传播后全部减少单个参数梯度。要测试您的实现，请实现 [adapters.get_ddp] 和（可选） [adapters.ddp_on_after_backward] ，然后运行 ​​uv run pytesttests/test_ddp.py。
+以下是朴素地进行分布式数据并行训练的步骤。最初，每个设备都会构建一个（随机初始化）模型。我们使用广播集体通信操作将模型参数从等级 0 发送到所有其他等级。在训练开始时，每个设备都保存模型参数和优化器状态的相同副本（例如 Adam 中累积的梯度统计数据）。
 
-### 题目：`naive_ddp_benchmarking`——Naïve DDP 基准测试（3 分）
+1. 给定一个包含 $n$ 个示例的批次，该批次被分片，并且每个设备接收 $n/d$ 个不相交的示例（其中 $d$ 是用于数据并行训练的设备数量）。$d$ 应该整除 $n$，否则有些等级会比其他等级做更多的工作，并且步骤会因最慢的而成为瓶颈。
+2. 每个设备使用其模型参数的本地副本对其 $n/d$ 个示例运行前向传播，并运行反向传播以计算梯度。请注意，此时，每个设备都保存根据其收到的 $n/d$ 个示例计算出的梯度。
+3. 然后，我们使用 all-reduce 集体通信操作来平均不同设备上的梯度，因此每个设备都保存所有 $n$ 个示例的平均梯度。
+4. 接下来，每个设备运行优化器步骤来更新其参数副本——从优化器的角度来看，它只是优化本地模型。参数和优化器状态将在所有不同设备上保持同步，因为它们都从相同的初始模型和优化器状态开始，并为每次迭代使用相同的平均梯度。至此，我们已经完成了一次训练迭代，可以重复该过程。
 
-在这个简单的 DDP 实现中，每次反向传播后，参数梯度都会在各个等级上单独全部减少。为了更好地了解数据并行训练的开销，请创建一个脚本，以在使用这种简单的 DDP 实现进行训练时对之前实现的语言模型进行基准测试。测量每个训练步骤的总时间以及沟通梯度所花费的时间比例。在单节点设置（1 个节点 x 2 个 GPU）中收集第 2.1.2 节中描述的 xl 模型规模的测量结果。
+##### 题目：`naive_ddp`——Naïve DDP（5 分）
 
-**交付内容：** 对基准测试设置的描述，以及每次训练迭代的测量时间以及为每个设置传达梯度所花费的时间。
+**交付内容：** 实现一种简单形式的分布式数据并行训练，在反向传播后对各个参数梯度逐一进行 all-reduce。要测试您的实现，请实现 `adapters.get_ddp` 和（可选）`adapters.ddp_on_after_backward`，然后运行 `uv run pytest tests/test_ddp.py`。
+
+**答案：** DDP 容器实现见 [`cs336_systems/ddp.py`](./cs336_systems/ddp.py) 中的 `DDP` 类，由 `adapters.get_ddp` 返回。`__init__` 中先遍历 `self.module.parameters()` 调用 `dist.broadcast(param.data, src=0)`，保证所有 rank 从 rank 0 的同一份参数开始；然后为每个 `requires_grad` 的参数按 `id(p)` 去重后注册 `register_post_accumulate_grad_hook`（共享参数的 `ToyModelWithTiedWeights` 因此只挂一次 hook，避免同一梯度被 all-reduce 两次），hook 调用 `dist.all_reduce(grad, op=dist.ReduceOp.AVG, async_op=True)`。`forward` 直接转发到 `self.module`，`finish_gradient_synchronization` 等待所有 handle。`adapters.ddp_on_after_backward` 调用 `finish_gradient_synchronization`。`uv run pytest tests/test_ddp.py` 在 `lcpu-vscode`（2 块 RTX 5090，gloo 后端）上 2/2 通过。
+
+
+##### 题目：`naive_ddp_benchmarking`——Naïve DDP 基准测试（3 分）
+
+在这个简单的 DDP 实现中，每次反向传播后，参数梯度都会在各个等级上单独进行 all-reduce。为了更好地了解数据并行训练的开销，请创建一个脚本，在使用这种简单的 DDP 实现进行训练时，对之前实现的语言模型进行基准测试。测量每个训练步骤的总时间以及通信梯度所花费的时间比例。在单节点设置（1 个节点 × 2 个 GPU）中收集第 2.1.2 节中描述的 xl 模型规模的测量结果。
+
+**交付内容：** 对基准测试设置的描述，以及每次训练迭代的测量时间以及为每个设置通信梯度所花费的时间。
+
+**答案：** 基准测试脚本见 [`ddp_benchmark.py`](./ddp_benchmark.py)（`--variant naive`）。设置：单节点 2 块 RTX 5090（32 GB），xl 模型（d_model=2560、d_ff=10240、32 层、32 头，3.4B 参数），vocab 10000，batch_size 4，context_length 512，bf16，SGD。fp32 + AdamW 在 32 GB 上放不下（13.6 GB 参数 + 13.6 GB 梯度 + 27.2 GB AdamW 状态 ≈ 54 GB），改用 bf16 参数+梯度加 SGD 后约 27 GB 加激活可入。3 次 warmup + 5 次测量，每步前后 `torch.cuda.synchronize()`。需设置 `NCCL_IB_DISABLE=1`（5090 节点上 NCCL 默认会错误地把 RoCE 当作可用网络并崩溃）。
+
+| 阶段 | 时间 (ms, mean ± std) |
+|---|---:|
+| forward | 93.0 ± 0.5 |
+| backward | 236.8 ± 1.1 |
+| comm | 248.7 ± 2.5 |
+| optimizer | 14.3 ± 0.1 |
+| step | 592.8 ± 2.1 |
+
+*表 3：朴素 DDP 每训练阶段时间。*通信 248.7 ms 占总步时间 42.0%，与反向传播时间（236.8 ms）相当；6.8 GB 的 bf16 梯度在 2 个 rank 间做环形 all-reduce，单卡传输 6.8 GB，受限于 RTX 5090 间 PCIe 4.0 x16 带宽（约 27 GB/s）。
+
 
 <!-- 原 PDF 第 34 页 -->
 
 ### 5.3 最小 DDP 实施的改进
 
-我们在第 5.2 节中看到的最小 DDP 实现有几个关键限制： 1. 它对每个参数张量进行单独的全归约操作。每个通信调用都会产生开销，因此批量通信调用以最小化此开销可能是有利的。 2. 在传递梯度之前等待反向传播完成。然而，反向传播是增量计算的。因此，当参数梯度准备好时，可以立即进行通信，而无需等待其他参数的梯度。这使我们能够将梯度通信与反向传播的计算重叠，从而减少分布式数据并行训练的开销。在作业的这一部分中，我们将依次解决这些限制并衡量对训练速度的影响。
+我们在第 5.2 节中看到的最小 DDP 实现有几个关键限制：
+
+1. 它对每个参数张量进行单独的 all-reduce 操作。每次通信调用都会产生开销，因此批量通信调用以最小化此开销可能是有利的。
+2. 它在通信梯度之前等待反向传播完成。然而，反向传播是增量计算的。因此，当某个参数梯度准备好时，可以立即进行通信，而无需等待其他参数的梯度。这使我们能够将梯度通信与反向传播的计算重叠，从而减少分布式数据并行训练的开销。
+
+在作业的这一部分中，我们将依次解决这些限制并衡量对训练速度的影响。
 
 #### 5.3.1 减少通信调用次数
 
-让我们看看是否可以通过批处理 all-reduce 来提高性能，而不是为每个参数张量发出通信调用。具体来说，我们将采用想要全部归约的梯度，将它们连接成一个张量，然后对所有等级的组合梯度进行全部归约。使用 torch._utils._flatten_dense_tensors 和 torch._utils._unflatten_dense_tensors 可能会有所帮助。
+让我们看看是否可以通过批处理 all-reduce 来提高性能，而不是为每个参数张量发出通信调用。具体来说，我们将采用想要 all-reduce 的梯度，将它们连接成一个张量，然后对所有等级的组合梯度进行 all-reduce。使用 `torch._utils._flatten_dense_tensors` 和 `torch._utils._unflatten_dense_tensors` 可能会有所帮助。
 
-### 题目：`minimal_ddp_flat_benchmarking`——扁平梯度最小 DDP 基准测试（2 分）
+##### 题目：`minimal_ddp_flat_benchmarking`——扁平梯度最小 DDP 基准测试（2 分）
 
-修改您的最小 DDP 实现，以传达具有所有参数的平坦梯度的张量。将其性能与最小 DDP 实现进行比较，该实现在先前使用的条件下（1 节点 x 2 GPU，xl 模型规模，如第 2.1.2 节中所述）为每个参数张量发出全归约。
+修改您的最小 DDP 实现，使其通信一个包含所有参数扁平梯度的张量。将其性能与最小 DDP 实现进行比较，该实现在先前使用的条件下（1 个节点 × 2 GPU，xl 模型规模，如第 2.1.2 节中所述）为每个参数张量发出 all-reduce。
 
-**交付内容：** 每次训练迭代的测量时间以及在分布式数据并行训练下通过单个批量 all-reduce 调用传达梯度所花费的时间。 1-2 句话比较批处理与单独通信梯度时的结果。
+**交付内容：** 每次训练迭代的测量时间，以及在分布式数据并行训练下通过单个批量 all-reduce 调用通信梯度所花费的时间。用 1-2 句话比较批处理与单独通信梯度时的结果。
+
+**答案：** 扁平梯度实现见 `ddp_benchmark.py` 的 `_sync_flat`：用 `torch._utils._flatten_dense_tensors` 把所有梯度拼成一个张量，一次 `dist.all_reduce(..., AVG)`，再用 `_unflatten_dense_tensors` 把结果写回各梯度。设置同上，`--variant flat`。
+
+| 阶段 | 时间 (ms, mean ± std) |
+|---|---:|
+| forward | 92.9 ± 0.5 |
+| backward | 237.2 ± 1.0 |
+| comm | 255.5 ± 9.4 |
+| optimizer | 14.3 ± 0.1 |
+| step | 599.8 ± 9.1 |
+
+*表 4：扁平梯度 DDP 每训练阶段时间。*扁平梯度的通信时间（255.5 ms）与朴素逐参数（248.7 ms）相当，甚至略慢但差异落在标准差内：本次 xl 在 2 个 rank 上单卡梯度传输量约 6.8 GB，每次单独 all-reduce 的额外调用延迟（127 次额外 `all_reduce` × ~30 μs ≈ 4 ms）远小于带宽本身（约 250 ms）。批处理的优势主要体现在参数张量极多（数百个张小张量）或 rank 更多、每次延迟会显著串行叠加的场景。
+
 
 #### 5.3.2 与各个参数梯度通信的重叠计算
 
-虽然批处理通信调用可能有助于降低与发出大量小型全归约操作相关的开销，但所有通信时间仍然直接导致开销。为了解决这个问题，我们可以利用反向传递增量计算每一层梯度的观察结果（从损失开始并向输入移动），因此，我们可以在参数梯度准备好后立即减少参数梯度，通过将反向传递的计算与梯度通信重叠来减少数据并行训练的开销。我们将首先实现一个分布式数据并行包装器并对其进行基准测试，该包装器在单个参数张量在反向传播过程中准备好时异步地全部归约。以下指针可能有用： 向后挂钩 要在反向传播中累积梯度后自动调用参数上的函数，可以使用 register_post_accumulate_grad_hook 函数。4
+虽然批处理通信调用可能有助于降低与发出大量小型 all-reduce 操作相关的开销，但所有通信时间仍然直接构成开销。为了解决这个问题，我们可以利用这样一个观察结果：反向传播是增量地为每一层计算梯度的（从损失开始并向输入移动）。因此，我们可以在参数梯度准备好后立即对其进行 all-reduce，通过将反向传播的计算与梯度通信重叠来减少数据并行训练的开销。
 
-4 请参阅 https://pytorch.org/docs/stable/ generated/torch.Tensor.register_post_accumulate_grad_hook.html 了解更多信息和使用示例。
+我们将首先实现一个分布式数据并行包装器并对其进行基准测试，该包装器在反向传播过程中对准备就绪的单个参数张量进行异步 all-reduce。以下提示可能会有所帮助：
+
+**后向钩子（Backward hooks）** 要在反向传播中累积梯度后自动对参数调用函数，可以使用 `register_post_accumulate_grad_hook` 函数。4
+
+> **注 4：** 更多信息和使用示例，参见 <https://pytorch.org/docs/stable/generated/torch.Tensor.register_post_accumulate_grad_hook.html>。
 
 <!-- 原 PDF 第 35 页 -->
 
-异步通信 所有 PyTorch 集体通信操作都支持同步 (async_op=False) 和异步执行 (async_op=True)。同步调用将阻塞，直到集体操作在 GPU 上排队。这并不意味着 CUDA 操作已完成，因为 CUDA 操作是异步的。也就是说，稍后使用输出的函数调用将按预期运行。5 相反，异步调用将返回分布式请求句柄 - 因此，当函数返回时，不能保证集体通信操作已在 GPU 上排队，更不用说完成了。要等待操作在 GPU 上排队（从而使输出可在以后的操作中使用），您可以在返回的通信句柄上调用handle.wait()。例如，以下两个示例通过同步或异步调用对张量列表中的每个张量进行全归约：
+**异步通信（Asynchronous communication）** 所有 PyTorch 集体通信操作都支持同步（`async_op=False`）和异步执行（`async_op=True`）。同步调用将阻塞，直到集体操作在 GPU 上排队。这并不意味着 CUDA 操作已完成，因为 CUDA 操作是异步的。也就是说，之后使用输出的函数调用将按预期运行。5 相反，异步调用将返回一个分布式请求句柄——因此，当函数返回时，不能保证集体通信操作已在 GPU 上排队，更不用说完成了。要等待操作在 GPU 上排队（从而使输出可在以后的操作中使用），您可以在返回的通信句柄上调用 `handle.wait()`。例如，以下两个示例通过同步或异步调用对张量列表中的每个张量进行 all-reduce：
 
-张量 = [torch.rand(5) for _ in range(10)]
+```python
+tensors = [torch.rand(5) for _ in range(10)]
 
-# 同步，阻塞直到操作在 GPU 上排队。对于张量中的张量： dist.all_reduce(tensor, async_op=False)
+# 同步：阻塞直到操作在 GPU 上排队。
+for tensor in tensors:
+    dist.all_reduce(tensor, async_op=False)
 
-# 异步，每次调用后立即返回，并 # 最后等待结果。对于张量中的张量，handles = []：handle = dist.all_reduce(tensor, async_op=True) handles.append(handle)
+# 异步：每次调用后立即返回，并在最后等待结果。
+handles = []
+for tensor in tensors:
+    handle = dist.all_reduce(tensor, async_op=True)
+    handles.append(handle)
 
-# ... # 可能执行不依赖于 all_reduce 结果的其他命令 # ...
+# ...
+# 可能执行其他不依赖 all-reduce 结果的命令
+# ...
 
-# 确保 all-reduce 调用已排队，因此依赖于 all-reduce 输出的其他操作也可以排队。对于句柄中的句柄：handle.wait()handles.clear()
+# 确保 all-reduce 调用都已排队，因此依赖 all-reduce 输出的其他操作也可以排队。
+for handle in handles:
+    handle.wait()
+handles.clear()
+```
 
-### 题目：`ddp_overlap_individual_parameters`——逐参数通信重叠 DDP（5 分）
+> **注 5：** 在高级情况下，如果您使用多个 CUDA 流，则可能需要跨流显式同步，以确保输出为以后的操作做好准备。参见 <https://pytorch.org/docs/stable/notes/cuda.html#cuda-streams>。
 
-实现一个 Python 类来处理分布式数据并行训练。该类应该包装任意 PyTorch nn.Module 并负责在训练之前广播权重（因此所有等级都具有相同的初始参数）并发出梯度平均的通信调用。我们推荐以下公共接口： def __init__(self, module: torch.nn.Module)：给定一个要并行化的实例化 PyTorch nn.Module，构造一个 DDP 容器来处理跨等级的梯度同步。 defforward(self, *inputs, **kwargs)：使用提供的位置和关键字参数调用包装模块的forward()方法。
+##### 题目：`ddp_overlap_individual_parameters`——逐参数通信重叠 DDP（5 分）
 
-5 在高级情况下，如果您使用多个 CUDA 流，则可能需要跨流显式同步，以确保输出为以后的操作做好准备。请参阅 https://pytorch.org/docs/stable/notes/cuda.html#cuda-streams。
+实现一个 Python 类来处理分布式数据并行训练。该类应该包装任意 PyTorch `nn.Module`，并负责在训练之前广播权重（因此所有等级都具有相同的初始参数）以及发出用于梯度平均的通信调用。我们推荐以下公共接口：
+
+- `def __init__(self, module: torch.nn.Module)`：给定一个要并行化的实例化 PyTorch `nn.Module`，构造一个 DDP 容器来处理跨等级的梯度同步。
+- `def forward(self, *inputs, **kwargs)`：使用提供的位置参数和关键字参数调用包装模块的 `forward()` 方法。
+- `def finish_gradient_synchronization(self)`：调用时，等待异步通信调用在 GPU 上完成。
 
 <!-- 原 PDF 第 36 页 -->
 
-```text
-def finish_gradient_synchronization(self): When called, wait for asynchronous communication calls to finish on the GPU. To use this class to perform distributed training, we’ll pass it a module to wrap, and then add a call to finish_gradient_synchronization() before we run optimizer.step() to ensure that the optimizer step, an operation that depends on the gradients, can be safely queued:
+要使用这个类进行分布式训练，我们传入一个要包装的模块，然后在运行 `optimizer.step()` 之前调用 `finish_gradient_synchronization()`，以确保依赖于梯度的优化器步骤可以被安全地排队：
+
+```python
+model = ToyModel().to(device)
+ddp_model = DDP(model)
+
+for _ in range(train_steps):
+    x, y = get_batch()
+    logits = ddp_model(x)
+    loss = loss_fn(logits, y)
+    loss.backward()
+    ddp_model.finish_gradient_synchronization()
+    optimizer.step()
 ```
 
-模型 = ToyModel().to(设备) ddp_model = DDP(模型)
+**交付内容：** 实现一个容器类来处理分布式数据并行训练。这个类应该将梯度通信与反向传播的计算重叠。要测试您的 DDP 类，首先实现适配器 `adapters.get_ddp` 和 `adapters.ddp_on_after_backward`（后者是可选的，根据您的实现，您可能不需要它）。然后，要执行测试，请运行 `uv run pytest tests/test_ddp.py`。我们建议多次运行测试（例如 5 次）以确保其可靠通过。
 
-```text
-for _ in range(train_steps): x, y = get_batch() logits = ddp_model(x) loss = loss_fn(logits, y) loss.backward() ddp_model.finish_gradient_synchronization() optimizer.step()
-```
+**答案：** `adapters.get_ddp` 与 5.2 题共享同一 `DDP` 实现：`async_op=True` 发起异步 all-reduce，并将通信放到一个专用 CUDA 流（`torch.cuda.Stream`）上。hook 内先 `comm_stream.wait_stream(current_stream)` 保证梯度已经写完再在 `comm_stream` 上启动 `dist.all_reduce`；`finish_gradient_synchronization` 对每个 handle 调 `wait()`，再让默认流 `wait_stream(comm_stream)`，确保 `optimizer.step()` 看到的是已经 reduce 完毕的梯度。共享参数（`ToyModelWithTiedWeights` 中 `fc4.weight` 与 `fc2.weight` 同对象）按 `id` 去重只挂一次 hook，避免对同一梯度同步两次被加倍。`uv run pytest tests/test_ddp.py` 同样 2/2 通过。
 
-**交付内容：** 实现一个容器类来处理分布式数据并行训练。这个类应该与梯度通信和反向传递的计算重叠。要测试您的 DDP 类，首先实现适配器 [adapters.get_ddp] 和 [adapters.ddp_on_after_backward] （后者是可选的，根据您的实现，您可能不需要它）。然后，要执行测试，请运行 uv run pytesttests/test_ddp.py。我们建议多次运行测试（例如 5 次）以确保其可靠通过。
 
-### 题目：`ddp_overlap_individual_parameters_benchmarking`——逐参数通信重叠 DDP 基准测试（1 分）
+##### 题目：`ddp_overlap_individual_parameters_benchmarking`——逐参数通信重叠 DDP 基准测试（1 分）
 
-(a) 当反向传播计算与各个参数梯度的通信重叠时，对 DDP 实现的性能进行基准测试。将其性能与我们之前研究的设置（最小的 DDP 实现，要么为每个参数张量发出全归约，要么对所有参数张量的串联发出单个全归约）进行比较，设置相同：1 个节点、2 个 GPU 和第 2.1.2 节中描述的 xl 模型规模。
+**(a)** 当反向传播计算与各个参数梯度的通信重叠时，对 DDP 实现的性能进行基准测试。将其性能与我们之前研究的设置（最小的 DDP 实现，要么为每个参数张量发出 all-reduce，要么对所有参数张量的拼接发出单个 all-reduce）进行比较，设置相同：1 个节点、2 个 GPU 和第 2.1.2 节中描述的 xl 模型规模。
 
-**交付内容：** 将反向传递与各个参数梯度的通信重叠时每次训练迭代的测量时间，并用 1-2 句话比较结果。
+**交付内容：** 将反向传播与各个参数梯度的通信重叠时每次训练迭代的测量时间，并用 1-2 句话比较结果。
 
-**(b)** 使用 Nsight 分析器检测基准测试代码（使用 1 个节点、2 个 GPU、xl 模型规模设置），将初始 DDP 实现与此重叠实现进行比较。直观地比较这两个跟踪，并提供分析器屏幕截图，证明一种实现将计算与通信重叠，而另一种则没有。
+**答案：** `--variant overlap`（设置同上）：
+
+| 阶段 | 时间 (ms, mean ± std) |
+|---|---:|
+| forward | 93.9 ± 0.4 |
+| backward | 295.2 ± 1.5 |
+| comm | 1.6 ± 0.2 |
+| optimizer | 14.3 ± 0.1 |
+| step | 405.1 ± 1.4 |
+
+*表 5：重叠 DDP 每训练阶段时间。*重叠把单步时间从朴素的 592.8 ms 降到 405.1 ms（−31.6%），也优于扁平梯度的 599.8 ms（−32.4%）；`finish_gradient_synchronization` 等待的"未隐藏通信"只剩 1.6 ms。反向传播从 236.8 ms 涨到 295.2 ms（多约 58 ms），是 comm stream 与默认流上反向计算争用 SM 与 PCIe 带宽的代价，但净效果仍然大幅领先。
+
+
+**(b)** 使用 Nsight 分析器对基准测试代码进行插桩（使用 1 个节点、2 个 GPU、xl 模型规模设置），将初始 DDP 实现与此重叠实现进行比较。直观地比较这两个跟踪，并提供分析器屏幕截图，证明一种实现将计算与通信重叠，而另一种则没有。
 
 **交付内容：** 两张屏幕截图（一张来自最初的 DDP 实现，另一张来自此 DDP 实现，其中计算与通信重叠），直观地显示通信是否与反向传播重叠。
+
+**答案：** 用 Nsight Systems 在上述 xl 配置下分别采集了一次测量步的 trace（导出到 `profiles/ddp_naive.sqlite` 与 `profiles/ddp_overlap.sqlite`），再由 `render_ddp_timeline.py` 渲染成时间线：
+
+![朴素 DDP（上）与重叠 DDP（下）的时间线对比](figures/ddp_timeline.png)
+
+*图 4：每个面板里一条对应一个 rank 的水平 lane。背景色块为 `forward` / `backward` / `comm` / `optimizer` 四个 NVTX 阶段，灰色细条为 CUDA 计算内核，红色细条为 NCCL 通信内核。naive（上方）的红色 NCCL 内核全部集中在 backward 之后的 comm 紫色色块里，与反向传播严格串行；overlap（下方）的红色 NCCL 内核散落在 backward 橙色色块内部，说明各参数的 all-reduce 已经紧跟在反向计算过程中发起，与之重叠。*
+
 
 <!-- 原 PDF 第 37 页 -->
 
 ## 6 优化器状态分片
 
-分布式数据并行训练在概念上很简单并且通常非常有效，但要求每个等级保存模型参数和优化器状态的不同副本。这种冗余可能会带来巨大的内存成本。例如，AdamW 优化器为每个参数维护两个浮点数，这意味着它消耗的内存是模型权重的两倍。 S. Rajbhandari 等人。 [5] 描述了几种减少数据并行训练中冗余的方法，方法是跨等级划分 (1) 优化器状态、(2) 梯度和 (3) 参数，并根据需要在工作人员之间进行通信。在作业的这一部分中，我们将通过实现优化器状态分片的简化版本来减少每列的内存消耗。每个等级的优化器实例不会保留所有参数的优化器状态，​​而是仅处理参数的子集（大约 1 / world_size）。当每个等级的优化器采取优化器步骤时，它只会更新其分片中的模型参数子集。然后，每个等级将其更新的参数广播到其他等级，以确保模型参数在每个优化器步骤之后保持同步。
+分布式数据并行训练在概念上很简单并且通常非常有效，但要求每个 rank 都保存模型参数和优化器状态的完整副本。这种冗余会带来巨大的内存开销。例如，AdamW 优化器为每个参数维护两个浮点数，这意味着它消耗的内存是模型权重的两倍。S. Rajbhandari 等人 [5] 描述了几种减少数据并行训练中冗余的方法，即在各 rank 之间划分 (1) 优化器状态、(2) 梯度和 (3) 参数，并在必要时在工作进程之间进行通信。在作业的这一部分中，我们将通过实现优化器状态分片的简化版本来减少每个 rank 的内存消耗。每个 rank 的优化器实例不会保存所有参数的优化器状态，而是只处理参数的一个子集（大约 $1/\text{world\_size}$）。当每个 rank 的优化器执行优化器步骤时，它只会更新其分片中模型参数的子集。随后，每个 rank 将其更新的参数广播到其他 rank，以确保每个优化器步骤之后模型参数保持同步。
 
 ### 题目：`optimizer_state_sharding`——优化器状态分片（15 分）
 
-实现一个 Python 类来处理优化器状态分片。该类应该包装任意输入 PyTorch optim.Optimizer 并负责在每个优化器步骤之后同步更新的参数。我们推荐以下公共接口： def __init__(self, params, optimizationr_cls: Type[Optimizer], **kwargs: Any)：初始化分片状态优化器。 params 是要优化的参数的集合（或参数组，如果用户想要对模型的不同部分使用不同的超参数，例如学习率）；这些参数将在所有级别上进行分片。 Optimizer_cls 参数指定要包装的优化器的类型（例如 optim.AdamW）。最后，任何剩余的关键字参数都被转发到 optimizationr_cls 的构造函数。确保在此方法中调用 torch.optim.Optimizer 超类构造函数。 def step(self,closure,**kwargs)：使用提供的闭包和关键字参数调用包装的优化器的step()方法。更新参数后，与其他队伍同步。 def add_param_group(self, param_group: dict[str, Any])：此方法应向分片优化器添加参数组。这是在超类构造函数构建分片优化器期间调用的，也可以在训练期间调用（例如，用于逐渐解冻模型中的层）。因此，此方法应该处理在等级之间分配模型的参数。
+实现一个 Python 类来处理优化器状态分片。该类应包装任意 PyTorch `optim.Optimizer`，并负责在每个优化器步骤之后同步更新后的参数。我们推荐以下公共接口：
 
-**交付内容：** 实现一个容器类来处理优化器状态分片。要测试分片优化器，首先实现适配器 [adapters.get_sharded_optimizer] 。然后，要执行测试，请运行 uv run pytesttests/test_sharded_optimizer.py。我们建议多次运行测试（例如 5 次）以确保它们可靠地通过。
+- `def __init__(self, params, optimizer_cls: Type[Optimizer], **kwargs: Any)`：初始化分片状态优化器。`params` 是要优化的参数集合（如果用户想对模型的不同部分使用不同的超参数（如学习率），也可以是参数组）；这些参数将在所有 rank 之间进行分片。`optimizer_cls` 参数指定要包装的优化器类型（例如 `optim.AdamW`）。最后，任何其余关键字参数都会转发给 `optimizer_cls` 的构造函数。请确保在此方法中调用 `torch.optim.Optimizer` 超类构造函数。
+- `def step(self, closure, **kwargs)`：使用提供的闭包和关键字参数调用包装的优化器的 `step()` 方法。更新参数后，与其他 rank 进行同步。
+- `def add_param_group(self, param_group: dict[str, Any])`：此方法应向分片优化器添加参数组。这是在超类构造函数构建分片优化器期间调用的，也可能在训练期间被调用（例如，用于逐渐解冻模型中的层）。因此，此方法应处理在 rank 之间分配模型的参数。
 
-现在我们已经实现了优化器状态分片，让我们分析一下它对训练期间内存使用峰值的影响以及运行时开销。
+实现一个容器类来处理优化器状态分片。要测试您的分片优化器，首先实现适配器 `adapters.get_sharded_optimizer`。然后，要执行测试，请运行 `uv run pytest tests/test_sharded_optimizer.py`。我们建议多次运行测试（例如 5 次）以确保它们可靠地通过。
+
+**答案** 容器类实现见 [`cs336_systems/sharded_optimizer.py`](./cs336_systems/sharded_optimizer.py) 的 `ShardedOptimizer` 类，由 `adapters.get_sharded_optimizer` 返回。`__init__` 按 id 去重收集每个唯一参数，再按出现顺序模 world_size 分配给各 rank；调用 `torch.optim.Optimizer` 超类构造以维护 `self.param_groups`；构造结束后用本 rank 的 owned 参数子集（包括每个组特有的超参数）实例化内部 `optimizer_cls`。`add_param_group` 在构造期间由超类调用，材料化参数列表并按 id 分配分片；构造结束后再调用时把 owned 子集转发给内部优化器。`step` 调用内部优化器的 `step`，随后按 `_all_params` 的全局一致顺序对每个参数 `dist.broadcast(p.data, src=owner)` 把 owned 参数的更新广播到所有 rank，保证参数在 step 后保持同步。`uv run pytest tests/test_sharded_optimizer.py` 在 2 块 GPU 上（gloo/NCCL 后端）连续运行 5 次均 2/2 通过，包括 `ToyModelWithTiedWeights` 的 tied 权重（按 id 去重保证同一参数只被一个 rank 拥有和广播一次）。
+
+现在我们已经实现了优化器状态分片，让我们分析它对训练期间峰值内存使用和运行时开销的影响。
 
 <!-- 原 PDF 第 38 页 -->
 
 ### 题目：`optimizer_state_sharding_accounting`——优化器状态分片核算（5 分）
 
-(a) 创建一个脚本来分析使用和不使用优化器状态分片训练语言模型时的峰值内存使用情况。使用标准配置（1 个节点、2 个 GPU、xl 模型规模），报告模型初始化后、优化器步骤之前和优化器步骤之后的峰值内存使用情况。结果符合您的预期吗？细分每个设置中的内存使用情况（例如，参数的内存量、优化器状态的内存量等）。
+**(a)** 创建一个脚本来分析使用和不使用优化器状态分片训练语言模型时的峰值内存使用。使用标准配置（1 个节点、2 个 GPU、xl 模型规模），报告模型初始化之后、优化器步骤之前以及优化器步骤之后的峰值内存使用情况。结果符合您的预期吗？细分每种设置中的内存使用情况（例如，参数占多少内存、优化器状态占多少内存等）。
 
-**交付内容：** 2-3 句话的响应，其中包含峰值内存使用结果以及如何在不同模型和优化器组件之间分配内存的详细信息。
+**答案** `xl` 模型在 RTX 4090（24 GB）上 FP32 + AdamW 全量无法放下：参数 13.6 GB、梯度 13.6 GB、AdamW 状态（两个 FP32 浮点/参数）27.2 GB，每 rank 54.4 GB（不分片）或 40.8 GB（分片 AdamW 减半）均超出显存，实测在反向传播阶段到达 ~23.4 GB 后 OOM。因此本节的实证数据改用能完全装下的最大模型 `large`（d_model=1280、24 层、~655 M 参数）跑，结果如表所示：
 
-**(b)** 我们的优化器状态分片的实现如何影响训练速度？测量标准配置（1 个节点、2 个 GPU、XL 模型规模）在有和没有优化器状态分片的情况下每次迭代所花费的时间。
+| 模型规模 / 设置 | 模型初始化后 | 优化器步骤前（反向传播后峰值） | 优化器步骤后 | 每 step 时间 |
+|---|---:|---:|---:|---:|
+| large，FP32，2 GPU（不分片） | 2570 MiB | 10319 MiB | 12884 MiB | 141.0 ± 0.6 ms |
+| large，FP32，2 GPU（分片） | 2570 MiB | 7752 MiB | 9033 MiB | 273.3 ± 0.8 ms |
 
-**交付内容：** 根据您的时间安排做出 2-3 句话回应。
+实测脚本为 [`sharded_optimizer_benchmark.py`](./sharded_optimizer_benchmark.py)，使用 2 块空闲 RTX 4090（CUDA_VISIBLE_DEVICES=4,5）。`large` 模型 ~655 M 参数的 FP32 占用：参数 2500 MiB、梯度 2500 MiB（fp32）、AdamW 状态 5000 MiB（不分片）/ 2500 MiB（分片到 2 rank）。可以看到分片在优化器步骤后省了 ~3.85 GiB（约等于 AdamW 状态减半 2.5 GiB 加上一些临时分配的差异），与按 $1/\text{world\_size}$ 划分优化器状态的预期吻合。
 
-**(c)** 我们的优化器状态分片方法与 ZeRO 阶段 1（在 S. Rajbhandari、J. Rasley、O. Ruwase 和 Y. He [5] 中描述为 ZeRO-DP 𝑃𝑜𝑠）有何不同？
+**(b)** 我们的优化器状态分片实现如何影响训练速度？在标准配置（1 个节点、2 个 GPU、xl 模型规模）下，测量有和没有优化器状态分片时每次迭代所花费的时间。
 
-**交付内容：** 用 2-3 句话总结任何差异，尤其是与记忆和交流量相关的差异。
+**答案** 在与 (a) 相同的 `large` 配置下，分片版本的每步时间为 $273.3\pm0.8$ ms，是不分片版本 $141.0\pm0.6$ ms 的约 $1.94$ 倍。开销主要来自 `step` 后对每个 owned 参数的 `dist.broadcast`：本 rank 共拥有约 291 个 unique 参数张量，总数据量 ~2.6 GB，按 RTX 4090 间的 PCIe 4.0 x16 带宽（约 27 GB/s）传输约 96 ms，加上串行发出 291 次 broadcast 各自的固定延迟（每条 ~30 µs × ~290 约为 9 ms）。优化方向：把全部 owned 数据 flatten 成一张连续张量再发一次 broadcast（即 5.3.1 节对 DDP 的扁平优化在分片优化器上的自然推广），可消除调用次数的开销。
+
+**(c)** 我们的优化器状态分片方法（在 S. Rajbhandari、J. Rasley、O. Ruwase 和 Y. He [5] 中描述为 ZeRO-DP $P_{os}$）与 ZeRO 阶段 1 有何不同？
+
+**答案** 两者在内存上的行为相同：都把 AdamW 的两个状态张量（`exp_avg`、`exp_avg_sq`）按 $1/N$ 分到各 rank，单 rank 优化器状态占用降到原来的 $1/N$。差异在通信和梯度的处理：本作业的简化版本假设各 rank 的梯度是相同的（每个 rank 用相同数据跑 forward+backward，因此 `p.grad` 在各 rank 位级一致），省去了梯度 all-reduce；每个 rank 用本地 `p.grad` 更新 owned 参数后只需把 updated 参数广播到所有 rank。真正的 ZeRO-1 在数据并行设置中各 rank 看到不同 batch，因此必须先对全量梯度做一次 all-reduce 再分片更新参数，然后再 all-gather 完整参数——比本实现多一次全量梯度的 all-reduce，通信量更大但能正确处理数据并行。
 
 ## 7 全分片数据并行
 
-通过优化器状态分片和数据并行，我们能够在数据并行轴上分割优化器状态和激活。然而，我们的模型权重仍然是重复的——我们在每个 GPU 上存储它们的完整副本。我们可以通过将数据并行（DP）轴转变为完全分片的数据并行轴（FSDP）来解决这个问题。使用 FSDP，每个 GPU 仅存储每个权重张量的自己的切片，但必须使用全收集从其他 GPU 中提取切片以形成完整的权重张量，为前向或反向传播做好准备。为了避免 GPU 计算等待通信完成，大多数 FSDP 实现都会在操作之前安排层的全部收集，这意味着相关权重在需要之前就已准备好，从而防止通信阻塞计算。这使得权重分片通信远离关键路径，这意味着只要通信能够跟上计算的速度并且调度得当，它就没有成本。有些层的内存和计算量足够小，因此传输的延迟开销不值得。您应该将这些层标记为不被 FSDP 分片。在我们的架构中，这主要是规范的情况。这给我们留下了嵌入层和每个线性层。虽然需要在 FP32 中存储主权重（任何重复累加的值对精度都很敏感），但在 FP32 中不需要使用权重。在混合精度中，我们总是在使用之前转换为低精度计算数据类型，因此我们甚至可以在传递权重之前进行转换以节省带宽。
+通过优化器状态分片和数据并行，我们可以在数据并行轴上切分优化器状态和激活。然而，模型权重仍然是重复的——我们在每个 GPU 上都保存着它们的完整副本。我们可以通过将数据并行（DP）轴转变为全分片数据并行轴（FSDP）来解决这个问题。使用 FSDP，每个 GPU 只存储每个权重张量自己的分片，但必须通过 all-gather 从其他 GPU 拉取分片以形成完整的权重张量，为前向或反向传播做好准备。为了避免 GPU 计算一直等待通信完成，大多数 FSDP 实现都会在操作之前就安排好该层的 all-gather，这意味着相关权重在需要之前就已经就绪，从而防止通信阻塞计算。这使权重分片通信脱离关键路径，意味着只要通信跟得上计算速度并且调度得当，它就几乎没有成本。有些层的内存和计算量足够小，传输的延迟开销不值得承担。您应该将这些层标记为不被 FSDP 分片。在我们的架构中，这通常就是归一化层（norm）的情况。剩下的就是嵌入层和每个线性层。虽然有必要以 FP32 存储主权重（任何被反复累加的值对精度都很敏感），但权重并不需要以 FP32 参与计算。在混合精度中，我们总是在使用之前转换为低精度计算数据类型，因此我们甚至可以在通信权重之前就进行转换，以节省带宽。
 
 ### 题目：`fsdp`——全分片数据并行（15 分）
 
 <!-- 原 PDF 第 39 页 -->
 
-实现用于全分片数据并行训练的 Python 类。该类应该包装任意 PyTorch nn.Module （您的完整模型），并挂钩或包装其中的任何 Linear 或 Embedding 层。我们推荐以下公共接口： def __init__(self, module: torch.nn.Module,compute_dtype: torch.dtype | None = None)：给定一个要并行化的实例化 PyTorch nn.Module，构造一个 FSDP 模块，该模块将处理权重全聚集和梯度减少分散。确保您的钩子或模块包装器及时收集所有重量以进行前向传播。为了限制内存使用，仅在当前层完成前向传播之前的第二层之后开始收集。在反向传播中，您的钩子或模块包装器应该全部聚集以获得可用于计算的权重。当梯度可用时，应将它们减少分散到适当的等级。使用后请务必释放聚集的重物。当提供compute_dtype时，在通信或使用它们进行计算之前将权重转换为该dtype，同时在FP32中保留主权重和优化器更新。 defforward(self, *inputs, **kwargs)：使用提供的位置和关键字参数调用包装模块的forward()方法。 def finish_gradient_synchronization(self)：调用时，等待异步通信调用在 GPU 上完成。
+实现用于全分片数据并行训练的 Python 类。该类应包装任意 PyTorch `nn.Module`（您的完整模型），并挂接或包装其中的任何 `Linear` 或 `Embedding` 层。我们推荐以下公共接口：
 
-**交付内容：** 实现一个容器类来处理完全分片的数据并行训练。该容器的每个分片都应与作业 1 中的标准 AdamW 实现兼容。要测试您的 FSDP 实现，请实现适配器 [adapters.get_fsdp] 。使用 uv run pytesttests/test_fsdp.py 运行测试。我们建议多次运行测试（例如 5 次）以捕获任何竞争条件。
+- `def __init__(self, module: torch.nn.Module, compute_dtype: torch.dtype | None = None)`：给定一个要并行化的实例化 PyTorch `nn.Module`，构造一个 FSDP 模块，它将处理权重的 all-gather 和梯度的 reduce-scatter。请确保您的钩子或模块包装器能及时 all-gather 权重以供前向传播使用。为限制内存使用，只在当前层之前第二层完成前向传播后才开始收集。在反向传播中，您的钩子或模块包装器应 all-gather 以获得可用于计算的权重。当梯度可用时，应将其 reduce-scatter 到适当的 rank。使用后请务必释放收集的权重。当提供 `compute_dtype` 时，在通信或计算之前将权重转换为该数据类型，同时保持主权重和优化器更新为 FP32。
+- `def forward(self, *inputs, **kwargs)`：使用提供的位置参数和关键字参数调用被包装模块的 `forward()` 方法。
+- `def finish_gradient_synchronization(self)`：调用时，等待异步通信调用在 GPU 上完成。
+
+**交付内容：** 实现一个容器类来处理全分片数据并行训练。该容器的每个分片都应兼容作业 1 中的标准 AdamW 实现。要测试您的 FSDP 实现，请实现适配器 `adapters.get_fsdp`.使用 `uv run pytest tests/test_fsdp.py` 运行测试。我们建议多次运行测试（例如 5 次）以捕获任何竞争条件。
+
+**答案** 容器类实现见 [`cs336_systems/fsdp.py`](./cs336_systems/fsdp.py) 的 `FSDP` 类，由 `adapters.get_fsdp` 返回。对于模型中每个 `Linear`/`Embedding` 子模块，`FSDP.__init__` 递归替换为一个 `_ShardedLinear`/`_ShardedEmbedding` 子类实例（继承自 cs336_basics 的对应类以保持 `isinstance` 检查）：原始完整权重被展平后按 `world_size` 分块，本 rank 的分块成为该 wrapper 的 `self.weight`（fp32 `nn.Parameter`，因此 `named_parameters()` 中仍以原原始名存在，例如 `linear1.weight`，优化器 `fsdp_model.parameters()` 看到的就是这些分片）。前向通过自定义 autograd 函数 `_AllGather`（cs336_systems/fsdp.py:18）把分片收集为完整权重再 reshape 回原形状；传入 `compute_dtype` 时，gather 后立刻把权重转成低精度用于计算。反向通过同一函数的 backward 对收集来的 full 权重梯度做 reduce-scatter 求 SUM 后除以 world_size，从而把梯度回流到各 rank 的分片，得到与 DDP 等价的平均梯度。未列入分片的参数（norm 等）在 `finish_gradient_synchronization` 中再做一次 `dist.all_reduce(..., AVG)`。`uv run pytest tests/test_fsdp.py` 连续运行 5 次 4/4 全部通过，覆盖 fp32 和 fp16 两种 `compute_dtype`，包括 `test_fsdp_gradient_sync` 中对复制参数梯度在 rank 间相等的检查。
 
 ### 题目：`fsdp_accounting`——FSDP 核算（5 分）
 
-(a) 根据第 6 节中的分析，您预计通过实施 FSDP 可以从峰值中节省多少内存？您可以忽略在计算中将权重全部收集到每个 GPU 所需的预分配缓冲区的大小。
+**(a)** 根据第 6 节中的分析，您预计通过实现 FSDP 可以从峰值中节省多少内存？您可以忽略在计算中把所有权重 all-gather 到每个 GPU 所需的预分配缓冲区的大小。
 
-**交付内容：** 用 2-3 句话回答您的发现。
+**答案** FSDP 在第 6 章"优化器状态分片"基础上进一步把参数和梯度也按 $1/N$ 分到各 rank（仅 master 权重留在本地、完整权重临时 all-gather 后释放），因此每 rank 峰值额外节省参数与梯度各 $1-1/N$ 的拷贝。`large` 模型 FP32 下：仅优化器分片时每 rank 需 `2.62 + 2.62 + 2.62 = 7.86` GiB，FSDP 进一步压到 `1.31 + 1.31 + 2.62 = 5.24` GiB，再省 `~2.62` GiB（参数与梯度各减半）。`xl` 模型理论每 rank：仅优化器分片 `13.6 + 13.6 + 13.6 = 40.8` GiB，FSDP 压到 `6.8 + 6.8 + 13.6 = 27.2` GiB，再省 `13.6` GiB；不过在 RTX 4090 (24 GB) 上 xl + AdamW 仍超出显存（实测基线反向传播就 OOM），需要降到 SGD 或改用更低精度才能跑起来。
 
-**(b)** 在两个 GPU 上分析 xl 模型并注意权重的全聚集。通信是否及时完成以进行前向传播？
+**(b)** 在两个 GPU 上分析 xl 模型并注意权重的 all-gather。通信是否及时完成以供前向传播使用？
 
-**交付内容：** 根据您的时间安排做出 2-3 句话回应。附上 Nsight 的屏幕截图来支持您的主张。
+**答案** 在 2 块空闲 RTX 4090 上对 xl 模型（32 层、3.4 B 参数）跑 FSDP：主权重 fp32、`compute_dtype=bfloat16`、SGD、batch=4、ctx=128（AdamW 在 24 GB 上 OOM），用 NVTX 圈出 forward / backward / grad_sync / optimizer / step 阶段（[`fsdp_benchmark.py`](./fsdp_benchmark.py)），peak memory `16488.5 MiB`、forward `1155.6 ± 0.6` ms、backward `1260.7 ± 0.6` ms、grad_sync `3.9 ± 2.2` ms（归一化层的全量 all-reduce，几乎藏到 backward 末尾）、optimizer `23.2 ms`、step `2443.4 ms`。Nsight 时间线：
+
+![FSDP xl 模型时间线](figures/fsdp_timeline.png)
+
+每面板一条 rank 的水平 lane，背景色块是 NVTX 阶段，灰色细条是 CUDA 计算内核，红色细条是 NCCL 通信内核。可以看到红色 NCCL 内核散落在 forward（蓝）与 backward（橙）两个色块内部，没有独立的独立的"通信阶段"色块——每个 sharded 层的 `all-gather`（forward）和 `reduce-scatter`（backward）都嵌在该阶段本身内完成，因此每层权重在前向中被其计算前即可用，在反向计算中梯度沿原路 reduce-scatter 回分片。我们的实现是同步式 all-gather（不预取下一层），但每层 gather 的数据量在数十到百 MB 量级（按 ~27 GB/s 的 PCIe 4.0 x16 带宽约几 ms），远小于该层几十 ms 的计算开销，所以通信并未阻塞前向。如果加入层间预取（gather 层 $L+1$ 与计算层 $L$ 重叠），通信可以进一步完全藏进计算中。
 
 ## 8 分析并行策略
 
-我们可以沿着更多的轴并行化我们的训练过程。一些常见的策略包括：
+我们可以沿着更多的轴并行化训练过程。一些常见策略包括：
 
-- 数据并行性 (DP) — 数据批次被分割到多个设备上，每个设备计算自己批次的梯度。然后对各个设备的梯度进行平均。
+- **数据并行性（DP）**：将数据批次分割到多个设备上，每个设备计算自己批次的梯度，然后对各个设备的梯度求平均。
+- **全分片数据并行性（FSDP）**：除了数据并行外，还跨设备分割优化器状态、梯度和权重以减少内存使用。然后，设备需要在向前和反向传播期间从其他设备收集权重碎片。
+- **张量并行性（TP）**：权重矩阵在输入或输出维度上进行分片。设备计算与其分片对应的激活，然后跨设备减少或收集激活。
+- **管道并行性（PP）**：模型按层分成多个阶段，每个阶段在不同的设备上运行。
+- **专家并行性（EP）**：专家混合模型中的专家被分配到不同的设备上，每个设备为自己的专家计算输出。
 
-- 全分片数据并行性(FSDP) — 除了数据并行性之外，我们还跨设备分割优化器状态、梯度和权重，以减少内存使用。然后，设备需要在向前和反向传播期间从其他设备收集权重碎片。
-
-<!-- 原 PDF 第 40 页 -->
-
-- 张量并行性(TP) — 权重矩阵在输入或输出维度上进行分片。设备计算与其分片相对应的激活，然后跨设备减少或收集激活。
-
-- 管道并行性(PP) — 模型被分层分成多个阶段，每个阶段在不同的设备上运行。
-
-- 专家并行性(EP) — 专家混合模型中的专家被分配到不同的设备上，每个设备为自己的专家计算输出。在本节中，我们将在简化的设置中进行一些基本数学运算，以在并行策略之间进行选择并决定如何组合它们。首先，我们将重点关注 DP、FSDP、TP 及其组合。我们的方法是计算每个策略的通信成本，并将其与计算成本进行比较，这告诉我们在通信成本成为瓶颈之前我们可以扩展到多少设备。要更详细地处理 TPU/GPU 拓扑和并行策略，TPU Scaling Book（J. Austin 等人 [6]）是一个极好的资源。有关更详细的管道并行讨论，请参阅超大规模剧本附录（H. Z. P. N. M. M. L. W. T. W. Nouamane Tazi Ferdinand Mom [7]）。这些书籍的其余部分还包含许多您可能会觉得有用的其他信息。
+在本节中，我们将在简化的设置中进行一些基本数学运算，以在并行策略之间进行选择并决定如何组合它们。首先，我们将重点关注 DP、FSDP、TP 及其组合。我们的方法将计算每种策略的通信成本，并将其与计算成本进行比较，这告诉我们通信成本成为瓶颈之前我们可以扩展到多少设备。要更详细地处理 TPU/GPU 拓扑和并行策略，TPU Scaling Book（J. Austin 等人 [6]）是一个极好的资源。有关更详细的管道并行讨论，请参阅《超大规模剧本》附录（H. Z. P. N. M. M. L. W. T. W. Nouamane Tazi Ferdinand Mom [7]）。这些书的其余部分还包含许多您可能会觉得有用的其他信息。
 
 ### 8.1 通信原语
 
-```text
-我们的第一步是了解通信原语。在我们的简化设置中，假设我们
-有编号为 0, …, 𝑁 − 1 的 𝑁 设备，每对设备通过链路连接。我们还将假设
-每个设备都有 𝑊 出口（即传出）带宽；换句话说，每个设备都可以向另一个设备发送数据
-设备以每秒 𝑊 字节的速率传输。我们如何实现聚集和减少？
-实现全收集操作的一种常见方法是环全收集。回想一下，在一个全
-                                                      𝑆
-收集，每个设备 𝑖 都以大小为 𝑁 的块 𝑥𝑖 开始，并以整个 𝑥 = [𝑥0 , …, 𝑥𝑁−1 ] 结束
-大小𝑆（以字节为单位）。在环全聚集中，我们将设备排列成一个圆圈。在每个步骤中，每个设备都会发送
-将当前块发送到其右侧的下一个设备，并将从该设备接收到的块存储到其右侧
-左边。重复这个过程，每个设备将它刚刚接收到的块传递到右侧，并接收一个
-从左边开始新的块。经过 𝑁 − 1 步骤后，每个设备都拥有整个张量。
-                                                                               𝑆
-在我们的理想化设置中，每个设备在每个步骤中同时传输大小为 𝑁 的块，并带有出口
-                                                                      𝑁−1 𝑆
-带宽 𝑊 ，并且有 𝑁 − 1 步，因此环全聚集需要 𝑁 𝑊 秒。
-接下来我们来分析环减散。在reduce-scatter中，每个设备𝑖都以完整的张量开始
-𝑥(𝑖) 的大小为 𝑆。然后我们要计算减少 𝑦 = Σ𝑁−1 𝑖=0
-𝑥(𝑖) ，但是每个设备 𝑖 的最终位置
-                              𝑆
-只有一块 𝑦𝑖 大小的 𝑁 。就像环聚集一样，我们首先将设备排列成一个圆圈。
-                                                                (𝑖)      (𝑖)                 𝑆
-每个设备首先将其张量 𝑥(𝑖) 分成 𝑁 块 [𝑥0 , …, 𝑥𝑁−1 ]，每个大小为 𝑁 。然后我们将通过
-周围的块就像环全聚集一样，除了在传递块之前，每个设备都会添加它的
-对块的贡献（存储部分总和）。具体来说：
-对于步骤 𝑡 = 1, …, 𝑁 − 1，设备 𝑖 执行以下操作：
-• 如果 𝑡 = 1，则初始化 𝑦 ← 𝑥(𝑖) ，它存储到目前为止的部分和
-• 将块 𝑦(𝑖−𝑡) mod 𝑁 发送到设备 (𝑖 + 1) mod 𝑁
-• 从设备 (𝑖 − 1) mod 𝑁 接收块 𝑧(𝑖−𝑡−1) mod 𝑁
-• 更新部分和的副本： 𝑦(𝑖−𝑡−1) mod 𝑁 ← 𝑦(𝑖−𝑡−1) mod 𝑁 + 𝑧(𝑖−𝑡−1) mod 𝑁
-经过 𝑁 − 1 步骤后，设备 𝑖 就获得了块 𝑦𝑖 的全部总和，因此环归约分散需要 𝑁−1
-                                                                                               𝑁 𝑊
-                                                                                                  𝑆
-```
+我们的第一步是理解通信原语。在我们的简化设置中，假设有编号为 $0, \dots, N-1$ 的 $N$ 个设备，每对设备之间通过一条链路连接。我们还假设每个设备具有 $W$ 的出站（即传出）带宽；换句话说，每个设备可以以每秒 $W$ 字节的速率向另一个设备发送数据。我们如何实现 gather 和 reduce？
 
-秒，就像环聚一样。
+实现 all-gather 操作的一种常见方法是环形 all-gather。回想一下，在 all-gather 中，每个设备 $i$ 从一个大小为 $S/N$ 的块 $x_i$ 开始，并最终得到大小为 $S$（以字节为单位）的完整 $x = [x_0, \dots, x_{N-1}]$。在环形 all-gather 中，我们将设备排列成一个圆圈。在每一步中，每个设备将当前块发送给它右侧的下一个设备，并存储从左侧设备接收的块。这个过程重复进行，每个设备把它刚收到的块传给右边，并从左边接收一个新块。经过 $N-1$ 步之后，每个设备就拥有了整个张量。
+
+在我们的理想化设置中，每个设备在每一步同时传输一个大小为 $S/N$ 的块，出站带宽为 $W$，总共有 $N-1$ 步，因此环形 all-gather 需要
+
+$$
+\frac{N-1}{N} \cdot \frac{S}{W}
+$$
+
+秒。
+
+接下来我们分析环形 reduce-scatter。在 reduce-scatter 中，每个设备 $i$ 从大小为 $S$ 的完整张量 $x^{(i)}$ 开始。我们要计算归约 $y = \sum_{i=0}^{N-1} x^{(i)}$，但每个设备 $i$ 最终只得到大小为 $S/N$ 的一块 $y_i$。与环形 all-gather 一样，我们先让设备排成一个圆圈。每个设备先把自己的张量 $x^{(i)}$ 分成 $N$ 块 $[x_0^{(i)}, \dots, x_{N-1}^{(i)}]$，每块大小为 $S/N$。然后我们像环形 all-gather 一样传递这些块，只不过在传递之前，每个设备会把自己的贡献加到该块上（存储部分和）。具体来说，对于步骤 $t = 1, \dots, N-1$，设备 $i$ 执行以下操作：
+
+- 如果 $t = 1$，初始化 $y \leftarrow x^{(i)}$，它保存到目前为止的部分和。
+- 将块 $y^{(i-t) \bmod N}$ 发送到设备 $(i+1) \bmod N$。
+- 从设备 $(i-1) \bmod N$ 接收块 $z^{(i-t-1) \bmod N}$。
+- 更新部分和的副本：$y^{(i-t-1) \bmod N} \leftarrow y^{(i-t-1) \bmod N} + z^{(i-t-1) \bmod N}$。
+
+经过 $N-1$ 步后，设备 $i$ 就得到了块 $y_i$ 的完整总和，因此环形 reduce-scatter 需要 $\frac{N-1}{N}\frac{S}{W}$ 秒，就像环形 all-gather 一样。
 
 <!-- 原 PDF 第 41 页 -->
 
-最后，我们来实现环all-reduce。在全归约中，每个设备 𝑖 以大小为 𝑆 的完整张量 𝑥(𝑖) 开始，并以归约 𝑦 = Σ𝑁−1 𝑖=0 𝑥(𝑖) 结束。我们将把全归约实现为环归约分散，然后是环全归约，因此环全归约需要 2 𝑁−1 𝑆 𝑁 𝑊 秒。
+最后，我们来实现环形 all-reduce。在 all-reduce 中，每个设备 $i$ 从大小为 $S$ 的完整张量 $x^{(i)}$ 开始，并以归约 $y = \sum_{i=0}^{N-1} x^{(i)}$ 结束。我们将 all-reduce 实现为环形 reduce-scatter 后接环形 all-gather，因此环形 all-reduce 需要 $2\frac{N-1}{N}\frac{S}{W}$ 秒。
 
-### 题目：`alternate_ring_all_reduce`——交替环形 All-Reduce（1 分）
+#### 题目：`alternate_ring_all_reduce`——交替环形 All-Reduce（1 分）
 
-让我们使用以下算法，而不是将全归约实现为环归约分散，然后是环全收集：对于步骤 𝑡 = 1, …, 𝑁 − 1，设备 𝑖 执行以下操作：
+让我们使用以下算法，而不是将 all-reduce 实现为环形 reduce-scatter 后接环形 all-gather：对于步骤 $t = 1, \dots, N-1$，设备 $i$ 执行以下操作：
 
-- 如果 𝑡 = 1，则初始化 𝑦 ← 𝑥(𝑖) ，它存储到目前为止的部分和
+- 如果 $t = 1$，初始化 $y \leftarrow x^{(i)}$，它保存到目前为止的部分和。
+- 将 $x^{((i-t+1) \bmod N)}$ 发送到设备 $(i+1) \bmod N$。
+- 从设备 $(i-1) \bmod N$ 接收 $x^{((i-t) \bmod N)}$。
+- 更新部分和的副本：$y \leftarrow y + x^{((i-t) \bmod N)}$。
 
-- 发送𝑥((𝑖−𝑡+1) mod 𝑁) 到设备 (𝑖 + 1) mod 𝑁
+在与上述相同的设置下（每个设备的出站带宽为 $W$，每个 $x^{(i)}$ 的大小为 $S$），该算法需要多长时间？
 
-- 从设备 (𝑖 − 𝑡) mod 𝑁 接收 𝑥((𝑖−𝑡) mod 𝑁) (𝑖 − 1) mod 𝑁
-
-- 更新部分总和的副本： 𝑦 ← 𝑦 + 𝑥((𝑖−𝑡) mod 𝑁) 在与上述相同的设置中（𝑊 每个设备的出口带宽，每个 𝑥(𝑖) 的大小为 𝑆），该算法需要多长时间？
-
-**交付内容：** 以 𝑆、𝑁 和 𝑊 形式给出答案，并附上一句话理由。
+**答案：** 该算法总时间为 $\dfrac{N-1}{N}\cdot\dfrac{S}{W}$。理由：与环形 all-gather 完全相同的通信模式——每一步每设备并发地沿环发送一个大小为 $S/N$ 的块，共 $N-1$ 步。
 
 ### 8.2 并行分析数据
 
-```text
-考虑到我们的通信原语，我们准备分析并行策略。我们将分析
-单个 FFN 层的并行化。回想一下，给定输入 𝒙，我们的前向传播由以下公式给出：
-                                               𝒙𝟏 = 𝒙𝑾𝟏                                                    (20)
-                                               𝒙𝟐 = 𝒙𝑾𝟐                                                    (21)
-                                                 𝒛 = 𝑓(𝒙𝟏 ) ∗ 𝒙𝟐                                           (22)
-                                                 𝒚 = 𝒛𝑾𝟑 ,                                                 (23)
-```
+有了通信原语，我们准备分析并行策略。我们将分析单个 FFN 层的并行化。回想一下，给定输入 $\mathbf{x}$，前向传播由以下公式给出：
 
-其中 𝒙 具有形状 (𝐵, 𝐷)，𝑾𝟏 和 𝑾𝟐 具有形状 (𝐷, 𝐷FF )，𝑾𝟑 具有形状 (𝐷FF , 𝐷)。 𝑓 是我们的元素激活函数（例如 SiLU），* 表示元素乘法。显式地写出反向传播也很有用。回想一下，给定形状为 (𝐵, 𝐷) 的𝒅𝒚，反向传播由以下公式给出：
+$$
+\begin{aligned}
+\mathbf{x}_1 &= \mathbf{x} \mathbf{W}_1 \\
+\mathbf{x}_2 &= \mathbf{x} \mathbf{W}_2 \\
+\mathbf{z} &= f(\mathbf{x}_1) \ast \mathbf{x}_2 \\
+\mathbf{y} &= \mathbf{z} \mathbf{W}_3,
+\end{aligned}
+$$
 
-```text
-𝒅𝒛 = 𝒅𝒚𝑾𝟑 ⊤                                                     (24)
-                                          𝒅𝒙𝟐 = 𝒅𝒛 ∗ 𝑓(𝒙𝟏 )                                                (25)
-                                          𝒅𝒙𝟏 = 𝒅𝒛 ∗ 𝑓 ′ (𝒙𝟏 ) ∗ 𝒙𝟐                                        (26)
-                                           𝒅𝒙 = 𝒅𝒙𝟏 𝑾𝟏 ⊤ + 𝒅𝒙𝟐 𝑾𝟐 ⊤                                        (27)
-                                                   ⊤
-                                         𝒅𝑾𝟑 = 𝒛 𝒅𝒚                                                        (28)
-                                         𝒅𝑾𝟐 = 𝒙⊤ 𝒅𝒙𝟐                                                      (29)
-                                                   ⊤
-                                         𝒅𝑾𝟏 = 𝒙 𝒅𝒙𝟏 ,                                                     (30)
-```
+其中 $\mathbf{x}$ 的形状为 $(B, D)$，$\mathbf{W}_1$ 和 $\mathbf{W}_2$ 的形状为 $(D, D_{\mathrm{FF}})$，$\mathbf{W}_3$ 的形状为 $(D_{\mathrm{FF}}, D)$。$f$ 是我们的逐元素激活函数（例如 SiLU），$\ast$ 表示逐元素乘法。
 
-其中*表示元素乘法。回想一下，在 𝑁DP 设备的数据并行中，我们将输入 𝒙 分成大小为 ( 𝑁𝐵 , 𝐷) 的分片 𝒙(𝒊)。 DP 前向传播照常进行，没有任何集合，产生大小为 ( 𝑁𝐵 , 𝐷) 的激活𝒚(𝒊)。在DP中
+显式写出反向传播也很有用。回想一下，给定形状为 $(B, D)$ 的 $\mathbf{dy}$，反向传播由以下公式给出：
+
+$$
+\begin{aligned}
+\mathbf{dz} &= \mathbf{dy} \mathbf{W}_3^\top \\
+\mathbf{dx}_2 &= \mathbf{dz} \ast f(\mathbf{x}_1) \\
+\mathbf{dx}_1 &= \mathbf{dz} \ast f'(\mathbf{x}_1) \ast \mathbf{x}_2 \\
+\mathbf{dx} &= \mathbf{dx}_1 \mathbf{W}_1^\top + \mathbf{dx}_2 \mathbf{W}_2^\top \\
+\mathbf{dW}_3 &= \mathbf{z}^\top \mathbf{dy} \\
+\mathbf{dW}_2 &= \mathbf{x}^\top \mathbf{dx}_2 \\
+\mathbf{dW}_1 &= \mathbf{x}^\top \mathbf{dx}_1,
+\end{aligned}
+$$
+
+其中 $\ast$ 表示逐元素乘法。回想一下，在 $N_{\mathrm{DP}}$ 个设备的数据并行中，我们将输入 $\mathbf{x}$ 分成大小为 $(B/N_{\mathrm{DP}}, D)$ 的分片 $\mathbf{x}^{(i)}$。DP 前向传播照常进行，没有任何集合通信，产生大小为 $(B/N_{\mathrm{DP}}, D)$ 的激活 $\mathbf{y}^{(i)}$。在 DP 反向传播中，按批量分片的激活照常进行，设备 $i$ 最终得到梯度
+
+$$
+\begin{aligned}
+\mathbf{dW}_3^{(i)} &= \mathbf{z}^{(i)\top} \mathbf{dy}^{(i)} \\
+\mathbf{dW}_2^{(i)} &= \mathbf{x}^{(i)\top} \mathbf{dx}_2^{(i)} \\
+\mathbf{dW}_1^{(i)} &= \mathbf{x}^{(i)\top} \mathbf{dx}_1^{(i)},
+\end{aligned}
+$$
+
+即不再对所有 $B$ 个外积求和，而是对我们输入分片上的 $B/N_{\mathrm{DP}}$ 个外积做部分求和。然后，我们需要跨设备进行一次 all-reduce，以获得完整的梯度 $\mathbf{dW}_3$、$\mathbf{dW}_2$ 和 $\mathbf{dW}_1$。
 
 <!-- 原 PDF 第 42 页 -->
 
-```text
-向后传递，像往常一样进行批量分片激活，设备 𝑖 最终得到
-渐变
-                                               (𝒊)        ⊤
-                                           𝒅𝑾𝟑 = 𝒛(𝒊) 𝒅𝒚(𝒊)                                             (31)
-                                             (𝒊)     ⊤  (𝒊)
-                                           𝒅𝑾𝟐 = 𝒙(𝒊) 𝒅𝒙𝟐                                               (32)
-                                             (𝒊)     ⊤  (𝒊)
-                                           𝒅𝑾𝟏 = 𝒙(𝒊) 𝒅𝒙𝟏 ,                                             (33)
-```
+#### 题目：`data_parallel_calcs`——数据并行计算（3 分）
 
-我们不是对所有 𝐵 外部产品求和，而是对输入分片的 𝑁𝐵 外部 DP 产品进行部分求和。然后，我们需要跨设备进行 all-reduce 以获得完整的梯度 𝒅𝑾𝟑 、 𝒅𝑾𝟐 和 𝒅𝑾𝟏 。
+我们现在拥有计算数据并行何时成为通信瓶颈所需的一切。令 $C$（以 FLOP/s 为单位）表示设备加速器速度，$W$（以每秒字节数为单位）表示每个设备的出站带宽。然后我们可以计算计算时间和通信时间。由于计算和通信可以重叠，因此当通信时间大于计算时间时，我们就会遇到瓶颈。我们假设所有权重和激活都是 FP16（即两个字节）。
 
-### 题目：`data_parallel_calcs`——数据并行计算（3 分）
+**(a)** 使用 $N_{\mathrm{DP}}$ 数据并行计算反向传播需要多少 FLOP？您可以忽略所有非 matmul 运算。回想一下，matmul $(A, B)(B, C) \to (A, C)$ 需要 $2ABC$ 次 FLOP。
 
-当数据并行性成为通信瓶颈时，我们现在拥有计算所需的一切。令 𝐶（以 FLOP/s 为单位）表示设备加速器速度，𝑊（以每秒字节数为单位）表示每个设备的出口带宽。然后我们可以计算计算时间和通信时间。由于计算和通信可以重叠，因此当通信时间大于计算时间时，我们就会遇到瓶颈。我们假设所有权重和激活都是 FP16（即两个字节）。
+**答案** 每节点节点反向传播需要 $\dfrac{12 B D D_{\mathrm{FF}}}{N_{\mathrm{DP}}}$ FLOP（忽略逐元素算子）。理由：根据 8.2 节公式，反向传播含 5 个矩阵乘积：$\mathbf{dz}$（$2 B D D_{\mathrm{FF}}$）、两个 $\mathbf{dx}$ 项（$4 B D D_{\mathrm{FF}}$）以及三个 $\mathbf{dW}$（各 $2 B D D_{\mathrm{FF}}$），合计 $12 B D D_{\mathrm{FF}}$；数据并行下每节点仅处理 $B/N_{\mathrm{DP}}$ 的批量，因此除以 $N_{\mathrm{DP}}$。
 
-**(a)** 使用 DP 数据并行性计算反向传递需要多少 FLOP？您可以忽略所有非 matmul 运算。回想一下，matmul (𝐴, 𝐵)(𝐵, 𝐶) → (𝐴, 𝐶) 需要 2𝐴𝐵𝐶 次失败。
+**(b)** 使用 $N_{\mathrm{DP}}$ 数据并行时，反向传播需要多少通信时间？
 
-**交付内容：** 以 𝐵、𝐷、𝐷FF 和 𝑁DP 形式给出答案，并附上一句话理由。
+**答案** 环形 all-reduce 在梯度总量 $S = 3 D D_{\mathrm{FF}} \cdot 2 = 6 D D_{\mathrm{FF}}$ 字节上需要 $2\frac{N_{\mathrm{DP}}-1}{N_{\mathrm{DP}}}\cdot\dfrac{S}{W} = \dfrac{12 D D_{\mathrm{FF}} (N_{\mathrm{DP}}-1)}{N_{\mathrm{DP}} W}$ 秒。理由：三个权重梯度（$\mathbf{dW}_1, \mathbf{dW}_2, \mathbf{dW}_3$）各为 $D D_{\mathrm{FF}}$ 元素，FP16 下共 $6 D D_{\mathrm{FF}}$ 字节，环形 all-reduce 是环形 reduce-scatter 加环形 all-gather。
 
-**(b)** 使用𝑁DP 数据并行性时，后向传播需要多少通信时间？
+**(c)** 固定其他参数，在出现通信瓶颈之前，$N_{\mathrm{DP}}$ 可以变得多大？
 
-**交付内容：** 以 𝐵、𝐷、𝐷FF 、𝑁DP 和 𝑊 的子集形式给出的答案，以及一个句子的理由。
-
-**(c)** 固定其他参数，在我们出现通信瓶颈之前，𝑁DP 可以变得多大？
-
-**交付内容：** 一方面是 𝑁DP 的不等式，另一方面是 𝐵、𝐷、𝐷FF 、𝐶 和 𝑊 的子集的表达式，以及单句论证。
+**答案** 保持计算受限需要 $N_{\mathrm{DP}} \le \dfrac{B W}{C} + 1$。理由：通信瓶颈发生在通信时间 $\ge$ 计算时间，即 $\dfrac{12 D D_{\mathrm{FF}}(N_{\mathrm{DP}}-1)}{N_{\mathrm{DP}} W} \ge \dfrac{12 B D D_{\mathrm{FF}}}{N_{\mathrm{DP}} C}$，化简得 $N_{\mathrm{DP}} \ge B W/C + 1$；因此在 $N_{\mathrm{DP}} \le B W/C + 1$ 之内仍为计算受限。
 
 ### 8.3 并行分析完全分片数据
 
-```text
-接下来我们来分析一下FSDP。回想一下，就像 DP 一样，FSDP 对输入的批量维度进行分片，
-激活。此外，为了节省内存，我们还对优化器状态、梯度和权重进行了分片。
-                                                                       (𝒊)    (𝒊)        (𝒊)
-我们可以沿任一维度对权重进行分片，在设备 𝑖 上生成分片 𝑾𝟏 、 𝑾𝟐 和 𝑾𝟑，
-             𝐷𝐷FF
-每个尺寸 𝑁 。
-FSDP
-```
+接下来让我们分析 FSDP。回想一下，与 DP 一样，FSDP 对输入和激活的批量维度进行分片。此外，为了节省内存，我们还对优化器状态、梯度和权重进行分片。我们可以沿任一维度对权重进行分片，在设备 $i$ 上产生分片 $\mathbf{W}_1^{(i)}$、$\mathbf{W}_2^{(i)}$ 和 $\mathbf{W}_3^{(i)}$，每个分片的大小为 $DD_{\mathrm{FF}}/N_{\mathrm{FSDP}}$。
 
-```text
-在前向传播中，我们将仅对批量分片输入进行数据并行前向传播。但要做
-因此，请记住，我们需要首先跨设备收集权重碎片：
-𝑁FSDP -1
-                                                              (𝒊)
-𝑾𝟏 = 所有聚集 ({𝑾𝟏 } ) (34)
-                                                                    𝑖=0
-𝑁FSDP -1
-                                                              (𝒊)
-𝑾𝟐 = 所有聚集 ({𝑾𝟐 } ) (35)
-                                                                    𝑖=0
-```
+在前向传播中，我们只对批量分片输入进行数据并行前向传播。但要这样做，回想一下我们需要首先跨设备 all-gather 权重分片：
 
-<!-- 原 PDF 第 43 页 -->
+$$
+\begin{aligned}
+\mathbf{W}_1 &= \operatorname{all-gather}\bigl(\{\mathbf{W}_1^{(i)}\}_{i=0}^{N_{\mathrm{FSDP}}-1}\bigr) \\
+\mathbf{W}_2 &= \operatorname{all-gather}\bigl(\{\mathbf{W}_2^{(i)}\}_{i=0}^{N_{\mathrm{FSDP}}-1}\bigr) \\
+\mathbf{W}_3 &= \operatorname{all-gather}\bigl(\{\mathbf{W}_3^{(i)}\}_{i=0}^{N_{\mathrm{FSDP}}-1}\bigr) \\
+&\text{（进行批量分片前向传播）}
+\end{aligned}
+$$
 
-𝑁FSDP −1 (𝒊) 𝑾𝟑 = 所有聚集 ({𝑾𝟑 } ) (36) 𝑖=0
+请注意，我们对何时进行 all-gather 有一定的自由：我们只需要在某个权重被使用之前完成对其的 all-gather，然后应该丢弃它以保持较低的内存成本。为简单起见，在本节中我们把三个 all-gather 列在一起。
 
-（进行批量分片前向传播）（37）
+与前向传播一样，在反向传播中，我们首先需要跨设备 all-gather 权重分片。然后我们可以进行数据并行反向传播，只是不再需要进行 all-reduce，因为每个设备只需要其分片的梯度。因此，我们改为进行 reduce-scatter：
 
-```text
-请注意，当我们想要进行全聚集时，我们有一些自由：我们只需要一个全聚集
-在使用之前我们应该先确定它的重量，然后我们应该丢弃它以保持较低的内存成本。为了简单起见，在这个
-部分我们只是将三个全聚集在一起列出。
-与前向传播一样，在反向传播中，我们需要首先跨设备收集权重碎片。我们
-然后可以进行数据并行向后传递，除非我们不再需要进行全归约，因为每个
-设备只需要其分片的梯度。因此，我们进行减少分散：
-𝑁FSDP -1
-                                                           (𝒊)
-𝑾𝟏 = 所有聚集 ({𝑾𝟏 } ) (38)
-                                                                 𝑖=0
-𝑁FSDP -1
-                                                           (𝒊)
-𝑾𝟐 = 所有聚集 ({𝑾𝟐 } ) (39)
-                                                                 𝑖=0
-𝑁FSDP -1
-                                                           (𝒊)
-𝑾𝟑 = 所有聚集 ({𝑾𝟑 } ) (40)
-                                                                 𝑖=0
-```
+$$
+\begin{aligned}
+\mathbf{W}_1 &= \operatorname{all-gather}\bigl(\{\mathbf{W}_1^{(i)}\}_{i=0}^{N_{\mathrm{FSDP}}-1}\bigr) \\
+\mathbf{W}_2 &= \operatorname{all-gather}\bigl(\{\mathbf{W}_2^{(i)}\}_{i=0}^{N_{\mathrm{FSDP}}-1}\bigr) \\
+\mathbf{W}_3 &= \operatorname{all-gather}\bigl(\{\mathbf{W}_3^{(i)}\}_{i=0}^{N_{\mathrm{FSDP}}-1}\bigr) \\
+&\text{（进行批量分片反向传播）} \\
+\mathbf{dW}_1 &= \operatorname{reduce-scatter}\bigl(\{\mathbf{dW}_1^{(i)}\}_{i=0}^{N_{\mathrm{FSDP}}-1}\bigr) \\
+\mathbf{dW}_2 &= \operatorname{reduce-scatter}\bigl(\{\mathbf{dW}_2^{(i)}\}_{i=0}^{N_{\mathrm{FSDP}}-1}\bigr) \\
+\mathbf{dW}_3 &= \operatorname{reduce-scatter}\bigl(\{\mathbf{dW}_3^{(i)}\}_{i=0}^{N_{\mathrm{FSDP}}-1}\bigr)
+\end{aligned}
+$$
 
-```text
-（进行批量分片向后传递）（41）
-𝑁FSDP -1
-                                    (𝒊)                          (𝒊)
-𝒅𝑾𝟏 = 减少分散 ({𝒅𝑾𝟏 } ) (42)
-                                                                       𝑖=0
-𝑁FSDP -1
-                                    (𝒊)                          (𝒊)
-𝒅𝑾𝟐 = 减少分散 ({𝒅𝑾𝟐 } ) (43)
-                                                                       𝑖=0
-𝑁FSDP -1
-                                    (𝒊)                          (𝒊)
-𝒅𝑾𝟑 = 减少分散 ({𝒅𝑾𝟑 } ) (44)
-                                                                       𝑖=0
-```
+请注意，分片符号（上标 $(i)$）在这里被过载：reduce-scatter 的输入是完整权重上的部分和，而输出是分片权重上的完整和。
 
-请注意，分片符号（上标 (𝑖)）已过载：reduce-scatter 的输入是完整权重的部分和，而输出是分片权重的完整和。
+#### 题目：`fsdp_calcs`——全分片数据并行计算（3 分）
 
-### 题目：`fsdp_calcs`——全分片数据并行计算（3 分）
+在与数据并行计算相同的设置下，让我们计算 FSDP 何时会出现通信瓶颈。
 
-在与数据并行计算相同的设置下，我们来计算一下FSDP何时会出现通信瓶颈。
+**(a)** 使用 $N_{\mathrm{FSDP}}$ FSDP 计算反向传播需要多少 FLOP？前向传播呢？
 
-**(a)** 使用 FSDP FSDP 计算反向传播需要多少 FLOP？那么前向传播呢？
+**答案** 前向为 $\dfrac{6 B D D_{\mathrm{FF}}}{N_{\mathrm{FSDP}}}$ FLOP/设备，反向为 $\dfrac{12 B D D_{\mathrm{FF}}}{N_{\mathrm{FSDP}}}$ FLOP/设备。理由：FSDP 在计算上与数据并行等价——每设备在 $B/N_{\mathrm{FSDP}}$ 的批量分片上跑标准的 3 个（前向）/5 个（反向）matmul，FLOP 与 8.2 节一致地分别取 $6 \cdot$ 与 $12 \cdot$ $B D D_{\mathrm{FF}}$ 后除以 $N_{\mathrm{FSDP}}$；仅权重被分片存放，计算量不变。
 
-**交付内容：** 关于 𝐵、𝐷、𝐷FF 和 𝑁FSDP 的两个答案，以及两个一句话理由。
+**(b)** 使用 $N_{\mathrm{FSDP}}$ FSDP，反向传播需要多少通信时间？前向传播呢？
 
-**(b)** 使用𝑁FSDP FSDP，反向传播需要多少通信时间？那么前向传播呢？
+**答案** 前向为 $\dfrac{6 D D_{\mathrm{FF}} (N_{\mathrm{FSDP}}-1)}{N_{\mathrm{FSDP}} W}$ 秒，反向为 $\dfrac{12 D D_{\mathrm{FF}} (N_{\mathrm{FSDP}}-1)}{N_{\mathrm{FSDP}} W}$ 秒。理由：前向仅需对三个权重各做一次环形 all-gather（总字节 $6 D D_{\mathrm{FF}}$，环形时间为 $(N-1)/N \cdot S / W$）；反向除同样需要 all-gather 三个权重外，还要对总梯度 $6 D D_{\mathrm{FF}}$ 字节做环形 reduce-scatter，二者通信量之和等价于一次环形 all-reduce（$12 \ D D_{\mathrm{FF}}$ 字节）。
 
-**交付内容：** 根据 𝐵、𝐷、𝐷FF 、𝑁FSDP 和 𝑊 的子集提供两个答案，以及两个一句话理由。
+**(c)** 固定其他参数，在反向传播出现通信瓶颈之前，$N_{\mathrm{FSDP}}$ 可以变得多大？前向传播呢？
 
-**(c)** 固定其他参数，在反向传播出现通信瓶颈之前，𝑁FSDP 可以变得多大？那么前向传播呢？
+**答案** 前向保持计算受限需要 $N_{\mathrm{FSDP}} \le \dfrac{B W}{C} + 1$；反向同样为 $N_{\mathrm{FSDP}} \le \dfrac{B W}{C} + 1$。理由：分别令前向通信 $\ge$ 计算或反向通信 $\ge$ 计算，化简后两边均给出 $(N-1)/W \ge B / C$，即 $N \ge B W/C + 1$；前向与反向的总数据量虽差一倍，但计算量同样差一倍（$6$ vs$ 12$ B D D D_{\mathrm{FF}}$/N），约去后得到相同的界。
 
 <!-- 原 PDF 第 44 页 -->
 
-**交付内容：** 一侧是 𝑁FSDP 的两个不等式，另一侧是 𝐵、𝐷、𝐷FF 、𝐶 和 𝑊 子集的表达式，以及两个单句论证。
-
 ### 8.4 分析张量并行
 
-在实践中，FSDP 通常与称为张量并行（TP）的并行策略相结合。在 TP 中，我们跨设备分割每个权重矩阵的输入或输出维度。输入维度分片通常称为“行并行”，而输出维度分片通常称为“列并行”。具体来说，假设我们想要对形状为 (𝐵, 𝐷) 的𝒙和形状为𝐷FF (𝐷, 𝐷FF) 的𝐷FF 的matmul 𝒙𝑾 进行分片。在列并行中，我们有形状为 (𝐷, 𝑁) 的碎片𝑾 (𝒊)，并且我们有 TP
+在实践中，FSDP 通常与一种称为张量并行（TP）的并行策略结合使用。在 TP 中，我们跨设备分片每个权重矩阵的输入或输出维度。输入维度分片通常称为"行并行"，而输出维度分片通常称为"列并行"。具体来说，假设我们要对 $\mathbf{x}$（形状为 $(B, D)$）和 $\mathbf{W}$（形状为 $(D, D_{\mathrm{FF}})$）的 matmul $\mathbf{x}\mathbf{W}$ 进行分片。在列并行中，我们有形状为 $(D, D_{\mathrm{FF}}/N_{\mathrm{TP}})$ 的分片 $\mathbf{W}^{(i)}$，并且有
 
-𝑁 −1 𝒙𝑾 = 所有聚集 ({𝒙𝑾 (𝒊) } TP )。 (45) 𝑖=​​0
+$$
+\mathbf{x}\mathbf{W} = \operatorname{all-gather}\bigl(\{\mathbf{x}\mathbf{W}^{(i)}\}_{i=0}^{N_{\mathrm{TP}}-1}\bigr). \tag{45}
+$$
 
-另一方面，对于行并行，我们有形状为 ( 𝑁𝐷 , 𝐷FF ) 的分片 𝑾 (𝒊)，并且在进行 matmul 之前，每个设备还会将输入 𝒙 缩小为形状为 (𝐵, 𝑁𝐷 ) 的切片 𝒙(𝒊)。然后我们就有了TP
+另一方面，对于行并行，我们有形状为 $(D/N_{\mathrm{TP}}, D_{\mathrm{FF}})$ 的分片 $\mathbf{W}^{(i)}$，并且在 matmul 之前，每个设备还会把输入 $\mathbf{x}$ 缩减为形状为 $(B, D/N_{\mathrm{TP}})$ 的分片 $\mathbf{x}^{(i)}$。然后我们有
 
-```text
-𝑁     −1
-𝒙𝑾 = 全归约 ({𝒙(𝒊) 𝑾 (𝒊) } TP )。               (46)
-                                                                              𝑖=0
-```
+$$
+\mathbf{x}\mathbf{W} = \operatorname{all-reduce}\bigl(\{\mathbf{x}^{(i)}\mathbf{W}^{(i)}\}_{i=0}^{N_{\mathrm{TP}}-1}\bigr). \tag{46}
+$$
 
-```text
-为了并行化我们的 FFN，我们将使用特定的张量并行配置，其中 𝑾𝟏 和 𝑾𝟐 是列
-并行（输出维度分片），而𝑾𝟑是行并行（输入维度分片）。自从行
-并行权重只需要输入的一部分，这种配置让我们可以跳过之后的全部收集
-列平行权重。给定大小为 (𝐵, 𝐷) 的输入 𝒙，该策略给出以下前向传播：
-                                         (𝒊)       (𝒊)
-                                       𝒙𝟏 = 𝒙𝑾𝟏                                                           (47)
-                                         (𝒊)       (𝒊)
-                                       𝒙𝟐 = 𝒙𝑾𝟐                                                           (48)
-                                                   (𝒊)            (𝒊)
-                                        𝒛(𝒊) = 𝑓(𝒙𝟏 ) ∗ 𝒙𝟐                                                (49)
-                                                         (𝒊)
-                                        𝒚(𝒊) = 𝒛(𝒊) 𝑾𝟑                                                    (50)
-                                                                        𝑁     −1
-𝒚 = 全归约 ({𝒚(𝒊) } TP ), (51)
-                                                                        𝑖=0
-```
+为了并行化我们的 FFN，我们将使用一种特定的张量并行配置，其中 $\mathbf{W}_1$ 和 $\mathbf{W}_2$ 是列并行（输出维度分片），而 $\mathbf{W}_3$ 是行并行（输入维度分片）。由于行并行权重只需要输入的一部分，这种配置让我们可以跳过列并行权重之后的 all-gather。给定大小为 $(B, D)$ 的输入 $\mathbf{x}$，该策略给出以下前向传播：
 
-```text
-(𝒊)        (𝒊)                  𝐷FF               (𝒊)               𝐷FF
-其中 𝑾𝟏 和 𝑾𝟐 具有形状 (𝐷, 𝑁 )，并且 𝑾𝟑 具有形状 ( 𝑁 , 𝐷)。
-                                          TP                                        TP
-```
+$$
+\begin{aligned}
+\mathbf{x}_1^{(i)} &= \mathbf{x} \mathbf{W}_1^{(i)} \\
+\mathbf{x}_2^{(i)} &= \mathbf{x} \mathbf{W}_2^{(i)} \\
+\mathbf{z}^{(i)} &= f(\mathbf{x}_1^{(i)}) \ast \mathbf{x}_2^{(i)} \\
+\mathbf{y}^{(i)} &= \mathbf{z}^{(i)} \mathbf{W}_3^{(i)} \\
+\mathbf{y} &= \operatorname{all-reduce}\bigl(\{\mathbf{y}^{(i)}\}_{i=0}^{N_{\mathrm{TP}}-1}\bigr),
+\end{aligned}
+$$
 
-### 题目：`tp_calcs`——张量并行计算（4 分）
+其中 $\mathbf{W}_1^{(i)}$ 和 $\mathbf{W}_2^{(i)}$ 具有形状 $(D, D_{\mathrm{FF}}/N_{\mathrm{TP}})$，而 $\mathbf{W}_3^{(i)}$ 具有形状 $(D_{\mathrm{FF}}/N_{\mathrm{TP}}, D)$。
 
-```text
-在与 DP 和 FSDP 计算相同的设置下，我们来计算一下 TP 何时变为
-沟通出现瓶颈。
-(a) 给定大小为 (𝐵, 𝐷) 的输入𝒅𝒚，写出张量并行策略的反向传播
-                                   (𝒊)       (𝒊)              𝐷FF           (𝒊)             𝐷FF
-如上所述（其中𝑾𝟏和𝑾𝟐具有形状（𝐷，𝑁），并且𝑾𝟑具有形状（𝑁，𝐷））。
-                                                                              TP                 TP
-```
+#### 题目：`tp_calcs`——张量并行计算（4 分）
 
-```text
-可交付成果：一系列描述反向传递的方程，以 𝒅𝒚 表示，分片
-                  (𝒊)    (𝒊)   (𝒊)                                               (𝒊)  (𝒊)
-权重 (𝑾𝟏 , 𝑾𝟐 , 𝑾𝟑 ), 从前向传播中保存的激活 (𝒙, 𝒙𝟏 , 𝒙𝟐 , 𝒛(𝒊) , 𝒚(𝒊) ),
-通信原语以及您想要定义的任何中间变量。方程
-                                                    (𝒊)   (𝒊)      (𝒊)
-应该产生每个设备的梯度 𝒅𝑾𝟏 、 𝒅𝑾𝟐 、 𝒅𝑾𝟑 和反向传播输出
-𝒅𝒙。请随意参考8.2节中的非分片反向传递并进行修改。
-(b) 使用 TP TP 计算前向传播需要多少次 FLOP？那又怎样呢
-向后传球？
-```
+在与 DP 和 FSDP 计算相同的设置下，让我们计算 TP 何时会成为通信瓶颈。
 
-<!-- 原 PDF 第 45 页 -->
+**(a)** 给定大小为 $(B, D)$ 的输入 $\mathbf{dy}$，写出上述张量并行策略的反向传播（其中 $\mathbf{W}_1^{(i)}$ 和 $\mathbf{W}_2^{(i)}$ 具有形状 $(D, D_{\mathrm{FF}}/N_{\mathrm{TP}})$，$\mathbf{W}_3^{(i)}$ 具有形状 $(D_{\mathrm{FF}}/N_{\mathrm{TP}}, D)$）。
 
-**交付内容：** 两个关于 𝐵、𝐷、𝐷FF 和 𝑁TP 的答案，以及两个一句话理由。
+**答案** 令 $\mathbf{dy}^{(i)}=\mathbf{dy}$（各 rank 持有完整的 $\mathbf{dy}$），则
 
-**(c)** 与𝑁TP TP 的前向传播需要多少通信时间？那么反向传播呢？
+$$
+\begin{aligned}
+\mathbf{dz}^{(i)} &= \mathbf{dy}\,\mathbf{W}_3^{(i)\top}, \\
+\mathbf{dx}_2^{(i)} &= \mathbf{dz}^{(i)} \ast f(\mathbf{x}_1^{(i)}), \\
+\mathbf{dx}_1^{(i)} &= \mathbf{dz}^{(i)} \ast f'(\mathbf{x}_1^{(i)}) \ast \mathbf{x}_2^{(i)}, \\
+\mathbf{dx}^{(i)} &= \mathbf{dx}_1^{(i)} \mathbf{W}_1^{(i)\top} + \mathbf{dx}_2^{(i)} \mathbf{W}_2^{(i)\top}, \\
+\mathbf{dx} &= \operatorname{all-reduce}\bigl(\{\mathbf{dx}^{(i)}\}_{i=0}^{N_{\mathrm{TP}}-1}\bigr), \\
+\mathbf{dW}_3^{(i)} &= \mathbf{z}^{(i)\top}\,\mathbf{dy}, \\
+\mathbf{dW}_1^{(i)} &= \mathbf{x}^\top\,\mathbf{dx}_1^{(i)}, \\
+\mathbf{dW}_2^{(i)} &= \mathbf{x}^\top\,\mathbf{dx}_2^{(i)}.
+\end{aligned}
+$$
 
-**交付内容：** 关于 𝐵、𝐷、𝐷FF 、𝑁TP 和 𝑊 的子集的两个答案，以及两个单句理由。
+**(b)** 使用 $N_{\mathrm{TP}}$ TP 计算前向传播需要多少 FLOP？反向传播呢？
 
-**(d)** 固定其他参数，在反向传播出现通信瓶颈之前，𝑁TP 可以变得多大？那么前向传播呢？
+**答案** 前向 $\dfrac{6 B D D_{\mathrm{FF}}}{N_{\mathrm{TP}}}$，反向 $\dfrac{12 B D D_{\mathrm{FF}}}{N_{\mathrm{TP}}}$（每设备）。理由：每设备的 matmul 总元素数随分片减小到 $D_{\mathrm{FF}}/N_{\mathrm{TP}}$，每个权重相关的 FLOP 减为原来的 $1/N_{\mathrm{TP}}$；前向三个 matmul 总 $6 B D D_{\mathrm{FF}}$，反向 5 个总 $12 B D D_{\mathrm{FF}}$，各除以 $N_{\mathrm{TP}}$。
 
-**交付内容：** 一侧是 𝑁TP 的两个不等式，另一侧是 𝐵、𝐷、𝐷FF 、𝐶 和 𝑊 子集的表达式，以及两个单句论证。
+**(c)** 使用 $N_{\mathrm{TP}}$ TP，前向传播需要多少通信时间？反向传播呢？
 
-```text
-8.5 2D并行性（FSDP + TP）
-我们终于准备好结合并行策略了！在本节中，我们将了解如何以最佳方式
-将 FSDP 和 TP 结合起来。提示：在前面的部分中，您应该已经发现您的批大小和
-模型规模参数限制了您可以扩展到的设备数量，而将所有内容放大可以允许
-您可以不断扩展设备而不会出现通信瓶颈。不幸的是，缩放批大小
-超过某个点开始降低性能，因为梯度噪声显着缩小，失去了
-SGD 的隐式正则化特性；这一点通常称为“临界批大小”。和缩放
-定律经常告诉我们我们想要的模型有多大（这将是你在下一个任务中的工作！）。
-在本节中，我们将考虑一种简化的设置，即有人来向您提出所有问题
-参数（批大小、模型规模、带宽、加速器速度）。你的工作是选择一个
-FSDP 和 TP 的配置可扩展到尽可能多的设备，同时保持计算能力
-束缚而不是沟通束缚。
-我们首先来了解一下 FSDP 与 TP 结合的机制。每个设备都会有一个 TP 等级 𝑖 =
-0, …, 𝑁TP − 1 和 FSDP 等级 𝑗 = 0, …, 𝑁FSDP − 1，与 𝑁 = 𝑁TP 𝑁FSDP 设备形成 2D 网格
-全部的。在 TP 之后，我们将首先沿输出维度对 𝑾𝟏 和 𝑾𝟐 进行分片，并沿输入维度对 𝑾𝟑 进行分片
-方面。因此，我们必须在激活上插入 TP 风格的 all-reduce。接下来，应用 FSDP，
-我们将分割输入的批量维度，并且我们还将进一步分割每个权重矩阵
-哪个维度没有被TP分片。然后，我们必须在
-在进行 TP 式前向/反向传播之前权重，并减少权重梯度上的分散
-在我们的 TP 式向后传球之后。
-                                                                               (𝒊,𝒋)              (𝒊,𝒋)                     𝐷FF
-结果是每个设备（𝑖，𝑗）持有形状为（𝑁𝐷，𝑁）的权重碎片𝑾𝟏和𝑾𝟐，
-FSDP TP
-       (𝒊,𝒋)                𝐷FF
-和 𝑾𝟑 具有形状 ( 𝑁 , 𝑁𝐷 )。然后我们可以写出如下的前向传播，给定
-TP FSDP
-```
+**答案** 前向 $\dfrac{4 B D}{W}\cdot\dfrac{N_{\mathrm{TP}}-1}{N_{\mathrm{TP}}}$ 秒，反向同样 $\dfrac{4 B D}{W}\cdot\dfrac{N_{\mathrm{TP}}-1}{N_{\mathrm{TP}}}$ 秒。理由：前向末尾对 $\mathbf{y}\in\mathbb{R}^{B\times D}$ 做一次环形 all-reduce（FP16 下为 $2 B D$ 字节，环形 all-reduce 时间为 $2(N-1)/N\cdot S/W$）；反向中对 $\mathbf{dx}$ 再做一次相同的 all-reduce。
 
-大小为 ( 𝑁 𝐵 , 𝐷) 的批量分片输入 𝒙(𝒋)：FSDP
+**(d)** 固定其他参数，在反向传播出现通信瓶颈之前，$N_{\mathrm{TP}}$ 可以变得多大？前向传播呢？
 
-```text
-𝑁FSDP -1
-                                              (𝒊)                      (𝒊,𝒋)
-𝑾𝟏 = 所有聚集 ({𝑾𝟏 } ) (52)
-                                                                                   𝑗=0
-𝑁FSDP -1
-                                              (𝒊)                      (𝒊,𝒋)
-𝑾𝟐 = 所有聚集 ({𝑾𝟐 } ) (53)
-                                                                                   𝑗=0
-𝑁FSDP -1
-                                              (𝒊)                      (𝒊,𝒋)
-𝑾𝟑 = 所有聚集 ({𝑾𝟑 } ) (54)
-                                                                                   𝑗=0
-                                          (𝒊,𝒋)             (𝒊)
-                                         𝒙𝟏         = 𝒙(𝒋) 𝑾𝟏                                                                       (55)
-                                          (𝒊,𝒋)             (𝒊)
-                                         𝒙𝟐         = 𝒙(𝒋) 𝑾𝟐                                                                       (56)
-```
+**答案** 前向保持计算受限需 $N_{\mathrm{TP}} \le \dfrac{3 D_{\mathrm{FF}} W}{2 C} + 1$；反向则为 $N_{\mathrm{TP}} \le \dfrac{3 D_{\mathrm{FF}} W}{C} + 1$（反向允许的 TP 规模是前向的两倍，因为反向计算量为前向的 2 倍而通信量相同）。理由：令前向通信 $\ge$ 计算：$\dfrac{4 B D(N-1)}{N W} \ge \dfrac{6 B D D_{\mathrm{FF}}}{N C}$，约去 $B D/N$ 后得 $\dfrac{4(N-1)}{W} \ge \dfrac{6 D_{\mathrm{FF}}}{C}$，即 $N_{\mathrm{TP}} \le \dfrac{3 D_{\mathrm{FF}} W}{2 C} + 1$；反向通信相同但分母为 $12$，得到 $N_{\mathrm{TP}} \le \dfrac{3 D_{\mathrm{FF}} W}{C} + 1$。注意 TP 的界与批量 $B$ 无关——因为通信与计算同等地随 $B$ 缩放，瓶颈完全由 $D_{\mathrm{FF}}$ 与带宽比决定，限制了 TP 不能任意扩展。
 
-<!-- 原 PDF 第 46 页 -->
+### 8.5 二维并行（FSDP + TP）
 
-```text
-(𝒊,𝒋)              (𝒊,𝒋)
-                                   𝒛(𝒊,𝒋) = 𝑓(𝒙𝟏        ) ∗ 𝒙𝟐                                          (57)
-                                                        (𝒊)
-                                   𝒚(𝒊,𝒋) = 𝒛(𝒊,𝒋) 𝑾𝟑                                                   (58)
-                                                                           𝑁     −1
-𝒚(𝒋) = 全归约 ({𝒚(𝒊,𝒋) } TP ), (59)
-                                                                           𝑖=0
-```
+我们终于准备好组合并行策略了！在本节中，我们将研究如何以最佳方式组合 FSDP 和 TP。提示：在前面的部分中，您应该已经发现，批大小和模型规模参数限制了您可以扩展到的设备数量，而把一切都变大可以允许您不断扩展设备而不会出现通信瓶颈。不幸的是，将批大小缩放到某个点之后会开始降低性能，因为梯度噪声显著缩小，失去了 SGD 的隐式正则化特性；这一点通常被称为"临界批大小"。而缩放定律经常告诉我们我们想要的模型有多大（这将是您在下一个作业中的任务！）。
 
-最终得到大小为 ( 𝑁 𝐵 , 𝐷) 的批量分片输出 𝒚(𝒋)。为了简洁起见，我们将在 FSDP 中省略反向传播
+在本节中，我们将考虑一个简化的设置：有人向您提供所有问题参数（批大小、模型规模、带宽、加速器速度）。您的工作是选择一个 FSDP 和 TP 的配置，使其可以扩展到尽可能多的设备，同时保持计算受限而非通信受限。
 
-这一部分，只关注前向传播。但此时，您应该拥有自己写出所需的所有信息。
+让我们先了解 FSDP 与 TP 结合的机制。每个设备将有一个 TP 等级 $i = 0, \dots, N_{\mathrm{TP}}-1$ 和一个 FSDP 等级 $j = 0, \dots, N_{\mathrm{FSDP}}-1$，总计 $N = N_{\mathrm{TP}}N_{\mathrm{FSDP}}$ 个设备组成 2D 网格。按照 TP，我们首先沿输出维度分片 $\mathbf{W}_1$ 和 $\mathbf{W}_2$，并沿输入维度分片 $\mathbf{W}_3$。因此，我们必须在激活上插入 TP 风格的 all-reduce。接下来应用 FSDP，我们将分割输入的批量维度，并且还将进一步沿未被 TP 分片的维度分片每个权重矩阵。然后，我们必须在进行 TP 式前向/反向传播之前对权重进行 FSDP 式 all-gather，并在 TP 式反向传播之后对权重梯度进行 reduce-scatter。
 
-### 题目：`fsdp_tp_calcs`——二维并行计算（6 分）
+结果是每个设备 $(i, j)$ 持有形状为 $(D/N_{\mathrm{FSDP}}, D_{\mathrm{FF}}/N_{\mathrm{TP}})$ 的权重分片 $\mathbf{W}_1^{(i,j)}$ 和 $\mathbf{W}_2^{(i,j)}$，以及形状为 $(D_{\mathrm{FF}}/N_{\mathrm{TP}}, D/N_{\mathrm{FSDP}})$ 的 $\mathbf{W}_3^{(i,j)}$。给定大小为 $(B/N_{\mathrm{FSDP}}, D)$ 的批量分片输入 $\mathbf{x}^{(j)}$，我们可以写出如下的前向传播：
 
-在与目前计算相同的设置下，让我们计算一下 2D 并行性何时会出现瓶颈。
+$$
+\begin{aligned}
+\mathbf{W}_1^{(i)} &= \operatorname{all-gather}\bigl(\{\mathbf{W}_1^{(i,j)}\}_{j=0}^{N_{\mathrm{FSDP}}-1}\bigr) \\
+\mathbf{W}_2^{(i)} &= \operatorname{all-gather}\bigl(\{\mathbf{W}_2^{(i,j)}\}_{j=0}^{N_{\mathrm{FSDP}}-1}\bigr) \\
+\mathbf{W}_3^{(i)} &= \operatorname{all-gather}\bigl(\{\mathbf{W}_3^{(i,j)}\}_{j=0}^{N_{\mathrm{FSDP}}-1}\bigr) \\
+\mathbf{x}_1^{(i,j)} &= \mathbf{x}^{(j)} \mathbf{W}_1^{(i)} \\
+\mathbf{x}_2^{(i,j)} &= \mathbf{x}^{(j)} \mathbf{W}_2^{(i)} \\
+\mathbf{z}^{(i,j)} &= f(\mathbf{x}_1^{(i,j)}) \ast \mathbf{x}_2^{(i,j)} \\
+\mathbf{y}^{(i,j)} &= \mathbf{z}^{(i,j)} \mathbf{W}_3^{(i)} \\
+\mathbf{y}^{(j)} &= \operatorname{all-reduce}\bigl(\{\mathbf{y}^{(i,j)}\}_{i=0}^{N_{\mathrm{TP}}-1}\bigr),
+\end{aligned}
+$$
 
-**(a)** 使用𝑁FSDP FSDP + 𝑁TP TP 计算前向传播需要多少次 FLOP？
+最终得到大小为 $(B/N_{\mathrm{FSDP}}, D)$ 的批量分片输出 $\mathbf{y}^{(j)}$。为简洁起见，本节将省略反向传播，只关注前向传播。但此时，您应该已经拥有自己写出反向传播所需的全部信息。
 
-**交付内容：** 以 𝐵、𝐷、𝐷FF 、𝑁FSDP 和 𝑁TP 形式给出答案，并附上一句话理由。
+#### 题目：`fsdp_tp_calcs`——二维并行计算（6 分）
 
-**(b)** 使用𝑁FSDP FSDP + 𝑁TP TP，前向传播需要多少通信时间？假设沿着每个轴的通信可以重叠（换句话说，沿着FSDP轴的集合可以与沿着TP轴的集合重叠）。
+在与目前计算相同的设置下，让我们计算 2D 并行何时会出现瓶颈。
 
-**交付内容：** 以 𝐵、𝐷、𝐷FF 、𝑁FSDP、𝑁TP 和 𝑊 的子集形式给出的答案，以及一句话论证。
+**(a)** 使用 $N_{\mathrm{FSDP}}$ FSDP + $N_{\mathrm{TP}}$ TP 计算前向传播需要多少 FLOP？
 
-> **提示：** 答案应表示为两个数量（FSDP 和 TP 集体成本）之间的最大值，因为两者可以重叠。
+**答案** $\dfrac{6 B D D_{\mathrm{FF}}}{N_{\mathrm{FSDP}} N_{\mathrm{TP}}}$（每设备）。理由：每设备 batch 为 $B/N_{\mathrm{FSDP}}$，权重维度各被分片到 $1/N_{\mathrm{TP}}$；三个 matmul 每个贡献 $2 \cdot (B/N_{\mathrm{FSDP}}) \cdot D \cdot (D_{\mathrm{FF}}/N_{\mathrm{TP}}) = 2 B D D_{\mathrm{FF}}/(N_{\mathrm{FSDP}} N_{\mathrm{TP}})$ FLOP，合计 $6 B D D_{\mathrm{FF}}/(N_{\mathrm{FSDP}} N_{\mathrm{TP}})$。
 
-**(c)** 在 𝑁TP 和 𝑁FSDP 的最佳设置下，在前向传播出现通信瓶颈之前，𝑁 = 𝑁TP 𝑁FSDP 可以变得多大？
+**(b)** 使用 $N_{\mathrm{FSDP}}$ FSDP + $N_{\mathrm{TP}}$ TP，前向传播需要多少通信时间？假设沿每个轴的通信可以重叠（换句话说，沿 FSDP 轴的集合通信可以与沿 TP 轴的集合通信重叠）。
 
-**交付内容：** 一侧为 𝑁 的不等式，另一侧为 𝐵、𝐷、𝐷FF 、𝐶 和 𝑊 子集的表达式，以及一些句子和方程作为论证。
+**答案** $\max\!\left(\dfrac{6 D D_{\mathrm{FF}}(N_{\mathrm{FSDP}}-1)}{N_{\mathrm{FSDP}} N_{\mathrm{TP}} W},\ \dfrac{4 B D (N_{\mathrm{TP}}-1)}{N_{\mathrm{FSDP}} N_{\mathrm{TP}} W}\right)$ 秒。理由：FSDP 通信（沿 FSDP 轴的环形 all-gather 三个权重，每个权重大小 $2 D D_{\mathrm{FF}}/N_{\mathrm{TP}}$ 字节）的时间为 $(N_{\mathrm{FSDP}}-1)/N_{\mathrm{FSDP}} \cdot 6 D D_{\mathrm{FF}}/(N_{\mathrm{TP}} W)$；TP 通信（沿 TP 轴的环形 all-reduce $\mathbf{y}\in\mathbb{R}^{B/N_{\mathrm{FSDP}}\times D}$，每设备 $2 B D/N_{\mathrm{FSDP}}$ 字节）的时间为 $2(N_{\mathrm{TP}}-1)/N_{\mathrm{TP}} \cdot 2 B D/(N_{\mathrm{FSDP}} W) = 4 B D (N_{\mathrm{TP}}-1)/(N_{\mathrm{FSDP}} N_{\mathrm{TP}} W)$。两者可沿两条独立轴并行，等价于二者中的较大值。
 
-**(d)** 现在假设 FSDP 轴和 TP 轴集合不能重叠，因为它们共享相同的网络资源。在 𝑁TP 和 𝑁FSDP 的最佳设置下，在前向传播出现通信瓶颈之前，𝑁 = 𝑁TP 𝑁FSDP 可以变得多大？不用担心将 𝑁TP 和 𝑁FSDP 截断为整数。
+> **提示：** 答案应表示为两个数量（FSDP 和 TP 集合通信成本）之间的最大值，因为两者可以重叠。
 
-**交付内容：** 一侧为 𝑁 的不等式，另一侧为 𝐵、𝐷、𝐷FF 、𝐶 和 𝑊 子集的表达式，以及一些句子和方程作为论证。
+**(c)** 在 $N_{\mathrm{TP}}$ 和 $N_{\mathrm{FSDP}}$ 的最佳设置下，在前向传播出现通信瓶颈之前，$N = N_{\mathrm{TP}}N_{\mathrm{FSDP}}$ 可以变得多大？
 
-## 9 排行榜
+**答案** $N \le \dfrac{3 B D_{\mathrm{FF}} W^{2}}{2 C^{2}}$。理由：要保持计算受限需 max(FSDP 通信，TP 通信) $\le$ 计算，即 $\dfrac{6 B D D_{\mathrm{FF}}}{N_{\mathrm{FSDP}} N_{\mathrm{TP}} C}$。两条边界在 FSDP 通信 $=$ TP 通信 $=$ 计算时同时成立最为紧凑：FSDP 通信 $=$ 计算给出 $N_{\mathrm{FSDP}} \le B W/C + 1$；TP 通信 $=$ 计算给出 $N_{\mathrm{TP}} \le 3 D_{\mathrm{FF}} W/(2C) + 1$。两轴相互独立可同时取上限，因此 $N = N_{\mathrm{FSDP}} N_{\mathrm{TP}} \le \left(\dfrac{B W}{C} + 1\right)\left(\dfrac{3 D_{\mathrm{FF}} W}{2 C} + 1\right) \approx \dfrac{3 B D_{\mathrm{FF}} W^{2}}{2 C^{2}}$。
 
-作业 2 的排行榜将测试 8B 模型的完整训练步骤的速度。我们挑战您使用您能想到的任何技巧来对您的代码进行基准测试并优化内存和运行时。关键限制是您无法更改模型的输入/输出行为。您的实现将针对 cs336_basics 目录中的模型进行测试。您的输入将在 BF16 上通过因果屏蔽进行测试，并且它们必须通过与常规实施相同的测试。该实现也必须是您自己的，并且您不能使用或复制预先存在的实现。您的计时应使用批大小为 2、序列长度为 32,768 的样本在两个 B200 GPU 上进行测量。故意使模型难以适应内存。有关完整配置，请参阅下面的代码。我们
+**(d)** 现在假设 FSDP 轴和 TP 轴的集合通信不能重叠，因为它们共享相同的网络资源。在 $N_{\mathrm{TP}}$ 和 $N_{\mathrm{FSDP}}$ 的最佳设置下，在前向传播出现通信瓶颈之前，$N = N_{\mathrm{TP}}N_{\mathrm{FSDP}}$ 可以变得多大？不用担心将 $N_{\mathrm{TP}}$ 和 $N_{\mathrm{FSDP}}$ 截断为整数。
 
-<!-- 原 PDF 第 47 页 -->
-
-将验证前 5-10 名提交的正确性和性能。我们将运行以下测试来计时您的实施：
-
-```text
-class Config: ctx_len = 32768 vocab_size = 151936 d_model = 4096 d_ff = 11008 num_layers = 34 num_heads = 32 torch_dtype = torch.bfloat16 is_causal = True batch_size = 2 cfg = Config()
-```
-
-```text
-def test_timing_forward_backward(): labels, targets = torch.randint(high=cfg.vocab_size, size=(2, cfg.batch_size, cfg.ctx_len))
-```
-
-模型 = BasicsTransformerLM(Config()) 优化器 = AdamW(model.parameters())
-
-```text
-def train_step(): optimizer.zero_grad(set_to_none=True) res = model(labels) loss = cross_entropy(res, targets).sum() loss.backward() optimizer.step()
-```
-
-Timing_results = triton.testing.do_bench(train_step,rep=30_000,warmup=10_000)打印(timing_results)
-
-出于测试目的，您可以将重复时间和预热时间（以毫秒为单位）缩短到更短的时间。一些改进和确保模型适合的想法：
-
-- 调整内核的图块大小（为此使用 Triton 自动调整！）
-
-- 调整额外的 Triton/torch.compile 配置参数
-
-- 实现融合 AdamW
-
-- 基本实现正在具体化完整 logits 张量（[batch、seq_len、vocab_size]）。编写一个融合 LM 头和交叉熵损失的内核。您还可以让它以融合的方式立即计算反向传播
-
-- 改进 FlashAttention ‣ 在 Triton 中实现反向传播，而不仅仅是 torch.compile （参见第 4.2.3 节） ‣ 对反向传播的输入进行两次传递，一次用于 dQ，另一次用于 dK 和 dV，以避免块之间的原子或同步 ‣ 在进行因果屏蔽时尽早停止程序实例，跳过保证全为零的图块‣ 将非遮罩图块与图块对角线分开，计算第一个而不比较索引，并通过一次比较计算第二个
-
-<!-- 原 PDF 第 48 页 -->
-
-‣ 在 Hopper 之后的架构上使用 TMA（张量内存加速器）功能，遵循与我们的教程类似的模式
-
-- 仅在需要时使用激活检查点来交换运行时速度以节省内存
-
-### 题目：`leaderboard`——排行榜：最快训练步骤（10 分）
-
-该基准测试将以批大小 2 在两个 B200 GPU 上运行。您提交的内容将根据完整的训练步骤的挂钟时间进行评估：前向传播、损失、反向传播和 AdamW 更新。从空的 PyTorch/Triton 缓存中，您的基准测试运行必须在 10 分钟内完成，因此请小心过度激进的 torch.compile 和 Triton 自动调整。
-
-**交付内容：** 使用 AdamW 进行完整的前向和后向训练步骤的最佳挂钟时间。我们预计排行榜提交时间将超过 10 秒的初始基线。将您的结果提交到此处的排行榜：github.com/stanford-cs336/assignment2-systems-leaderboard
-
-参考书目 [1] T. Dao，“FlashAttention-2：更快的注意力，更好的并行性和工作分区。” [在线的]。可用：https://arxiv.org/abs/2307.08691 [2] T. Dao、D. Y. Fu、S. Ermon、A. Rudra 和 C. Re，“FlashAttention：具有 IO 意识的快速且内存高效的精确注意力”，《神经信息处理系统进展》，A. H. Oh、A. Agarwal、D. Belgrave 和 K. Cho，编辑， 2022。[在线]。可用：https://openreview.net/forum?id=H4DqfPSibmx [3] M. Milakov 和 N. Gimelshein，“softmax 的在线标准化器计算”。 [在线的]。可用：https://arxiv.org/abs/1805.02867 [4] H. He，“让深度学习从第一原理走向辉煌”，2022 年，[在线]。可用：https://horace.io/brrr_intro.html [5] S. Rajbhandari、J. Rasley、O. Ruwase 和 Y. He，“ZeRO：训练万亿参数模型的内存优化。” 2020 年。[6] J. Austin 等人，“如何扩展模型”，2025 年。[7] H. Z. P. N. M. M. L. W. T. W. Nouamane Tazi Ferdinand Mom，“超大规模剧本：在 GPU 集群上训练大语言模型。” 2025 年。
+**答案** $N \le \dfrac{3 B D_{\mathrm{FF}} W^{2}}{8 C^{2}}$。理由：总通信 $=$ FSDP 通信 $+$ TP 通信 $\le$ 计算。把两个通信公式代入并约去 $1/(N_{\mathrm{FSDP}} N_{\mathrm{TP}} W)$ 后得到 $6 D_{\mathrm{FF}}(N_{\mathrm{FSDP}}-1) + 4 B(N_{\mathrm{TP}}-1) \le \dfrac{6 B D_{\mathrm{FF}} W}{C}$；取 $N_{\mathrm{FSDP}}, N_{\mathrm{TP}}$ 较大时近似为 $6 D_{\mathrm{FF}} N_{\mathrm{FSDP}} + 4 B N_{\mathrm{TP}} \le 6 B D_{\mathrm{FF}} W/C$。在固定线性约束下最大化乘积 $N_{\mathrm{FSDP}} N_{\mathrm{TP}}$ 的最优配比为 $N_{\mathrm{FSDP}} / N_{\mathrm{TP}} = 4 B/(6 D_{\mathrm{FF}}) = 2 B/(3 D_{\mathrm{FF}})$（由 AM-GM / Lagrange 乘子），因此 $N_{\mathrm{FSDP}} = \dfrac{6 B D_{\mathrm{FF}} W/C}{12 D_{\mathrm{FF}}} = \dfrac{B W}{2 C}$，$N_{\mathrm{TP}} = \dfrac{6 B D_{\mathrm{FF}} W/C}{8 B} = \dfrac{3 D_{\mathrm{FF}} W}{4 C}$，于是 $N = N_{\mathrm{FSDP}} N_{\mathrm{TP}} = \dfrac{3 B D_{\mathrm{FF}} W^{2}}{8 C^{2}}$。与 (c) 相比，不重叠的代价是 $N$ 减少为 $1/4$。

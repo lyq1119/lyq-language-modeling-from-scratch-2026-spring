@@ -121,16 +121,24 @@ def benchmark(
                 samples["full_step"].append(forward_time + backward_time + optimizer_time)
 
     model.train(needs_backward)
-    for _ in range(warmup_steps):
-        run_step(record=False)
     if memory_snapshot is not None:
         if device.type != "cuda":
             raise ValueError("memory profiling requires a CUDA device")
         memory_snapshot.parent.mkdir(parents=True, exist_ok=True)
-        torch.cuda.reset_peak_memory_stats(device)
-        torch.cuda.memory._record_memory_history(max_entries=1_000_000)
-    capture_range = torch.cuda.nvtx.range("benchmark") if device.type == "cuda" else nullcontext()
+        # Start before warm-up so allocations retain their Python/C++ call stacks.
+        torch.cuda.memory._record_memory_history(
+            enabled="all",
+            context="all",
+            stacks="all",
+            max_entries=1_000_000,
+        )
     try:
+        for _ in range(warmup_steps):
+            run_step(record=False)
+        if memory_snapshot is not None:
+            # Report the peak from the measured steps, not from warm-up.
+            torch.cuda.reset_peak_memory_stats(device)
+        capture_range = torch.cuda.nvtx.range("benchmark") if device.type == "cuda" else nullcontext()
         with capture_range:
             for _ in range(measurement_steps):
                 run_step(record=True)
@@ -181,6 +189,7 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--num-layers", type=int, help="override the selected model configuration")
     parser.add_argument("--num-heads", type=int, help="override the selected model configuration")
     parser.add_argument("--json", action="store_true", help="emit machine-readable JSON")
+    parser.add_argument("--compile", action="store_true", help="benchmark torch.compile(model)")
     return parser
 
 
@@ -209,6 +218,8 @@ def main(argv: Sequence[str] | None = None) -> None:
         context_length=args.context_length,
         **config,
     ).to(device=device, dtype=dtype)
+    if args.compile:
+        model = torch.compile(model)
     inputs = torch.randint(0, args.vocab_size, (args.batch_size, args.context_length), device=device)
     memory_stats: dict[str, int] = {}
     timings = benchmark(
@@ -235,6 +246,7 @@ def main(argv: Sequence[str] | None = None) -> None:
             "mode": args.mode,
             "warmup_steps": args.warmup_steps,
             "measurement_steps": args.measurement_steps,
+            "compiled": args.compile,
             "parameters": sum(parameter.numel() for parameter in model.parameters()),
         },
         "timings": {name: asdict(timing) for name, timing in timings.items()},

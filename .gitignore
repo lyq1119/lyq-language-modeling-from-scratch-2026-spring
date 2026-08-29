@@ -1,0 +1,8 @@
+.tools/
+profiles/
+_sec678_tmp.txt
+nsys
+__pycache__/
+*.py[cod]
+336_a2_test_venv/
+test_results.xml
