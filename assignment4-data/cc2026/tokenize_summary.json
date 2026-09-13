@@ -1,0 +1,6 @@
+{
+ "raw_docs": 1500000,
+ "final_docs": 1476008,
+ "tokens": 2000000292,
+ "bin": "local-shared-data/tokenized/train.bin"
+}

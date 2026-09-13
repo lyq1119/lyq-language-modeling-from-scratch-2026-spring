@@ -1,0 +1,5136 @@
+{
+ "stage_totals": {
+  "total": 8423240,
+  "length": 8068216,
+  "language": 2352223,
+  "gopher": 2205545,
+  "nsfw": 2201457,
+  "toxic": 2198797,
+  "quality": 2198797
+ },
+ "per_file": [
+  {
+   "file": "CC-MAIN-20260410081153-20260410111153-00471.warc.wet.gz",
+   "written": 5690,
+   "counts": {
+    "total": 21817,
+    "length": 21118,
+    "language": 6042,
+    "gopher": 5708,
+    "nsfw": 5696,
+    "toxic": 5690,
+    "quality": 5690
+   }
+  },
+  {
+   "file": "CC-MAIN-20260410081153-20260410111153-00561.warc.wet.gz",
+   "written": 5860,
+   "counts": {
+    "total": 21768,
+    "length": 21033,
+    "language": 6251,
+    "gopher": 5877,
+    "nsfw": 5869,
+    "toxic": 5860,
+    "quality": 5860
+   }
+  },
+  {
+   "file": "CC-MAIN-20260410081153-20260410111153-00813.warc.wet.gz",
+   "written": 5755,
+   "counts": {
+    "total": 21632,
+    "length": 20934,
+    "language": 6130,
+    "gopher": 5777,
+    "nsfw": 5767,
+    "toxic": 5755,
+    "quality": 5755
+   }
+  },
+  {
+   "file": "CC-MAIN-20260410081153-20260410111153-00963.warc.wet.gz",
+   "written": 5726,
+   "counts": {
+    "total": 21687,
+    "length": 20908,
+    "language": 6120,
+    "gopher": 5738,
+    "nsfw": 5732,
+    "toxic": 5726,
+    "quality": 5726
+   }
+  },
+  {
+   "file": "CC-MAIN-20260410112043-20260410142043-00702.warc.wet.gz",
+   "written": 5681,
+   "counts": {
+    "total": 21630,
+    "length": 20866,
+    "language": 6071,
+    "gopher": 5695,
+    "nsfw": 5686,
+    "toxic": 5681,
+    "quality": 5681
+   }
+  },
+  {
+   "file": "CC-MAIN-20260410142617-20260410172617-00411.warc.wet.gz",
+   "written": 5710,
+   "counts": {
+    "total": 21566,
+    "length": 20878,
+    "language": 6095,
+    "gopher": 5724,
+    "nsfw": 5714,
+    "toxic": 5710,
+    "quality": 5710
+   }
+  },
+  {
+   "file": "CC-MAIN-20260410142617-20260410172617-00508.warc.wet.gz",
+   "written": 5624,
+   "counts": {
+    "total": 21586,
+    "length": 20872,
+    "language": 6017,
+    "gopher": 5642,
+    "nsfw": 5632,
+    "toxic": 5624,
+    "quality": 5624
+   }
+  },
+  {
+   "file": "CC-MAIN-20260410142617-20260410172617-00561.warc.wet.gz",
+   "written": 5770,
+   "counts": {
+    "total": 21738,
+    "length": 21011,
+    "language": 6116,
+    "gopher": 5792,
+    "nsfw": 5777,
+    "toxic": 5770,
+    "quality": 5770
+   }
+  },
+  {
+   "file": "CC-MAIN-20260410142617-20260410172617-00584.warc.wet.gz",
+   "written": 5634,
+   "counts": {
+    "total": 21415,
+    "length": 20641,
+    "language": 6048,
+    "gopher": 5654,
+    "nsfw": 5641,
+    "toxic": 5634,
+    "quality": 5634
+   }
+  },
+  {
+   "file": "CC-MAIN-20260410142617-20260410172617-00651.warc.wet.gz",
+   "written": 5787,
+   "counts": {
+    "total": 21685,
+    "length": 20927,
+    "language": 6185,
+    "gopher": 5809,
+    "nsfw": 5796,
+    "toxic": 5787,
+    "quality": 5787
+   }
+  },
+  {
+   "file": "CC-MAIN-20260410142617-20260410172617-00739.warc.wet.gz",
+   "written": 5662,
+   "counts": {
+    "total": 21729,
+    "length": 20964,
+    "language": 6047,
+    "gopher": 5686,
+    "nsfw": 5672,
+    "toxic": 5662,
+    "quality": 5662
+   }
+  },
+  {
+   "file": "CC-MAIN-20260410142617-20260410172617-00918.warc.wet.gz",
+   "written": 5897,
+   "counts": {
+    "total": 21712,
+    "length": 21075,
+    "language": 6286,
+    "gopher": 5911,
+    "nsfw": 5904,
+    "toxic": 5897,
+    "quality": 5897
+   }
+  },
+  {
+   "file": "CC-MAIN-20260410154802-20260410184802-00314.warc.wet.gz",
+   "written": 5511,
+   "counts": {
+    "total": 21044,
+    "length": 20272,
+    "language": 5858,
+    "gopher": 5526,
+    "nsfw": 5513,
+    "toxic": 5511,
+    "quality": 5511
+   }
+  },
+  {
+   "file": "CC-MAIN-20260410154802-20260410184802-00416.warc.wet.gz",
+   "written": 5606,
+   "counts": {
+    "total": 21460,
+    "length": 20735,
+    "language": 5988,
+    "gopher": 5624,
+    "nsfw": 5613,
+    "toxic": 5606,
+    "quality": 5606
+   }
+  },
+  {
+   "file": "CC-MAIN-20260410154802-20260410184802-00494.warc.wet.gz",
+   "written": 5621,
+   "counts": {
+    "total": 21092,
+    "length": 20301,
+    "language": 6009,
+    "gopher": 5635,
+    "nsfw": 5629,
+    "toxic": 5621,
+    "quality": 5621
+   }
+  },
+  {
+   "file": "CC-MAIN-20260410154802-20260410184802-00775.warc.wet.gz",
+   "written": 5445,
+   "counts": {
+    "total": 20946,
+    "length": 20144,
+    "language": 5873,
+    "gopher": 5464,
+    "nsfw": 5449,
+    "toxic": 5445,
+    "quality": 5445
+   }
+  },
+  {
+   "file": "CC-MAIN-20260410154802-20260410184802-00832.warc.wet.gz",
+   "written": 5485,
+   "counts": {
+    "total": 21117,
+    "length": 20342,
+    "language": 5921,
+    "gopher": 5510,
+    "nsfw": 5493,
+    "toxic": 5485,
+    "quality": 5485
+   }
+  },
+  {
+   "file": "CC-MAIN-20260410185402-20260410215402-00297.warc.wet.gz",
+   "written": 5652,
+   "counts": {
+    "total": 21652,
+    "length": 20895,
+    "language": 6039,
+    "gopher": 5674,
+    "nsfw": 5658,
+    "toxic": 5652,
+    "quality": 5652
+   }
+  },
+  {
+   "file": "CC-MAIN-20260410185402-20260410215402-00440.warc.wet.gz",
+   "written": 5708,
+   "counts": {
+    "total": 21503,
+    "length": 20675,
+    "language": 6097,
+    "gopher": 5722,
+    "nsfw": 5716,
+    "toxic": 5708,
+    "quality": 5708
+   }
+  },
+  {
+   "file": "CC-MAIN-20260410185402-20260410215402-00926.warc.wet.gz",
+   "written": 5766,
+   "counts": {
+    "total": 21711,
+    "length": 20914,
+    "language": 6197,
+    "gopher": 5786,
+    "nsfw": 5777,
+    "toxic": 5766,
+    "quality": 5766
+   }
+  },
+  {
+   "file": "CC-MAIN-20260410215827-20260411005827-00469.warc.wet.gz",
+   "written": 5858,
+   "counts": {
+    "total": 21800,
+    "length": 20919,
+    "language": 6260,
+    "gopher": 5879,
+    "nsfw": 5864,
+    "toxic": 5858,
+    "quality": 5858
+   }
+  },
+  {
+   "file": "CC-MAIN-20260410215827-20260411005827-00545.warc.wet.gz",
+   "written": 5652,
+   "counts": {
+    "total": 21665,
+    "length": 20849,
+    "language": 6024,
+    "gopher": 5674,
+    "nsfw": 5660,
+    "toxic": 5652,
+    "quality": 5652
+   }
+  },
+  {
+   "file": "CC-MAIN-20260410215827-20260411005827-00597.warc.wet.gz",
+   "written": 5624,
+   "counts": {
+    "total": 21542,
+    "length": 20658,
+    "language": 6033,
+    "gopher": 5639,
+    "nsfw": 5631,
+    "toxic": 5624,
+    "quality": 5624
+   }
+  },
+  {
+   "file": "CC-MAIN-20260410215827-20260411005827-00639.warc.wet.gz",
+   "written": 5857,
+   "counts": {
+    "total": 21775,
+    "length": 20915,
+    "language": 6235,
+    "gopher": 5870,
+    "nsfw": 5861,
+    "toxic": 5857,
+    "quality": 5857
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411010817-20260411040817-00165.warc.wet.gz",
+   "written": 5635,
+   "counts": {
+    "total": 21510,
+    "length": 20612,
+    "language": 6047,
+    "gopher": 5657,
+    "nsfw": 5643,
+    "toxic": 5635,
+    "quality": 5635
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411010817-20260411040817-00188.warc.wet.gz",
+   "written": 5558,
+   "counts": {
+    "total": 21583,
+    "length": 20704,
+    "language": 5982,
+    "gopher": 5575,
+    "nsfw": 5569,
+    "toxic": 5558,
+    "quality": 5558
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411010817-20260411040817-00635.warc.wet.gz",
+   "written": 5784,
+   "counts": {
+    "total": 21704,
+    "length": 20847,
+    "language": 6159,
+    "gopher": 5802,
+    "nsfw": 5794,
+    "toxic": 5784,
+    "quality": 5784
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411010817-20260411040817-00757.warc.wet.gz",
+   "written": 5744,
+   "counts": {
+    "total": 21696,
+    "length": 20858,
+    "language": 6136,
+    "gopher": 5762,
+    "nsfw": 5748,
+    "toxic": 5744,
+    "quality": 5744
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411010817-20260411040817-00929.warc.wet.gz",
+   "written": 5700,
+   "counts": {
+    "total": 21815,
+    "length": 20962,
+    "language": 6137,
+    "gopher": 5721,
+    "nsfw": 5708,
+    "toxic": 5700,
+    "quality": 5700
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411010817-20260411040817-00949.warc.wet.gz",
+   "written": 5675,
+   "counts": {
+    "total": 21604,
+    "length": 20760,
+    "language": 6057,
+    "gopher": 5692,
+    "nsfw": 5682,
+    "toxic": 5675,
+    "quality": 5675
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411010817-20260411040817-00988.warc.wet.gz",
+   "written": 5540,
+   "counts": {
+    "total": 21259,
+    "length": 20375,
+    "language": 5937,
+    "gopher": 5554,
+    "nsfw": 5545,
+    "toxic": 5540,
+    "quality": 5540
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411041343-20260411071343-00093.warc.wet.gz",
+   "written": 5634,
+   "counts": {
+    "total": 21408,
+    "length": 20581,
+    "language": 5989,
+    "gopher": 5649,
+    "nsfw": 5640,
+    "toxic": 5634,
+    "quality": 5634
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411041343-20260411071343-00152.warc.wet.gz",
+   "written": 5679,
+   "counts": {
+    "total": 21471,
+    "length": 20680,
+    "language": 6100,
+    "gopher": 5698,
+    "nsfw": 5687,
+    "toxic": 5679,
+    "quality": 5679
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411041343-20260411071343-00301.warc.wet.gz",
+   "written": 5589,
+   "counts": {
+    "total": 21762,
+    "length": 20915,
+    "language": 5970,
+    "gopher": 5611,
+    "nsfw": 5596,
+    "toxic": 5589,
+    "quality": 5589
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411041343-20260411071343-00323.warc.wet.gz",
+   "written": 5659,
+   "counts": {
+    "total": 21503,
+    "length": 20632,
+    "language": 6093,
+    "gopher": 5679,
+    "nsfw": 5666,
+    "toxic": 5659,
+    "quality": 5659
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411041343-20260411071343-00339.warc.wet.gz",
+   "written": 5482,
+   "counts": {
+    "total": 21455,
+    "length": 20653,
+    "language": 5884,
+    "gopher": 5497,
+    "nsfw": 5486,
+    "toxic": 5482,
+    "quality": 5482
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411041343-20260411071343-00389.warc.wet.gz",
+   "written": 5659,
+   "counts": {
+    "total": 21484,
+    "length": 20703,
+    "language": 6104,
+    "gopher": 5680,
+    "nsfw": 5668,
+    "toxic": 5659,
+    "quality": 5659
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411041343-20260411071343-00558.warc.wet.gz",
+   "written": 5628,
+   "counts": {
+    "total": 21798,
+    "length": 20946,
+    "language": 6021,
+    "gopher": 5647,
+    "nsfw": 5635,
+    "toxic": 5628,
+    "quality": 5628
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411041343-20260411071343-00667.warc.wet.gz",
+   "written": 5733,
+   "counts": {
+    "total": 21670,
+    "length": 20852,
+    "language": 6112,
+    "gopher": 5751,
+    "nsfw": 5740,
+    "toxic": 5733,
+    "quality": 5733
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411041343-20260411071343-00677.warc.wet.gz",
+   "written": 5608,
+   "counts": {
+    "total": 21543,
+    "length": 20743,
+    "language": 5980,
+    "gopher": 5623,
+    "nsfw": 5612,
+    "toxic": 5608,
+    "quality": 5608
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411071803-20260411101803-00308.warc.wet.gz",
+   "written": 5671,
+   "counts": {
+    "total": 21266,
+    "length": 20374,
+    "language": 6048,
+    "gopher": 5695,
+    "nsfw": 5681,
+    "toxic": 5671,
+    "quality": 5671
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411071803-20260411101803-00324.warc.wet.gz",
+   "written": 5709,
+   "counts": {
+    "total": 21613,
+    "length": 20713,
+    "language": 6096,
+    "gopher": 5720,
+    "nsfw": 5713,
+    "toxic": 5709,
+    "quality": 5709
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411071803-20260411101803-00383.warc.wet.gz",
+   "written": 5642,
+   "counts": {
+    "total": 21651,
+    "length": 20831,
+    "language": 6044,
+    "gopher": 5662,
+    "nsfw": 5652,
+    "toxic": 5642,
+    "quality": 5642
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411071803-20260411101803-00384.warc.wet.gz",
+   "written": 5638,
+   "counts": {
+    "total": 21551,
+    "length": 20611,
+    "language": 6048,
+    "gopher": 5651,
+    "nsfw": 5644,
+    "toxic": 5638,
+    "quality": 5638
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411071803-20260411101803-00807.warc.wet.gz",
+   "written": 5547,
+   "counts": {
+    "total": 21437,
+    "length": 20518,
+    "language": 5958,
+    "gopher": 5561,
+    "nsfw": 5554,
+    "toxic": 5547,
+    "quality": 5547
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411103300-20260411133300-00013.warc.wet.gz",
+   "written": 5541,
+   "counts": {
+    "total": 21417,
+    "length": 20538,
+    "language": 5927,
+    "gopher": 5560,
+    "nsfw": 5549,
+    "toxic": 5541,
+    "quality": 5541
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411103300-20260411133300-00155.warc.wet.gz",
+   "written": 5593,
+   "counts": {
+    "total": 21726,
+    "length": 20819,
+    "language": 5969,
+    "gopher": 5612,
+    "nsfw": 5601,
+    "toxic": 5593,
+    "quality": 5593
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411103300-20260411133300-00225.warc.wet.gz",
+   "written": 5541,
+   "counts": {
+    "total": 21640,
+    "length": 20769,
+    "language": 5973,
+    "gopher": 5554,
+    "nsfw": 5548,
+    "toxic": 5541,
+    "quality": 5541
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411103300-20260411133300-00519.warc.wet.gz",
+   "written": 5714,
+   "counts": {
+    "total": 21849,
+    "length": 20995,
+    "language": 6084,
+    "gopher": 5730,
+    "nsfw": 5717,
+    "toxic": 5714,
+    "quality": 5714
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411103300-20260411133300-00616.warc.wet.gz",
+   "written": 5720,
+   "counts": {
+    "total": 21702,
+    "length": 20862,
+    "language": 6134,
+    "gopher": 5732,
+    "nsfw": 5726,
+    "toxic": 5720,
+    "quality": 5720
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411133751-20260411163751-00165.warc.wet.gz",
+   "written": 5703,
+   "counts": {
+    "total": 21846,
+    "length": 20893,
+    "language": 6107,
+    "gopher": 5715,
+    "nsfw": 5710,
+    "toxic": 5703,
+    "quality": 5703
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411133751-20260411163751-00192.warc.wet.gz",
+   "written": 5557,
+   "counts": {
+    "total": 21564,
+    "length": 20545,
+    "language": 5898,
+    "gopher": 5569,
+    "nsfw": 5559,
+    "toxic": 5557,
+    "quality": 5557
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411133751-20260411163751-00470.warc.wet.gz",
+   "written": 5563,
+   "counts": {
+    "total": 21174,
+    "length": 20249,
+    "language": 5992,
+    "gopher": 5580,
+    "nsfw": 5570,
+    "toxic": 5563,
+    "quality": 5563
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411133751-20260411163751-00931.warc.wet.gz",
+   "written": 5603,
+   "counts": {
+    "total": 21620,
+    "length": 20622,
+    "language": 5999,
+    "gopher": 5619,
+    "nsfw": 5606,
+    "toxic": 5603,
+    "quality": 5603
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411133751-20260411163751-00977.warc.wet.gz",
+   "written": 5623,
+   "counts": {
+    "total": 21411,
+    "length": 20449,
+    "language": 6017,
+    "gopher": 5644,
+    "nsfw": 5632,
+    "toxic": 5623,
+    "quality": 5623
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411164351-20260411194351-00004.warc.wet.gz",
+   "written": 5657,
+   "counts": {
+    "total": 21363,
+    "length": 20387,
+    "language": 6045,
+    "gopher": 5677,
+    "nsfw": 5665,
+    "toxic": 5657,
+    "quality": 5657
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411164351-20260411194351-00093.warc.wet.gz",
+   "written": 5688,
+   "counts": {
+    "total": 21890,
+    "length": 20789,
+    "language": 6097,
+    "gopher": 5709,
+    "nsfw": 5695,
+    "toxic": 5688,
+    "quality": 5688
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411164351-20260411194351-00301.warc.wet.gz",
+   "written": 5693,
+   "counts": {
+    "total": 21514,
+    "length": 20557,
+    "language": 6074,
+    "gopher": 5711,
+    "nsfw": 5704,
+    "toxic": 5693,
+    "quality": 5693
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411164351-20260411194351-00417.warc.wet.gz",
+   "written": 5659,
+   "counts": {
+    "total": 21488,
+    "length": 20472,
+    "language": 6012,
+    "gopher": 5676,
+    "nsfw": 5666,
+    "toxic": 5659,
+    "quality": 5659
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411164351-20260411194351-00451.warc.wet.gz",
+   "written": 5763,
+   "counts": {
+    "total": 21764,
+    "length": 20740,
+    "language": 6157,
+    "gopher": 5781,
+    "nsfw": 5771,
+    "toxic": 5763,
+    "quality": 5763
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411164351-20260411194351-00544.warc.wet.gz",
+   "written": 5632,
+   "counts": {
+    "total": 21723,
+    "length": 20682,
+    "language": 6019,
+    "gopher": 5654,
+    "nsfw": 5639,
+    "toxic": 5632,
+    "quality": 5632
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411164351-20260411194351-00642.warc.wet.gz",
+   "written": 5536,
+   "counts": {
+    "total": 21206,
+    "length": 20185,
+    "language": 5888,
+    "gopher": 5553,
+    "nsfw": 5544,
+    "toxic": 5536,
+    "quality": 5536
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411164351-20260411194351-00748.warc.wet.gz",
+   "written": 5616,
+   "counts": {
+    "total": 21442,
+    "length": 20422,
+    "language": 6000,
+    "gopher": 5635,
+    "nsfw": 5626,
+    "toxic": 5616,
+    "quality": 5616
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411194848-20260411224848-00292.warc.wet.gz",
+   "written": 5709,
+   "counts": {
+    "total": 21805,
+    "length": 20463,
+    "language": 6099,
+    "gopher": 5726,
+    "nsfw": 5716,
+    "toxic": 5709,
+    "quality": 5709
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411225202-20260412015202-00294.warc.wet.gz",
+   "written": 5551,
+   "counts": {
+    "total": 21540,
+    "length": 20123,
+    "language": 5929,
+    "gopher": 5559,
+    "nsfw": 5555,
+    "toxic": 5551,
+    "quality": 5551
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411225202-20260412015202-00383.warc.wet.gz",
+   "written": 5533,
+   "counts": {
+    "total": 21802,
+    "length": 20342,
+    "language": 5897,
+    "gopher": 5547,
+    "nsfw": 5541,
+    "toxic": 5533,
+    "quality": 5533
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411225202-20260412015202-00860.warc.wet.gz",
+   "written": 5501,
+   "counts": {
+    "total": 21639,
+    "length": 20156,
+    "language": 5908,
+    "gopher": 5515,
+    "nsfw": 5504,
+    "toxic": 5501,
+    "quality": 5501
+   }
+  },
+  {
+   "file": "CC-MAIN-20260411225202-20260412015202-00951.warc.wet.gz",
+   "written": 5460,
+   "counts": {
+    "total": 21587,
+    "length": 20062,
+    "language": 5833,
+    "gopher": 5484,
+    "nsfw": 5469,
+    "toxic": 5460,
+    "quality": 5460
+   }
+  },
+  {
+   "file": "CC-MAIN-20260412015729-20260412045729-00157.warc.wet.gz",
+   "written": 5490,
+   "counts": {
+    "total": 21602,
+    "length": 20241,
+    "language": 5899,
+    "gopher": 5512,
+    "nsfw": 5500,
+    "toxic": 5490,
+    "quality": 5490
+   }
+  },
+  {
+   "file": "CC-MAIN-20260412015729-20260412045729-00260.warc.wet.gz",
+   "written": 5650,
+   "counts": {
+    "total": 21731,
+    "length": 20336,
+    "language": 6049,
+    "gopher": 5664,
+    "nsfw": 5659,
+    "toxic": 5650,
+    "quality": 5650
+   }
+  },
+  {
+   "file": "CC-MAIN-20260412015729-20260412045729-00269.warc.wet.gz",
+   "written": 5633,
+   "counts": {
+    "total": 21835,
+    "length": 20481,
+    "language": 6015,
+    "gopher": 5651,
+    "nsfw": 5639,
+    "toxic": 5633,
+    "quality": 5633
+   }
+  },
+  {
+   "file": "CC-MAIN-20260412015729-20260412045729-00665.warc.wet.gz",
+   "written": 5580,
+   "counts": {
+    "total": 21500,
+    "length": 20179,
+    "language": 5991,
+    "gopher": 5604,
+    "nsfw": 5592,
+    "toxic": 5580,
+    "quality": 5580
+   }
+  },
+  {
+   "file": "CC-MAIN-20260412015729-20260412045729-00807.warc.wet.gz",
+   "written": 5452,
+   "counts": {
+    "total": 21470,
+    "length": 20101,
+    "language": 5835,
+    "gopher": 5472,
+    "nsfw": 5464,
+    "toxic": 5452,
+    "quality": 5452
+   }
+  },
+  {
+   "file": "CC-MAIN-20260412015729-20260412045729-00817.warc.wet.gz",
+   "written": 5545,
+   "counts": {
+    "total": 21391,
+    "length": 20042,
+    "language": 5912,
+    "gopher": 5560,
+    "nsfw": 5550,
+    "toxic": 5545,
+    "quality": 5545
+   }
+  },
+  {
+   "file": "CC-MAIN-20260412050224-20260412080224-00055.warc.wet.gz",
+   "written": 5415,
+   "counts": {
+    "total": 21610,
+    "length": 20321,
+    "language": 5827,
+    "gopher": 5439,
+    "nsfw": 5428,
+    "toxic": 5415,
+    "quality": 5415
+   }
+  },
+  {
+   "file": "CC-MAIN-20260412050224-20260412080224-00141.warc.wet.gz",
+   "written": 5444,
+   "counts": {
+    "total": 21659,
+    "length": 20436,
+    "language": 5797,
+    "gopher": 5464,
+    "nsfw": 5453,
+    "toxic": 5444,
+    "quality": 5444
+   }
+  },
+  {
+   "file": "CC-MAIN-20260412050224-20260412080224-00165.warc.wet.gz",
+   "written": 5475,
+   "counts": {
+    "total": 21488,
+    "length": 20157,
+    "language": 5841,
+    "gopher": 5491,
+    "nsfw": 5481,
+    "toxic": 5475,
+    "quality": 5475
+   }
+  },
+  {
+   "file": "CC-MAIN-20260412050224-20260412080224-00908.warc.wet.gz",
+   "written": 5554,
+   "counts": {
+    "total": 21831,
+    "length": 20546,
+    "language": 5984,
+    "gopher": 5575,
+    "nsfw": 5564,
+    "toxic": 5554,
+    "quality": 5554
+   }
+  },
+  {
+   "file": "CC-MAIN-20260412111925-20260412141925-00056.warc.wet.gz",
+   "written": 5396,
+   "counts": {
+    "total": 21347,
+    "length": 20199,
+    "language": 5809,
+    "gopher": 5425,
+    "nsfw": 5406,
+    "toxic": 5396,
+    "quality": 5396
+   }
+  },
+  {
+   "file": "CC-MAIN-20260412111925-20260412141925-00104.warc.wet.gz",
+   "written": 5397,
+   "counts": {
+    "total": 21439,
+    "length": 20310,
+    "language": 5822,
+    "gopher": 5423,
+    "nsfw": 5414,
+    "toxic": 5397,
+    "quality": 5397
+   }
+  },
+  {
+   "file": "CC-MAIN-20260412111925-20260412141925-00131.warc.wet.gz",
+   "written": 5443,
+   "counts": {
+    "total": 21514,
+    "length": 20369,
+    "language": 5838,
+    "gopher": 5460,
+    "nsfw": 5456,
+    "toxic": 5443,
+    "quality": 5443
+   }
+  },
+  {
+   "file": "CC-MAIN-20260412111925-20260412141925-00274.warc.wet.gz",
+   "written": 5571,
+   "counts": {
+    "total": 21403,
+    "length": 20333,
+    "language": 5967,
+    "gopher": 5586,
+    "nsfw": 5577,
+    "toxic": 5571,
+    "quality": 5571
+   }
+  },
+  {
+   "file": "CC-MAIN-20260412111925-20260412141925-00776.warc.wet.gz",
+   "written": 5368,
+   "counts": {
+    "total": 21418,
+    "length": 20212,
+    "language": 5747,
+    "gopher": 5391,
+    "nsfw": 5380,
+    "toxic": 5368,
+    "quality": 5368
+   }
+  },
+  {
+   "file": "CC-MAIN-20260412123146-20260412153146-00740.warc.wet.gz",
+   "written": 5441,
+   "counts": {
+    "total": 21336,
+    "length": 20084,
+    "language": 5834,
+    "gopher": 5458,
+    "nsfw": 5447,
+    "toxic": 5441,
+    "quality": 5441
+   }
+  },
+  {
+   "file": "CC-MAIN-20260412123146-20260412153146-00967.warc.wet.gz",
+   "written": 5446,
+   "counts": {
+    "total": 21283,
+    "length": 19939,
+    "language": 5814,
+    "gopher": 5477,
+    "nsfw": 5459,
+    "toxic": 5446,
+    "quality": 5446
+   }
+  },
+  {
+   "file": "CC-MAIN-20260412153740-20260412183740-00069.warc.wet.gz",
+   "written": 5463,
+   "counts": {
+    "total": 21328,
+    "length": 19895,
+    "language": 5899,
+    "gopher": 5483,
+    "nsfw": 5473,
+    "toxic": 5463,
+    "quality": 5463
+   }
+  },
+  {
+   "file": "CC-MAIN-20260412153740-20260412183740-00085.warc.wet.gz",
+   "written": 5510,
+   "counts": {
+    "total": 21943,
+    "length": 20404,
+    "language": 5860,
+    "gopher": 5526,
+    "nsfw": 5517,
+    "toxic": 5510,
+    "quality": 5510
+   }
+  },
+  {
+   "file": "CC-MAIN-20260412153740-20260412183740-00714.warc.wet.gz",
+   "written": 5340,
+   "counts": {
+    "total": 21355,
+    "length": 19874,
+    "language": 5714,
+    "gopher": 5351,
+    "nsfw": 5344,
+    "toxic": 5340,
+    "quality": 5340
+   }
+  },
+  {
+   "file": "CC-MAIN-20260412184625-20260412214625-00176.warc.wet.gz",
+   "written": 5621,
+   "counts": {
+    "total": 21502,
+    "length": 20409,
+    "language": 6005,
+    "gopher": 5637,
+    "nsfw": 5625,
+    "toxic": 5621,
+    "quality": 5621
+   }
+  },
+  {
+   "file": "CC-MAIN-20260412184625-20260412214625-00399.warc.wet.gz",
+   "written": 5537,
+   "counts": {
+    "total": 21313,
+    "length": 20210,
+    "language": 5913,
+    "gopher": 5553,
+    "nsfw": 5543,
+    "toxic": 5537,
+    "quality": 5537
+   }
+  },
+  {
+   "file": "CC-MAIN-20260412184625-20260412214625-00616.warc.wet.gz",
+   "written": 5500,
+   "counts": {
+    "total": 21463,
+    "length": 20446,
+    "language": 5907,
+    "gopher": 5511,
+    "nsfw": 5505,
+    "toxic": 5500,
+    "quality": 5500
+   }
+  },
+  {
+   "file": "CC-MAIN-20260412184625-20260412214625-00689.warc.wet.gz",
+   "written": 5664,
+   "counts": {
+    "total": 21487,
+    "length": 20412,
+    "language": 6081,
+    "gopher": 5685,
+    "nsfw": 5674,
+    "toxic": 5664,
+    "quality": 5664
+   }
+  },
+  {
+   "file": "CC-MAIN-20260412215615-20260413005615-00218.warc.wet.gz",
+   "written": 5574,
+   "counts": {
+    "total": 21301,
+    "length": 20222,
+    "language": 5967,
+    "gopher": 5585,
+    "nsfw": 5576,
+    "toxic": 5574,
+    "quality": 5574
+   }
+  },
+  {
+   "file": "CC-MAIN-20260412215615-20260413005615-00732.warc.wet.gz",
+   "written": 5552,
+   "counts": {
+    "total": 21393,
+    "length": 20283,
+    "language": 5897,
+    "gopher": 5562,
+    "nsfw": 5559,
+    "toxic": 5552,
+    "quality": 5552
+   }
+  },
+  {
+   "file": "CC-MAIN-20260412215615-20260413005615-00747.warc.wet.gz",
+   "written": 5601,
+   "counts": {
+    "total": 21563,
+    "length": 20437,
+    "language": 5972,
+    "gopher": 5620,
+    "nsfw": 5608,
+    "toxic": 5601,
+    "quality": 5601
+   }
+  },
+  {
+   "file": "CC-MAIN-20260413010038-20260413040038-00066.warc.wet.gz",
+   "written": 5739,
+   "counts": {
+    "total": 21728,
+    "length": 20728,
+    "language": 6117,
+    "gopher": 5759,
+    "nsfw": 5747,
+    "toxic": 5739,
+    "quality": 5739
+   }
+  },
+  {
+   "file": "CC-MAIN-20260413010038-20260413040038-00339.warc.wet.gz",
+   "written": 5687,
+   "counts": {
+    "total": 21606,
+    "length": 20672,
+    "language": 6105,
+    "gopher": 5704,
+    "nsfw": 5694,
+    "toxic": 5687,
+    "quality": 5687
+   }
+  },
+  {
+   "file": "CC-MAIN-20260413010038-20260413040038-00687.warc.wet.gz",
+   "written": 5732,
+   "counts": {
+    "total": 21649,
+    "length": 20774,
+    "language": 6147,
+    "gopher": 5749,
+    "nsfw": 5738,
+    "toxic": 5732,
+    "quality": 5732
+   }
+  },
+  {
+   "file": "CC-MAIN-20260413040425-20260413070425-00155.warc.wet.gz",
+   "written": 5759,
+   "counts": {
+    "total": 21789,
+    "length": 20915,
+    "language": 6118,
+    "gopher": 5766,
+    "nsfw": 5764,
+    "toxic": 5759,
+    "quality": 5759
+   }
+  },
+  {
+   "file": "CC-MAIN-20260413040425-20260413070425-00795.warc.wet.gz",
+   "written": 5653,
+   "counts": {
+    "total": 21490,
+    "length": 20648,
+    "language": 6022,
+    "gopher": 5667,
+    "nsfw": 5660,
+    "toxic": 5653,
+    "quality": 5653
+   }
+  },
+  {
+   "file": "CC-MAIN-20260413040425-20260413070425-00832.warc.wet.gz",
+   "written": 5676,
+   "counts": {
+    "total": 21316,
+    "length": 20503,
+    "language": 6073,
+    "gopher": 5695,
+    "nsfw": 5686,
+    "toxic": 5676,
+    "quality": 5676
+   }
+  },
+  {
+   "file": "CC-MAIN-20260413071237-20260413101237-00693.warc.wet.gz",
+   "written": 5673,
+   "counts": {
+    "total": 21528,
+    "length": 20757,
+    "language": 6067,
+    "gopher": 5690,
+    "nsfw": 5680,
+    "toxic": 5673,
+    "quality": 5673
+   }
+  },
+  {
+   "file": "CC-MAIN-20260413071237-20260413101237-00746.warc.wet.gz",
+   "written": 5885,
+   "counts": {
+    "total": 21934,
+    "length": 21081,
+    "language": 6259,
+    "gopher": 5900,
+    "nsfw": 5890,
+    "toxic": 5885,
+    "quality": 5885
+   }
+  },
+  {
+   "file": "CC-MAIN-20260413101656-20260413131656-00322.warc.wet.gz",
+   "written": 5707,
+   "counts": {
+    "total": 21364,
+    "length": 20573,
+    "language": 6134,
+    "gopher": 5726,
+    "nsfw": 5717,
+    "toxic": 5707,
+    "quality": 5707
+   }
+  },
+  {
+   "file": "CC-MAIN-20260413101656-20260413131656-00490.warc.wet.gz",
+   "written": 5659,
+   "counts": {
+    "total": 21247,
+    "length": 20422,
+    "language": 6049,
+    "gopher": 5671,
+    "nsfw": 5665,
+    "toxic": 5659,
+    "quality": 5659
+   }
+  },
+  {
+   "file": "CC-MAIN-20260413132510-20260413162510-00362.warc.wet.gz",
+   "written": 5662,
+   "counts": {
+    "total": 21543,
+    "length": 20784,
+    "language": 6024,
+    "gopher": 5673,
+    "nsfw": 5665,
+    "toxic": 5662,
+    "quality": 5662
+   }
+  },
+  {
+   "file": "CC-MAIN-20260413132510-20260413162510-00417.warc.wet.gz",
+   "written": 5659,
+   "counts": {
+    "total": 21572,
+    "length": 20836,
+    "language": 6057,
+    "gopher": 5683,
+    "nsfw": 5672,
+    "toxic": 5659,
+    "quality": 5659
+   }
+  },
+  {
+   "file": "CC-MAIN-20260413132510-20260413162510-00669.warc.wet.gz",
+   "written": 5757,
+   "counts": {
+    "total": 21718,
+    "length": 20955,
+    "language": 6151,
+    "gopher": 5768,
+    "nsfw": 5763,
+    "toxic": 5757,
+    "quality": 5757
+   }
+  },
+  {
+   "file": "CC-MAIN-20260413132510-20260413162510-00778.warc.wet.gz",
+   "written": 5684,
+   "counts": {
+    "total": 21543,
+    "length": 20776,
+    "language": 6071,
+    "gopher": 5695,
+    "nsfw": 5689,
+    "toxic": 5684,
+    "quality": 5684
+   }
+  },
+  {
+   "file": "CC-MAIN-20260413132510-20260413162510-00789.warc.wet.gz",
+   "written": 5869,
+   "counts": {
+    "total": 21780,
+    "length": 21100,
+    "language": 6271,
+    "gopher": 5890,
+    "nsfw": 5880,
+    "toxic": 5869,
+    "quality": 5869
+   }
+  },
+  {
+   "file": "CC-MAIN-20260413163432-20260413193432-00465.warc.wet.gz",
+   "written": 5577,
+   "counts": {
+    "total": 21651,
+    "length": 20919,
+    "language": 5965,
+    "gopher": 5594,
+    "nsfw": 5583,
+    "toxic": 5577,
+    "quality": 5577
+   }
+  },
+  {
+   "file": "CC-MAIN-20260413163432-20260413193432-00806.warc.wet.gz",
+   "written": 5685,
+   "counts": {
+    "total": 21702,
+    "length": 20966,
+    "language": 6090,
+    "gopher": 5698,
+    "nsfw": 5690,
+    "toxic": 5685,
+    "quality": 5685
+   }
+  },
+  {
+   "file": "CC-MAIN-20260413163432-20260413193432-00820.warc.wet.gz",
+   "written": 5650,
+   "counts": {
+    "total": 21587,
+    "length": 20882,
+    "language": 6058,
+    "gopher": 5662,
+    "nsfw": 5653,
+    "toxic": 5650,
+    "quality": 5650
+   }
+  },
+  {
+   "file": "CC-MAIN-20260413163432-20260413193432-00874.warc.wet.gz",
+   "written": 5661,
+   "counts": {
+    "total": 21610,
+    "length": 20881,
+    "language": 6096,
+    "gopher": 5680,
+    "nsfw": 5670,
+    "toxic": 5661,
+    "quality": 5661
+   }
+  },
+  {
+   "file": "CC-MAIN-20260413163432-20260413193432-00944.warc.wet.gz",
+   "written": 5748,
+   "counts": {
+    "total": 21622,
+    "length": 20883,
+    "language": 6149,
+    "gopher": 5767,
+    "nsfw": 5757,
+    "toxic": 5748,
+    "quality": 5748
+   }
+  },
+  {
+   "file": "CC-MAIN-20260413193854-20260413223854-00024.warc.wet.gz",
+   "written": 5475,
+   "counts": {
+    "total": 21081,
+    "length": 20346,
+    "language": 5894,
+    "gopher": 5489,
+    "nsfw": 5480,
+    "toxic": 5475,
+    "quality": 5475
+   }
+  },
+  {
+   "file": "CC-MAIN-20260413193854-20260413223854-00288.warc.wet.gz",
+   "written": 5476,
+   "counts": {
+    "total": 21220,
+    "length": 20449,
+    "language": 5910,
+    "gopher": 5500,
+    "nsfw": 5487,
+    "toxic": 5476,
+    "quality": 5476
+   }
+  },
+  {
+   "file": "CC-MAIN-20260413193854-20260413223854-00311.warc.wet.gz",
+   "written": 5686,
+   "counts": {
+    "total": 21494,
+    "length": 20759,
+    "language": 6117,
+    "gopher": 5711,
+    "nsfw": 5698,
+    "toxic": 5686,
+    "quality": 5686
+   }
+  },
+  {
+   "file": "CC-MAIN-20260413193854-20260413223854-00715.warc.wet.gz",
+   "written": 5631,
+   "counts": {
+    "total": 21515,
+    "length": 20721,
+    "language": 6055,
+    "gopher": 5648,
+    "nsfw": 5640,
+    "toxic": 5631,
+    "quality": 5631
+   }
+  },
+  {
+   "file": "CC-MAIN-20260413193854-20260413223854-00802.warc.wet.gz",
+   "written": 5513,
+   "counts": {
+    "total": 21254,
+    "length": 20513,
+    "language": 5859,
+    "gopher": 5527,
+    "nsfw": 5519,
+    "toxic": 5513,
+    "quality": 5513
+   }
+  },
+  {
+   "file": "CC-MAIN-20260413193854-20260413223854-00984.warc.wet.gz",
+   "written": 5511,
+   "counts": {
+    "total": 21061,
+    "length": 20277,
+    "language": 5870,
+    "gopher": 5522,
+    "nsfw": 5516,
+    "toxic": 5511,
+    "quality": 5511
+   }
+  },
+  {
+   "file": "CC-MAIN-20260413224816-20260414014816-00171.warc.wet.gz",
+   "written": 5735,
+   "counts": {
+    "total": 21727,
+    "length": 20828,
+    "language": 6136,
+    "gopher": 5755,
+    "nsfw": 5742,
+    "toxic": 5735,
+    "quality": 5735
+   }
+  },
+  {
+   "file": "CC-MAIN-20260413224816-20260414014816-00348.warc.wet.gz",
+   "written": 5530,
+   "counts": {
+    "total": 21391,
+    "length": 20540,
+    "language": 5939,
+    "gopher": 5547,
+    "nsfw": 5536,
+    "toxic": 5530,
+    "quality": 5530
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414015447-20260414045447-00155.warc.wet.gz",
+   "written": 5569,
+   "counts": {
+    "total": 21360,
+    "length": 20353,
+    "language": 5924,
+    "gopher": 5585,
+    "nsfw": 5577,
+    "toxic": 5569,
+    "quality": 5569
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414015447-20260414045447-00704.warc.wet.gz",
+   "written": 5578,
+   "counts": {
+    "total": 21677,
+    "length": 20693,
+    "language": 5964,
+    "gopher": 5597,
+    "nsfw": 5582,
+    "toxic": 5578,
+    "quality": 5578
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414015447-20260414045447-00761.warc.wet.gz",
+   "written": 5576,
+   "counts": {
+    "total": 21491,
+    "length": 20526,
+    "language": 5988,
+    "gopher": 5602,
+    "nsfw": 5587,
+    "toxic": 5576,
+    "quality": 5576
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414015447-20260414045447-00842.warc.wet.gz",
+   "written": 5552,
+   "counts": {
+    "total": 21546,
+    "length": 20556,
+    "language": 5980,
+    "gopher": 5572,
+    "nsfw": 5555,
+    "toxic": 5552,
+    "quality": 5552
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414015447-20260414045447-00942.warc.wet.gz",
+   "written": 5517,
+   "counts": {
+    "total": 21521,
+    "length": 20545,
+    "language": 5888,
+    "gopher": 5533,
+    "nsfw": 5527,
+    "toxic": 5517,
+    "quality": 5517
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414015447-20260414045447-00949.warc.wet.gz",
+   "written": 5734,
+   "counts": {
+    "total": 21663,
+    "length": 20675,
+    "language": 6144,
+    "gopher": 5753,
+    "nsfw": 5739,
+    "toxic": 5734,
+    "quality": 5734
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414050437-20260414080437-00645.warc.wet.gz",
+   "written": 5550,
+   "counts": {
+    "total": 21519,
+    "length": 20541,
+    "language": 5947,
+    "gopher": 5567,
+    "nsfw": 5556,
+    "toxic": 5550,
+    "quality": 5550
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414081010-20260414111010-00042.warc.wet.gz",
+   "written": 5645,
+   "counts": {
+    "total": 21782,
+    "length": 20862,
+    "language": 6062,
+    "gopher": 5669,
+    "nsfw": 5652,
+    "toxic": 5645,
+    "quality": 5645
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414081010-20260414111010-00111.warc.wet.gz",
+   "written": 5666,
+   "counts": {
+    "total": 21899,
+    "length": 20973,
+    "language": 6016,
+    "gopher": 5674,
+    "nsfw": 5671,
+    "toxic": 5666,
+    "quality": 5666
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414081010-20260414111010-00508.warc.wet.gz",
+   "written": 5653,
+   "counts": {
+    "total": 21758,
+    "length": 20770,
+    "language": 6046,
+    "gopher": 5667,
+    "nsfw": 5659,
+    "toxic": 5653,
+    "quality": 5653
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414111600-20260414141600-00039.warc.wet.gz",
+   "written": 5465,
+   "counts": {
+    "total": 20757,
+    "length": 19995,
+    "language": 5841,
+    "gopher": 5487,
+    "nsfw": 5471,
+    "toxic": 5465,
+    "quality": 5465
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414111600-20260414141600-00349.warc.wet.gz",
+   "written": 5365,
+   "counts": {
+    "total": 20763,
+    "length": 19958,
+    "language": 5750,
+    "gopher": 5384,
+    "nsfw": 5373,
+    "toxic": 5365,
+    "quality": 5365
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414111600-20260414141600-00621.warc.wet.gz",
+   "written": 5473,
+   "counts": {
+    "total": 20952,
+    "length": 20136,
+    "language": 5860,
+    "gopher": 5492,
+    "nsfw": 5480,
+    "toxic": 5473,
+    "quality": 5473
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414142456-20260414172456-00214.warc.wet.gz",
+   "written": 5676,
+   "counts": {
+    "total": 21327,
+    "length": 20577,
+    "language": 6058,
+    "gopher": 5690,
+    "nsfw": 5685,
+    "toxic": 5676,
+    "quality": 5676
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414142456-20260414172456-00536.warc.wet.gz",
+   "written": 5686,
+   "counts": {
+    "total": 21481,
+    "length": 20749,
+    "language": 6109,
+    "gopher": 5706,
+    "nsfw": 5691,
+    "toxic": 5686,
+    "quality": 5686
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414142456-20260414172456-00583.warc.wet.gz",
+   "written": 5660,
+   "counts": {
+    "total": 21415,
+    "length": 20702,
+    "language": 6068,
+    "gopher": 5679,
+    "nsfw": 5668,
+    "toxic": 5660,
+    "quality": 5660
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414142456-20260414172456-00616.warc.wet.gz",
+   "written": 5859,
+   "counts": {
+    "total": 21792,
+    "length": 21068,
+    "language": 6223,
+    "gopher": 5869,
+    "nsfw": 5864,
+    "toxic": 5859,
+    "quality": 5859
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414142456-20260414172456-00620.warc.wet.gz",
+   "written": 5647,
+   "counts": {
+    "total": 21359,
+    "length": 20640,
+    "language": 6029,
+    "gopher": 5668,
+    "nsfw": 5658,
+    "toxic": 5647,
+    "quality": 5647
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414142456-20260414172456-00644.warc.wet.gz",
+   "written": 5673,
+   "counts": {
+    "total": 21347,
+    "length": 20643,
+    "language": 6091,
+    "gopher": 5686,
+    "nsfw": 5678,
+    "toxic": 5673,
+    "quality": 5673
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414172947-20260414202947-00057.warc.wet.gz",
+   "written": 5546,
+   "counts": {
+    "total": 21432,
+    "length": 20709,
+    "language": 5990,
+    "gopher": 5563,
+    "nsfw": 5554,
+    "toxic": 5546,
+    "quality": 5546
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414172947-20260414202947-00274.warc.wet.gz",
+   "written": 5688,
+   "counts": {
+    "total": 21628,
+    "length": 20886,
+    "language": 6087,
+    "gopher": 5706,
+    "nsfw": 5693,
+    "toxic": 5688,
+    "quality": 5688
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414172947-20260414202947-00277.warc.wet.gz",
+   "written": 5752,
+   "counts": {
+    "total": 21693,
+    "length": 20914,
+    "language": 6174,
+    "gopher": 5768,
+    "nsfw": 5760,
+    "toxic": 5752,
+    "quality": 5752
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414172947-20260414202947-00284.warc.wet.gz",
+   "written": 5644,
+   "counts": {
+    "total": 21408,
+    "length": 20639,
+    "language": 6049,
+    "gopher": 5658,
+    "nsfw": 5650,
+    "toxic": 5644,
+    "quality": 5644
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414172947-20260414202947-00311.warc.wet.gz",
+   "written": 5719,
+   "counts": {
+    "total": 21616,
+    "length": 20900,
+    "language": 6136,
+    "gopher": 5734,
+    "nsfw": 5725,
+    "toxic": 5719,
+    "quality": 5719
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414172947-20260414202947-00415.warc.wet.gz",
+   "written": 5727,
+   "counts": {
+    "total": 21555,
+    "length": 20861,
+    "language": 6117,
+    "gopher": 5745,
+    "nsfw": 5733,
+    "toxic": 5727,
+    "quality": 5727
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414172947-20260414202947-00587.warc.wet.gz",
+   "written": 5697,
+   "counts": {
+    "total": 21422,
+    "length": 20668,
+    "language": 6081,
+    "gopher": 5716,
+    "nsfw": 5702,
+    "toxic": 5697,
+    "quality": 5697
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414172947-20260414202947-00589.warc.wet.gz",
+   "written": 5611,
+   "counts": {
+    "total": 21178,
+    "length": 20489,
+    "language": 6005,
+    "gopher": 5625,
+    "nsfw": 5618,
+    "toxic": 5611,
+    "quality": 5611
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414203710-20260414233710-00002.warc.wet.gz",
+   "written": 5733,
+   "counts": {
+    "total": 21545,
+    "length": 20783,
+    "language": 6127,
+    "gopher": 5749,
+    "nsfw": 5736,
+    "toxic": 5733,
+    "quality": 5733
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414203710-20260414233710-00189.warc.wet.gz",
+   "written": 5605,
+   "counts": {
+    "total": 21601,
+    "length": 20829,
+    "language": 5989,
+    "gopher": 5618,
+    "nsfw": 5610,
+    "toxic": 5605,
+    "quality": 5605
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414203710-20260414233710-00289.warc.wet.gz",
+   "written": 5809,
+   "counts": {
+    "total": 21735,
+    "length": 20940,
+    "language": 6201,
+    "gopher": 5821,
+    "nsfw": 5814,
+    "toxic": 5809,
+    "quality": 5809
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414203710-20260414233710-00308.warc.wet.gz",
+   "written": 5772,
+   "counts": {
+    "total": 21517,
+    "length": 20766,
+    "language": 6175,
+    "gopher": 5788,
+    "nsfw": 5776,
+    "toxic": 5772,
+    "quality": 5772
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414203710-20260414233710-00853.warc.wet.gz",
+   "written": 5596,
+   "counts": {
+    "total": 21406,
+    "length": 20707,
+    "language": 5976,
+    "gopher": 5615,
+    "nsfw": 5608,
+    "toxic": 5596,
+    "quality": 5596
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414203710-20260414233710-00889.warc.wet.gz",
+   "written": 5657,
+   "counts": {
+    "total": 21643,
+    "length": 20918,
+    "language": 6052,
+    "gopher": 5679,
+    "nsfw": 5662,
+    "toxic": 5657,
+    "quality": 5657
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414234659-20260415024659-00056.warc.wet.gz",
+   "written": 5651,
+   "counts": {
+    "total": 21559,
+    "length": 20830,
+    "language": 6007,
+    "gopher": 5674,
+    "nsfw": 5660,
+    "toxic": 5651,
+    "quality": 5651
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414234659-20260415024659-00429.warc.wet.gz",
+   "written": 5542,
+   "counts": {
+    "total": 21363,
+    "length": 20627,
+    "language": 5942,
+    "gopher": 5561,
+    "nsfw": 5552,
+    "toxic": 5542,
+    "quality": 5542
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414234659-20260415024659-00512.warc.wet.gz",
+   "written": 5737,
+   "counts": {
+    "total": 21841,
+    "length": 21114,
+    "language": 6117,
+    "gopher": 5759,
+    "nsfw": 5746,
+    "toxic": 5737,
+    "quality": 5737
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414234659-20260415024659-00614.warc.wet.gz",
+   "written": 5657,
+   "counts": {
+    "total": 21556,
+    "length": 20827,
+    "language": 6074,
+    "gopher": 5674,
+    "nsfw": 5665,
+    "toxic": 5657,
+    "quality": 5657
+   }
+  },
+  {
+   "file": "CC-MAIN-20260414234659-20260415024659-00697.warc.wet.gz",
+   "written": 5552,
+   "counts": {
+    "total": 21314,
+    "length": 20610,
+    "language": 5943,
+    "gopher": 5563,
+    "nsfw": 5556,
+    "toxic": 5552,
+    "quality": 5552
+   }
+  },
+  {
+   "file": "CC-MAIN-20260415025300-20260415055300-00253.warc.wet.gz",
+   "written": 5547,
+   "counts": {
+    "total": 21462,
+    "length": 20724,
+    "language": 5947,
+    "gopher": 5567,
+    "nsfw": 5554,
+    "toxic": 5547,
+    "quality": 5547
+   }
+  },
+  {
+   "file": "CC-MAIN-20260415025300-20260415055300-00374.warc.wet.gz",
+   "written": 5543,
+   "counts": {
+    "total": 21281,
+    "length": 20524,
+    "language": 5925,
+    "gopher": 5563,
+    "nsfw": 5550,
+    "toxic": 5543,
+    "quality": 5543
+   }
+  },
+  {
+   "file": "CC-MAIN-20260415025300-20260415055300-00482.warc.wet.gz",
+   "written": 5519,
+   "counts": {
+    "total": 21134,
+    "length": 20396,
+    "language": 5907,
+    "gopher": 5543,
+    "nsfw": 5526,
+    "toxic": 5519,
+    "quality": 5519
+   }
+  },
+  {
+   "file": "CC-MAIN-20260415025300-20260415055300-00837.warc.wet.gz",
+   "written": 5697,
+   "counts": {
+    "total": 21513,
+    "length": 20782,
+    "language": 6078,
+    "gopher": 5715,
+    "nsfw": 5705,
+    "toxic": 5697,
+    "quality": 5697
+   }
+  },
+  {
+   "file": "CC-MAIN-20260415055744-20260415085744-00286.warc.wet.gz",
+   "written": 5739,
+   "counts": {
+    "total": 21656,
+    "length": 20931,
+    "language": 6144,
+    "gopher": 5754,
+    "nsfw": 5747,
+    "toxic": 5739,
+    "quality": 5739
+   }
+  },
+  {
+   "file": "CC-MAIN-20260415055744-20260415085744-00430.warc.wet.gz",
+   "written": 5541,
+   "counts": {
+    "total": 21473,
+    "length": 20748,
+    "language": 5912,
+    "gopher": 5556,
+    "nsfw": 5548,
+    "toxic": 5541,
+    "quality": 5541
+   }
+  },
+  {
+   "file": "CC-MAIN-20260415055744-20260415085744-00580.warc.wet.gz",
+   "written": 5567,
+   "counts": {
+    "total": 21366,
+    "length": 20624,
+    "language": 5947,
+    "gopher": 5589,
+    "nsfw": 5580,
+    "toxic": 5567,
+    "quality": 5567
+   }
+  },
+  {
+   "file": "CC-MAIN-20260415055744-20260415085744-00689.warc.wet.gz",
+   "written": 5560,
+   "counts": {
+    "total": 21377,
+    "length": 20648,
+    "language": 5990,
+    "gopher": 5580,
+    "nsfw": 5569,
+    "toxic": 5560,
+    "quality": 5560
+   }
+  },
+  {
+   "file": "CC-MAIN-20260415090232-20260415120232-00204.warc.wet.gz",
+   "written": 5439,
+   "counts": {
+    "total": 21330,
+    "length": 20552,
+    "language": 5836,
+    "gopher": 5456,
+    "nsfw": 5444,
+    "toxic": 5439,
+    "quality": 5439
+   }
+  },
+  {
+   "file": "CC-MAIN-20260415090232-20260415120232-00724.warc.wet.gz",
+   "written": 5653,
+   "counts": {
+    "total": 21436,
+    "length": 20697,
+    "language": 6056,
+    "gopher": 5673,
+    "nsfw": 5662,
+    "toxic": 5653,
+    "quality": 5653
+   }
+  },
+  {
+   "file": "CC-MAIN-20260415090232-20260415120232-00887.warc.wet.gz",
+   "written": 5657,
+   "counts": {
+    "total": 21506,
+    "length": 20765,
+    "language": 6056,
+    "gopher": 5671,
+    "nsfw": 5662,
+    "toxic": 5657,
+    "quality": 5657
+   }
+  },
+  {
+   "file": "CC-MAIN-20260415090232-20260415120232-00963.warc.wet.gz",
+   "written": 5585,
+   "counts": {
+    "total": 21484,
+    "length": 20736,
+    "language": 5979,
+    "gopher": 5599,
+    "nsfw": 5589,
+    "toxic": 5585,
+    "quality": 5585
+   }
+  },
+  {
+   "file": "CC-MAIN-20260415090232-20260415120232-00974.warc.wet.gz",
+   "written": 5562,
+   "counts": {
+    "total": 21161,
+    "length": 20380,
+    "language": 5941,
+    "gopher": 5580,
+    "nsfw": 5568,
+    "toxic": 5562,
+    "quality": 5562
+   }
+  },
+  {
+   "file": "CC-MAIN-20260415120952-20260415150952-00065.warc.wet.gz",
+   "written": 5697,
+   "counts": {
+    "total": 21656,
+    "length": 20878,
+    "language": 6112,
+    "gopher": 5722,
+    "nsfw": 5711,
+    "toxic": 5697,
+    "quality": 5697
+   }
+  },
+  {
+   "file": "CC-MAIN-20260415120952-20260415150952-00109.warc.wet.gz",
+   "written": 5536,
+   "counts": {
+    "total": 21102,
+    "length": 20423,
+    "language": 5901,
+    "gopher": 5554,
+    "nsfw": 5545,
+    "toxic": 5536,
+    "quality": 5536
+   }
+  },
+  {
+   "file": "CC-MAIN-20260415120952-20260415150952-00139.warc.wet.gz",
+   "written": 5593,
+   "counts": {
+    "total": 21361,
+    "length": 20653,
+    "language": 5969,
+    "gopher": 5617,
+    "nsfw": 5597,
+    "toxic": 5593,
+    "quality": 5593
+   }
+  },
+  {
+   "file": "CC-MAIN-20260415120952-20260415150952-00273.warc.wet.gz",
+   "written": 5746,
+   "counts": {
+    "total": 21558,
+    "length": 20820,
+    "language": 6123,
+    "gopher": 5765,
+    "nsfw": 5752,
+    "toxic": 5746,
+    "quality": 5746
+   }
+  },
+  {
+   "file": "CC-MAIN-20260415120952-20260415150952-00484.warc.wet.gz",
+   "written": 5643,
+   "counts": {
+    "total": 21424,
+    "length": 20735,
+    "language": 6040,
+    "gopher": 5659,
+    "nsfw": 5651,
+    "toxic": 5643,
+    "quality": 5643
+   }
+  },
+  {
+   "file": "CC-MAIN-20260415151942-20260415181942-00082.warc.wet.gz",
+   "written": 5768,
+   "counts": {
+    "total": 21601,
+    "length": 20853,
+    "language": 6144,
+    "gopher": 5788,
+    "nsfw": 5778,
+    "toxic": 5768,
+    "quality": 5768
+   }
+  },
+  {
+   "file": "CC-MAIN-20260415151942-20260415181942-00247.warc.wet.gz",
+   "written": 5717,
+   "counts": {
+    "total": 21423,
+    "length": 20662,
+    "language": 6094,
+    "gopher": 5734,
+    "nsfw": 5722,
+    "toxic": 5717,
+    "quality": 5717
+   }
+  },
+  {
+   "file": "CC-MAIN-20260415151942-20260415181942-00283.warc.wet.gz",
+   "written": 5607,
+   "counts": {
+    "total": 21254,
+    "length": 20475,
+    "language": 5983,
+    "gopher": 5622,
+    "nsfw": 5615,
+    "toxic": 5607,
+    "quality": 5607
+   }
+  },
+  {
+   "file": "CC-MAIN-20260415151942-20260415181942-00678.warc.wet.gz",
+   "written": 5529,
+   "counts": {
+    "total": 21381,
+    "length": 20617,
+    "language": 5926,
+    "gopher": 5541,
+    "nsfw": 5532,
+    "toxic": 5529,
+    "quality": 5529
+   }
+  },
+  {
+   "file": "CC-MAIN-20260415182819-20260415212819-00097.warc.wet.gz",
+   "written": 5683,
+   "counts": {
+    "total": 21671,
+    "length": 20936,
+    "language": 6064,
+    "gopher": 5698,
+    "nsfw": 5689,
+    "toxic": 5683,
+    "quality": 5683
+   }
+  },
+  {
+   "file": "CC-MAIN-20260415182819-20260415212819-00141.warc.wet.gz",
+   "written": 5556,
+   "counts": {
+    "total": 21305,
+    "length": 20599,
+    "language": 5964,
+    "gopher": 5582,
+    "nsfw": 5566,
+    "toxic": 5556,
+    "quality": 5556
+   }
+  },
+  {
+   "file": "CC-MAIN-20260415182819-20260415212819-00919.warc.wet.gz",
+   "written": 5685,
+   "counts": {
+    "total": 21514,
+    "length": 20744,
+    "language": 6103,
+    "gopher": 5693,
+    "nsfw": 5690,
+    "toxic": 5685,
+    "quality": 5685
+   }
+  },
+  {
+   "file": "CC-MAIN-20260415213810-20260416003810-00246.warc.wet.gz",
+   "written": 5690,
+   "counts": {
+    "total": 21603,
+    "length": 20888,
+    "language": 6108,
+    "gopher": 5707,
+    "nsfw": 5697,
+    "toxic": 5690,
+    "quality": 5690
+   }
+  },
+  {
+   "file": "CC-MAIN-20260415213810-20260416003810-00271.warc.wet.gz",
+   "written": 5607,
+   "counts": {
+    "total": 21262,
+    "length": 20582,
+    "language": 6035,
+    "gopher": 5618,
+    "nsfw": 5612,
+    "toxic": 5607,
+    "quality": 5607
+   }
+  },
+  {
+   "file": "CC-MAIN-20260415213810-20260416003810-00300.warc.wet.gz",
+   "written": 5633,
+   "counts": {
+    "total": 21318,
+    "length": 20498,
+    "language": 6050,
+    "gopher": 5651,
+    "nsfw": 5639,
+    "toxic": 5633,
+    "quality": 5633
+   }
+  },
+  {
+   "file": "CC-MAIN-20260415213810-20260416003810-00454.warc.wet.gz",
+   "written": 5571,
+   "counts": {
+    "total": 21348,
+    "length": 20604,
+    "language": 5987,
+    "gopher": 5589,
+    "nsfw": 5575,
+    "toxic": 5571,
+    "quality": 5571
+   }
+  },
+  {
+   "file": "CC-MAIN-20260415213810-20260416003810-00502.warc.wet.gz",
+   "written": 5697,
+   "counts": {
+    "total": 21400,
+    "length": 20665,
+    "language": 6092,
+    "gopher": 5714,
+    "nsfw": 5705,
+    "toxic": 5697,
+    "quality": 5697
+   }
+  },
+  {
+   "file": "CC-MAIN-20260415213810-20260416003810-00626.warc.wet.gz",
+   "written": 5661,
+   "counts": {
+    "total": 21431,
+    "length": 20678,
+    "language": 6092,
+    "gopher": 5669,
+    "nsfw": 5667,
+    "toxic": 5661,
+    "quality": 5661
+   }
+  },
+  {
+   "file": "CC-MAIN-20260415213810-20260416003810-00989.warc.wet.gz",
+   "written": 5674,
+   "counts": {
+    "total": 21164,
+    "length": 20445,
+    "language": 6072,
+    "gopher": 5694,
+    "nsfw": 5683,
+    "toxic": 5674,
+    "quality": 5674
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416004801-20260416034801-00118.warc.wet.gz",
+   "written": 5644,
+   "counts": {
+    "total": 21316,
+    "length": 20500,
+    "language": 6043,
+    "gopher": 5654,
+    "nsfw": 5648,
+    "toxic": 5644,
+    "quality": 5644
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416004801-20260416034801-00447.warc.wet.gz",
+   "written": 5723,
+   "counts": {
+    "total": 21596,
+    "length": 20764,
+    "language": 6100,
+    "gopher": 5736,
+    "nsfw": 5724,
+    "toxic": 5723,
+    "quality": 5723
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416004801-20260416034801-00520.warc.wet.gz",
+   "written": 5549,
+   "counts": {
+    "total": 21192,
+    "length": 20386,
+    "language": 5929,
+    "gopher": 5565,
+    "nsfw": 5555,
+    "toxic": 5549,
+    "quality": 5549
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416004801-20260416034801-00584.warc.wet.gz",
+   "written": 5577,
+   "counts": {
+    "total": 21213,
+    "length": 20381,
+    "language": 5955,
+    "gopher": 5588,
+    "nsfw": 5581,
+    "toxic": 5577,
+    "quality": 5577
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416035750-20260416065750-00097.warc.wet.gz",
+   "written": 5708,
+   "counts": {
+    "total": 21582,
+    "length": 20564,
+    "language": 6062,
+    "gopher": 5720,
+    "nsfw": 5710,
+    "toxic": 5708,
+    "quality": 5708
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416035750-20260416065750-00460.warc.wet.gz",
+   "written": 5489,
+   "counts": {
+    "total": 21506,
+    "length": 20538,
+    "language": 5839,
+    "gopher": 5502,
+    "nsfw": 5495,
+    "toxic": 5489,
+    "quality": 5489
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416035750-20260416065750-00488.warc.wet.gz",
+   "written": 5610,
+   "counts": {
+    "total": 21528,
+    "length": 20609,
+    "language": 6025,
+    "gopher": 5629,
+    "nsfw": 5616,
+    "toxic": 5610,
+    "quality": 5610
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416035750-20260416065750-00550.warc.wet.gz",
+   "written": 5550,
+   "counts": {
+    "total": 21538,
+    "length": 20602,
+    "language": 5930,
+    "gopher": 5569,
+    "nsfw": 5552,
+    "toxic": 5550,
+    "quality": 5550
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416035750-20260416065750-00582.warc.wet.gz",
+   "written": 5529,
+   "counts": {
+    "total": 21437,
+    "length": 20426,
+    "language": 5917,
+    "gopher": 5546,
+    "nsfw": 5534,
+    "toxic": 5529,
+    "quality": 5529
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416035750-20260416065750-00647.warc.wet.gz",
+   "written": 5541,
+   "counts": {
+    "total": 21567,
+    "length": 20636,
+    "language": 5909,
+    "gopher": 5558,
+    "nsfw": 5548,
+    "toxic": 5541,
+    "quality": 5541
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416035750-20260416065750-00806.warc.wet.gz",
+   "written": 5447,
+   "counts": {
+    "total": 21392,
+    "length": 20452,
+    "language": 5835,
+    "gopher": 5460,
+    "nsfw": 5452,
+    "toxic": 5447,
+    "quality": 5447
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416070741-20260416100741-00206.warc.wet.gz",
+   "written": 5573,
+   "counts": {
+    "total": 21486,
+    "length": 20106,
+    "language": 5958,
+    "gopher": 5589,
+    "nsfw": 5578,
+    "toxic": 5573,
+    "quality": 5573
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416070741-20260416100741-00307.warc.wet.gz",
+   "written": 5490,
+   "counts": {
+    "total": 21633,
+    "length": 20266,
+    "language": 5899,
+    "gopher": 5510,
+    "nsfw": 5499,
+    "toxic": 5490,
+    "quality": 5490
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416070741-20260416100741-00810.warc.wet.gz",
+   "written": 5483,
+   "counts": {
+    "total": 21259,
+    "length": 19924,
+    "language": 5848,
+    "gopher": 5494,
+    "nsfw": 5486,
+    "toxic": 5483,
+    "quality": 5483
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416070741-20260416100741-00841.warc.wet.gz",
+   "written": 5446,
+   "counts": {
+    "total": 21483,
+    "length": 20096,
+    "language": 5841,
+    "gopher": 5460,
+    "nsfw": 5452,
+    "toxic": 5446,
+    "quality": 5446
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416101736-20260416131736-00445.warc.wet.gz",
+   "written": 5410,
+   "counts": {
+    "total": 21225,
+    "length": 19907,
+    "language": 5817,
+    "gopher": 5434,
+    "nsfw": 5420,
+    "toxic": 5410,
+    "quality": 5410
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416101736-20260416131736-00469.warc.wet.gz",
+   "written": 5485,
+   "counts": {
+    "total": 21493,
+    "length": 20117,
+    "language": 5860,
+    "gopher": 5499,
+    "nsfw": 5494,
+    "toxic": 5485,
+    "quality": 5485
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416101736-20260416131736-00908.warc.wet.gz",
+   "written": 5293,
+   "counts": {
+    "total": 21576,
+    "length": 20246,
+    "language": 5658,
+    "gopher": 5305,
+    "nsfw": 5296,
+    "toxic": 5293,
+    "quality": 5293
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416101736-20260416131736-00952.warc.wet.gz",
+   "written": 5540,
+   "counts": {
+    "total": 21770,
+    "length": 20413,
+    "language": 5941,
+    "gopher": 5554,
+    "nsfw": 5545,
+    "toxic": 5540,
+    "quality": 5540
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416101736-20260416131736-00978.warc.wet.gz",
+   "written": 5390,
+   "counts": {
+    "total": 21061,
+    "length": 19734,
+    "language": 5737,
+    "gopher": 5406,
+    "nsfw": 5394,
+    "toxic": 5390,
+    "quality": 5390
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416101736-20260416131736-00993.warc.wet.gz",
+   "written": 5465,
+   "counts": {
+    "total": 21319,
+    "length": 19975,
+    "language": 5875,
+    "gopher": 5487,
+    "nsfw": 5473,
+    "toxic": 5465,
+    "quality": 5465
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416132224-20260416162224-00445.warc.wet.gz",
+   "written": 5561,
+   "counts": {
+    "total": 21138,
+    "length": 19941,
+    "language": 5912,
+    "gopher": 5573,
+    "nsfw": 5568,
+    "toxic": 5561,
+    "quality": 5561
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416132224-20260416162224-00629.warc.wet.gz",
+   "written": 5487,
+   "counts": {
+    "total": 21363,
+    "length": 20100,
+    "language": 5851,
+    "gopher": 5502,
+    "nsfw": 5493,
+    "toxic": 5487,
+    "quality": 5487
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416132224-20260416162224-00734.warc.wet.gz",
+   "written": 5497,
+   "counts": {
+    "total": 21302,
+    "length": 20051,
+    "language": 5851,
+    "gopher": 5514,
+    "nsfw": 5503,
+    "toxic": 5497,
+    "quality": 5497
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416132224-20260416162224-00821.warc.wet.gz",
+   "written": 5388,
+   "counts": {
+    "total": 21041,
+    "length": 19824,
+    "language": 5767,
+    "gopher": 5408,
+    "nsfw": 5398,
+    "toxic": 5388,
+    "quality": 5388
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416163105-20260416193105-00237.warc.wet.gz",
+   "written": 5527,
+   "counts": {
+    "total": 21480,
+    "length": 20432,
+    "language": 5910,
+    "gopher": 5537,
+    "nsfw": 5533,
+    "toxic": 5527,
+    "quality": 5527
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416163105-20260416193105-00939.warc.wet.gz",
+   "written": 5545,
+   "counts": {
+    "total": 21384,
+    "length": 20341,
+    "language": 5942,
+    "gopher": 5565,
+    "nsfw": 5551,
+    "toxic": 5545,
+    "quality": 5545
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416193934-20260416223934-00272.warc.wet.gz",
+   "written": 5558,
+   "counts": {
+    "total": 21125,
+    "length": 20322,
+    "language": 5950,
+    "gopher": 5575,
+    "nsfw": 5564,
+    "toxic": 5558,
+    "quality": 5558
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416193934-20260416223934-00433.warc.wet.gz",
+   "written": 5635,
+   "counts": {
+    "total": 21460,
+    "length": 20638,
+    "language": 6013,
+    "gopher": 5646,
+    "nsfw": 5639,
+    "toxic": 5635,
+    "quality": 5635
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416193934-20260416223934-00634.warc.wet.gz",
+   "written": 5540,
+   "counts": {
+    "total": 21390,
+    "length": 20569,
+    "language": 5936,
+    "gopher": 5561,
+    "nsfw": 5548,
+    "toxic": 5540,
+    "quality": 5540
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416193934-20260416223934-00636.warc.wet.gz",
+   "written": 5680,
+   "counts": {
+    "total": 21341,
+    "length": 20536,
+    "language": 6078,
+    "gopher": 5696,
+    "nsfw": 5688,
+    "toxic": 5680,
+    "quality": 5680
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416193934-20260416223934-00710.warc.wet.gz",
+   "written": 5566,
+   "counts": {
+    "total": 21355,
+    "length": 20566,
+    "language": 5957,
+    "gopher": 5578,
+    "nsfw": 5570,
+    "toxic": 5566,
+    "quality": 5566
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416193934-20260416223934-00989.warc.wet.gz",
+   "written": 5515,
+   "counts": {
+    "total": 21382,
+    "length": 20557,
+    "language": 5948,
+    "gopher": 5534,
+    "nsfw": 5522,
+    "toxic": 5515,
+    "quality": 5515
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416224808-20260417014808-00073.warc.wet.gz",
+   "written": 5594,
+   "counts": {
+    "total": 21349,
+    "length": 20476,
+    "language": 6000,
+    "gopher": 5611,
+    "nsfw": 5598,
+    "toxic": 5594,
+    "quality": 5594
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416224808-20260417014808-00078.warc.wet.gz",
+   "written": 5593,
+   "counts": {
+    "total": 21501,
+    "length": 20628,
+    "language": 5994,
+    "gopher": 5615,
+    "nsfw": 5598,
+    "toxic": 5593,
+    "quality": 5593
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416224808-20260417014808-00654.warc.wet.gz",
+   "written": 5511,
+   "counts": {
+    "total": 21086,
+    "length": 20252,
+    "language": 5912,
+    "gopher": 5528,
+    "nsfw": 5519,
+    "toxic": 5511,
+    "quality": 5511
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416224808-20260417014808-00691.warc.wet.gz",
+   "written": 5607,
+   "counts": {
+    "total": 21491,
+    "length": 20627,
+    "language": 6000,
+    "gopher": 5626,
+    "nsfw": 5614,
+    "toxic": 5607,
+    "quality": 5607
+   }
+  },
+  {
+   "file": "CC-MAIN-20260416224808-20260417014808-00897.warc.wet.gz",
+   "written": 5697,
+   "counts": {
+    "total": 21331,
+    "length": 20474,
+    "language": 6073,
+    "gopher": 5717,
+    "nsfw": 5704,
+    "toxic": 5697,
+    "quality": 5697
+   }
+  },
+  {
+   "file": "CC-MAIN-20260417015642-20260417045642-00025.warc.wet.gz",
+   "written": 5757,
+   "counts": {
+    "total": 21592,
+    "length": 20706,
+    "language": 6142,
+    "gopher": 5778,
+    "nsfw": 5763,
+    "toxic": 5757,
+    "quality": 5757
+   }
+  },
+  {
+   "file": "CC-MAIN-20260417015642-20260417045642-00205.warc.wet.gz",
+   "written": 5518,
+   "counts": {
+    "total": 21398,
+    "length": 20493,
+    "language": 5926,
+    "gopher": 5529,
+    "nsfw": 5522,
+    "toxic": 5518,
+    "quality": 5518
+   }
+  },
+  {
+   "file": "CC-MAIN-20260417015642-20260417045642-00365.warc.wet.gz",
+   "written": 5485,
+   "counts": {
+    "total": 21586,
+    "length": 20700,
+    "language": 5862,
+    "gopher": 5498,
+    "nsfw": 5490,
+    "toxic": 5485,
+    "quality": 5485
+   }
+  },
+  {
+   "file": "CC-MAIN-20260417015642-20260417045642-00367.warc.wet.gz",
+   "written": 5575,
+   "counts": {
+    "total": 21429,
+    "length": 20523,
+    "language": 5982,
+    "gopher": 5594,
+    "nsfw": 5587,
+    "toxic": 5575,
+    "quality": 5575
+   }
+  },
+  {
+   "file": "CC-MAIN-20260417015642-20260417045642-00714.warc.wet.gz",
+   "written": 5596,
+   "counts": {
+    "total": 21441,
+    "length": 20544,
+    "language": 5977,
+    "gopher": 5618,
+    "nsfw": 5606,
+    "toxic": 5596,
+    "quality": 5596
+   }
+  },
+  {
+   "file": "CC-MAIN-20260417015642-20260417045642-00739.warc.wet.gz",
+   "written": 5523,
+   "counts": {
+    "total": 21409,
+    "length": 20521,
+    "language": 5901,
+    "gopher": 5538,
+    "nsfw": 5530,
+    "toxic": 5523,
+    "quality": 5523
+   }
+  },
+  {
+   "file": "CC-MAIN-20260417050133-20260417080133-00528.warc.wet.gz",
+   "written": 5678,
+   "counts": {
+    "total": 21433,
+    "length": 20578,
+    "language": 6073,
+    "gopher": 5702,
+    "nsfw": 5685,
+    "toxic": 5678,
+    "quality": 5678
+   }
+  },
+  {
+   "file": "CC-MAIN-20260417050133-20260417080133-00714.warc.wet.gz",
+   "written": 5509,
+   "counts": {
+    "total": 21465,
+    "length": 20662,
+    "language": 5913,
+    "gopher": 5528,
+    "nsfw": 5515,
+    "toxic": 5509,
+    "quality": 5509
+   }
+  },
+  {
+   "file": "CC-MAIN-20260417081244-20260417111244-00609.warc.wet.gz",
+   "written": 5454,
+   "counts": {
+    "total": 21062,
+    "length": 20185,
+    "language": 5871,
+    "gopher": 5463,
+    "nsfw": 5456,
+    "toxic": 5454,
+    "quality": 5454
+   }
+  },
+  {
+   "file": "CC-MAIN-20260417081244-20260417111244-00632.warc.wet.gz",
+   "written": 5539,
+   "counts": {
+    "total": 21366,
+    "length": 20501,
+    "language": 5897,
+    "gopher": 5558,
+    "nsfw": 5546,
+    "toxic": 5539,
+    "quality": 5539
+   }
+  },
+  {
+   "file": "CC-MAIN-20260417081244-20260417111244-00829.warc.wet.gz",
+   "written": 5561,
+   "counts": {
+    "total": 21505,
+    "length": 20576,
+    "language": 5923,
+    "gopher": 5573,
+    "nsfw": 5566,
+    "toxic": 5561,
+    "quality": 5561
+   }
+  },
+  {
+   "file": "CC-MAIN-20260417081244-20260417111244-00995.warc.wet.gz",
+   "written": 5636,
+   "counts": {
+    "total": 21630,
+    "length": 20639,
+    "language": 6053,
+    "gopher": 5652,
+    "nsfw": 5640,
+    "toxic": 5636,
+    "quality": 5636
+   }
+  },
+  {
+   "file": "CC-MAIN-20260417112009-20260417142009-00282.warc.wet.gz",
+   "written": 5430,
+   "counts": {
+    "total": 21021,
+    "length": 20176,
+    "language": 5828,
+    "gopher": 5445,
+    "nsfw": 5436,
+    "toxic": 5430,
+    "quality": 5430
+   }
+  },
+  {
+   "file": "CC-MAIN-20260417112009-20260417142009-00616.warc.wet.gz",
+   "written": 5641,
+   "counts": {
+    "total": 21273,
+    "length": 20475,
+    "language": 6042,
+    "gopher": 5662,
+    "nsfw": 5652,
+    "toxic": 5641,
+    "quality": 5641
+   }
+  },
+  {
+   "file": "CC-MAIN-20260417112009-20260417142009-00977.warc.wet.gz",
+   "written": 5469,
+   "counts": {
+    "total": 21237,
+    "length": 20420,
+    "language": 5875,
+    "gopher": 5486,
+    "nsfw": 5472,
+    "toxic": 5469,
+    "quality": 5469
+   }
+  },
+  {
+   "file": "CC-MAIN-20260417143000-20260417173000-00627.warc.wet.gz",
+   "written": 5596,
+   "counts": {
+    "total": 21226,
+    "length": 20405,
+    "language": 5980,
+    "gopher": 5614,
+    "nsfw": 5606,
+    "toxic": 5596,
+    "quality": 5596
+   }
+  },
+  {
+   "file": "CC-MAIN-20260417173955-20260417203955-00372.warc.wet.gz",
+   "written": 5410,
+   "counts": {
+    "total": 20967,
+    "length": 20172,
+    "language": 5771,
+    "gopher": 5424,
+    "nsfw": 5414,
+    "toxic": 5410,
+    "quality": 5410
+   }
+  },
+  {
+   "file": "CC-MAIN-20260417173955-20260417203955-00884.warc.wet.gz",
+   "written": 5607,
+   "counts": {
+    "total": 21149,
+    "length": 20349,
+    "language": 6018,
+    "gopher": 5625,
+    "nsfw": 5615,
+    "toxic": 5607,
+    "quality": 5607
+   }
+  },
+  {
+   "file": "CC-MAIN-20260417204951-20260417234951-00325.warc.wet.gz",
+   "written": 5539,
+   "counts": {
+    "total": 21295,
+    "length": 20306,
+    "language": 5902,
+    "gopher": 5563,
+    "nsfw": 5551,
+    "toxic": 5539,
+    "quality": 5539
+   }
+  },
+  {
+   "file": "CC-MAIN-20260417204951-20260417234951-00394.warc.wet.gz",
+   "written": 5571,
+   "counts": {
+    "total": 21305,
+    "length": 20390,
+    "language": 5934,
+    "gopher": 5583,
+    "nsfw": 5573,
+    "toxic": 5571,
+    "quality": 5571
+   }
+  },
+  {
+   "file": "CC-MAIN-20260417204951-20260417234951-00708.warc.wet.gz",
+   "written": 5592,
+   "counts": {
+    "total": 21265,
+    "length": 20390,
+    "language": 5974,
+    "gopher": 5602,
+    "nsfw": 5596,
+    "toxic": 5592,
+    "quality": 5592
+   }
+  },
+  {
+   "file": "CC-MAIN-20260417235941-20260418025941-00337.warc.wet.gz",
+   "written": 5565,
+   "counts": {
+    "total": 21105,
+    "length": 20062,
+    "language": 5939,
+    "gopher": 5584,
+    "nsfw": 5571,
+    "toxic": 5565,
+    "quality": 5565
+   }
+  },
+  {
+   "file": "CC-MAIN-20260418030820-20260418060820-00777.warc.wet.gz",
+   "written": 5475,
+   "counts": {
+    "total": 21349,
+    "length": 20240,
+    "language": 5869,
+    "gopher": 5497,
+    "nsfw": 5481,
+    "toxic": 5475,
+    "quality": 5475
+   }
+  },
+  {
+   "file": "CC-MAIN-20260418030820-20260418060820-00806.warc.wet.gz",
+   "written": 5607,
+   "counts": {
+    "total": 21451,
+    "length": 20379,
+    "language": 6001,
+    "gopher": 5634,
+    "nsfw": 5620,
+    "toxic": 5607,
+    "quality": 5607
+   }
+  },
+  {
+   "file": "CC-MAIN-20260418061813-20260418091813-00059.warc.wet.gz",
+   "written": 5580,
+   "counts": {
+    "total": 21495,
+    "length": 20471,
+    "language": 5968,
+    "gopher": 5593,
+    "nsfw": 5587,
+    "toxic": 5580,
+    "quality": 5580
+   }
+  },
+  {
+   "file": "CC-MAIN-20260418061813-20260418091813-00739.warc.wet.gz",
+   "written": 5578,
+   "counts": {
+    "total": 21369,
+    "length": 20370,
+    "language": 5934,
+    "gopher": 5592,
+    "nsfw": 5580,
+    "toxic": 5578,
+    "quality": 5578
+   }
+  },
+  {
+   "file": "CC-MAIN-20260418061813-20260418091813-00921.warc.wet.gz",
+   "written": 5536,
+   "counts": {
+    "total": 21384,
+    "length": 20358,
+    "language": 5908,
+    "gopher": 5551,
+    "nsfw": 5542,
+    "toxic": 5536,
+    "quality": 5536
+   }
+  },
+  {
+   "file": "CC-MAIN-20260418061813-20260418091813-00941.warc.wet.gz",
+   "written": 5477,
+   "counts": {
+    "total": 21335,
+    "length": 20322,
+    "language": 5875,
+    "gopher": 5497,
+    "nsfw": 5489,
+    "toxic": 5477,
+    "quality": 5477
+   }
+  },
+  {
+   "file": "CC-MAIN-20260418092809-20260418122809-00259.warc.wet.gz",
+   "written": 5586,
+   "counts": {
+    "total": 21358,
+    "length": 20316,
+    "language": 5969,
+    "gopher": 5603,
+    "nsfw": 5589,
+    "toxic": 5586,
+    "quality": 5586
+   }
+  },
+  {
+   "file": "CC-MAIN-20260418092809-20260418122809-00417.warc.wet.gz",
+   "written": 5532,
+   "counts": {
+    "total": 21544,
+    "length": 20506,
+    "language": 5922,
+    "gopher": 5547,
+    "nsfw": 5536,
+    "toxic": 5532,
+    "quality": 5532
+   }
+  },
+  {
+   "file": "CC-MAIN-20260418092809-20260418122809-00427.warc.wet.gz",
+   "written": 5492,
+   "counts": {
+    "total": 21414,
+    "length": 20427,
+    "language": 5916,
+    "gopher": 5514,
+    "nsfw": 5504,
+    "toxic": 5492,
+    "quality": 5492
+   }
+  },
+  {
+   "file": "CC-MAIN-20260418092809-20260418122809-00653.warc.wet.gz",
+   "written": 5567,
+   "counts": {
+    "total": 21195,
+    "length": 20227,
+    "language": 5937,
+    "gopher": 5584,
+    "nsfw": 5573,
+    "toxic": 5567,
+    "quality": 5567
+   }
+  },
+  {
+   "file": "CC-MAIN-20260418092809-20260418122809-00811.warc.wet.gz",
+   "written": 5534,
+   "counts": {
+    "total": 21334,
+    "length": 20377,
+    "language": 5929,
+    "gopher": 5553,
+    "nsfw": 5539,
+    "toxic": 5534,
+    "quality": 5534
+   }
+  },
+  {
+   "file": "CC-MAIN-20260418123419-20260418153419-00202.warc.wet.gz",
+   "written": 5549,
+   "counts": {
+    "total": 21392,
+    "length": 20543,
+    "language": 5955,
+    "gopher": 5562,
+    "nsfw": 5553,
+    "toxic": 5549,
+    "quality": 5549
+   }
+  },
+  {
+   "file": "CC-MAIN-20260418123419-20260418153419-00329.warc.wet.gz",
+   "written": 5547,
+   "counts": {
+    "total": 21219,
+    "length": 20375,
+    "language": 5935,
+    "gopher": 5565,
+    "nsfw": 5551,
+    "toxic": 5547,
+    "quality": 5547
+   }
+  },
+  {
+   "file": "CC-MAIN-20260418123419-20260418153419-00549.warc.wet.gz",
+   "written": 5522,
+   "counts": {
+    "total": 21246,
+    "length": 20478,
+    "language": 5932,
+    "gopher": 5532,
+    "nsfw": 5526,
+    "toxic": 5522,
+    "quality": 5522
+   }
+  },
+  {
+   "file": "CC-MAIN-20260418123419-20260418153419-00677.warc.wet.gz",
+   "written": 5566,
+   "counts": {
+    "total": 21216,
+    "length": 20388,
+    "language": 5936,
+    "gopher": 5585,
+    "nsfw": 5570,
+    "toxic": 5566,
+    "quality": 5566
+   }
+  },
+  {
+   "file": "CC-MAIN-20260418154413-20260418184413-00080.warc.wet.gz",
+   "written": 5600,
+   "counts": {
+    "total": 20909,
+    "length": 20157,
+    "language": 5983,
+    "gopher": 5611,
+    "nsfw": 5605,
+    "toxic": 5600,
+    "quality": 5600
+   }
+  },
+  {
+   "file": "CC-MAIN-20260418154413-20260418184413-00118.warc.wet.gz",
+   "written": 5527,
+   "counts": {
+    "total": 21443,
+    "length": 20642,
+    "language": 5908,
+    "gopher": 5545,
+    "nsfw": 5533,
+    "toxic": 5527,
+    "quality": 5527
+   }
+  },
+  {
+   "file": "CC-MAIN-20260418154413-20260418184413-00377.warc.wet.gz",
+   "written": 5689,
+   "counts": {
+    "total": 21359,
+    "length": 20552,
+    "language": 6079,
+    "gopher": 5710,
+    "nsfw": 5697,
+    "toxic": 5689,
+    "quality": 5689
+   }
+  },
+  {
+   "file": "CC-MAIN-20260418154413-20260418184413-00698.warc.wet.gz",
+   "written": 5601,
+   "counts": {
+    "total": 21071,
+    "length": 20295,
+    "language": 5987,
+    "gopher": 5622,
+    "nsfw": 5605,
+    "toxic": 5601,
+    "quality": 5601
+   }
+  },
+  {
+   "file": "CC-MAIN-20260418185138-20260418215138-00506.warc.wet.gz",
+   "written": 5524,
+   "counts": {
+    "total": 21127,
+    "length": 20413,
+    "language": 5918,
+    "gopher": 5547,
+    "nsfw": 5534,
+    "toxic": 5524,
+    "quality": 5524
+   }
+  },
+  {
+   "file": "CC-MAIN-20260418220012-20260419010012-00257.warc.wet.gz",
+   "written": 5605,
+   "counts": {
+    "total": 21426,
+    "length": 20605,
+    "language": 6015,
+    "gopher": 5623,
+    "nsfw": 5612,
+    "toxic": 5605,
+    "quality": 5605
+   }
+  },
+  {
+   "file": "CC-MAIN-20260418220012-20260419010012-00407.warc.wet.gz",
+   "written": 5452,
+   "counts": {
+    "total": 21105,
+    "length": 20343,
+    "language": 5811,
+    "gopher": 5479,
+    "nsfw": 5464,
+    "toxic": 5452,
+    "quality": 5452
+   }
+  },
+  {
+   "file": "CC-MAIN-20260418220012-20260419010012-00755.warc.wet.gz",
+   "written": 5469,
+   "counts": {
+    "total": 21158,
+    "length": 20329,
+    "language": 5848,
+    "gopher": 5486,
+    "nsfw": 5474,
+    "toxic": 5469,
+    "quality": 5469
+   }
+  },
+  {
+   "file": "CC-MAIN-20260419010731-20260419040731-00040.warc.wet.gz",
+   "written": 5512,
+   "counts": {
+    "total": 21085,
+    "length": 20342,
+    "language": 5906,
+    "gopher": 5541,
+    "nsfw": 5526,
+    "toxic": 5512,
+    "quality": 5512
+   }
+  },
+  {
+   "file": "CC-MAIN-20260419010731-20260419040731-00569.warc.wet.gz",
+   "written": 5442,
+   "counts": {
+    "total": 21167,
+    "length": 20449,
+    "language": 5809,
+    "gopher": 5472,
+    "nsfw": 5459,
+    "toxic": 5442,
+    "quality": 5442
+   }
+  },
+  {
+   "file": "CC-MAIN-20260419041722-20260419071722-00082.warc.wet.gz",
+   "written": 5440,
+   "counts": {
+    "total": 21274,
+    "length": 20404,
+    "language": 5841,
+    "gopher": 5454,
+    "nsfw": 5443,
+    "toxic": 5440,
+    "quality": 5440
+   }
+  },
+  {
+   "file": "CC-MAIN-20260419041722-20260419071722-00148.warc.wet.gz",
+   "written": 5495,
+   "counts": {
+    "total": 21380,
+    "length": 20613,
+    "language": 5908,
+    "gopher": 5515,
+    "nsfw": 5501,
+    "toxic": 5495,
+    "quality": 5495
+   }
+  },
+  {
+   "file": "CC-MAIN-20260419072330-20260419102330-00137.warc.wet.gz",
+   "written": 5589,
+   "counts": {
+    "total": 21506,
+    "length": 20631,
+    "language": 5975,
+    "gopher": 5603,
+    "nsfw": 5593,
+    "toxic": 5589,
+    "quality": 5589
+   }
+  },
+  {
+   "file": "CC-MAIN-20260419072330-20260419102330-00841.warc.wet.gz",
+   "written": 5617,
+   "counts": {
+    "total": 21306,
+    "length": 20521,
+    "language": 5985,
+    "gopher": 5636,
+    "nsfw": 5622,
+    "toxic": 5617,
+    "quality": 5617
+   }
+  },
+  {
+   "file": "CC-MAIN-20260419103210-20260419133210-00000.warc.wet.gz",
+   "written": 5483,
+   "counts": {
+    "total": 21365,
+    "length": 20482,
+    "language": 5864,
+    "gopher": 5496,
+    "nsfw": 5487,
+    "toxic": 5483,
+    "quality": 5483
+   }
+  },
+  {
+   "file": "CC-MAIN-20260419103210-20260419133210-00148.warc.wet.gz",
+   "written": 5511,
+   "counts": {
+    "total": 21427,
+    "length": 20538,
+    "language": 5902,
+    "gopher": 5527,
+    "nsfw": 5515,
+    "toxic": 5511,
+    "quality": 5511
+   }
+  },
+  {
+   "file": "CC-MAIN-20260419103210-20260419133210-00153.warc.wet.gz",
+   "written": 5515,
+   "counts": {
+    "total": 21096,
+    "length": 20262,
+    "language": 5903,
+    "gopher": 5531,
+    "nsfw": 5518,
+    "toxic": 5515,
+    "quality": 5515
+   }
+  },
+  {
+   "file": "CC-MAIN-20260419103210-20260419133210-00203.warc.wet.gz",
+   "written": 5600,
+   "counts": {
+    "total": 21122,
+    "length": 20268,
+    "language": 5997,
+    "gopher": 5618,
+    "nsfw": 5607,
+    "toxic": 5600,
+    "quality": 5600
+   }
+  },
+  {
+   "file": "CC-MAIN-20260419103210-20260419133210-00724.warc.wet.gz",
+   "written": 5521,
+   "counts": {
+    "total": 21227,
+    "length": 20337,
+    "language": 5925,
+    "gopher": 5534,
+    "nsfw": 5526,
+    "toxic": 5521,
+    "quality": 5521
+   }
+  },
+  {
+   "file": "CC-MAIN-20260419103210-20260419133210-00768.warc.wet.gz",
+   "written": 5573,
+   "counts": {
+    "total": 21306,
+    "length": 20402,
+    "language": 5946,
+    "gopher": 5594,
+    "nsfw": 5578,
+    "toxic": 5573,
+    "quality": 5573
+   }
+  },
+  {
+   "file": "CC-MAIN-20260419103210-20260419133210-00963.warc.wet.gz",
+   "written": 5439,
+   "counts": {
+    "total": 21193,
+    "length": 20313,
+    "language": 5823,
+    "gopher": 5452,
+    "nsfw": 5441,
+    "toxic": 5439,
+    "quality": 5439
+   }
+  },
+  {
+   "file": "CC-MAIN-20260419134048-20260419164048-00434.warc.wet.gz",
+   "written": 5543,
+   "counts": {
+    "total": 21270,
+    "length": 20364,
+    "language": 5924,
+    "gopher": 5553,
+    "nsfw": 5547,
+    "toxic": 5543,
+    "quality": 5543
+   }
+  },
+  {
+   "file": "CC-MAIN-20260419134048-20260419164048-00839.warc.wet.gz",
+   "written": 5585,
+   "counts": {
+    "total": 21342,
+    "length": 20450,
+    "language": 5946,
+    "gopher": 5605,
+    "nsfw": 5595,
+    "toxic": 5585,
+    "quality": 5585
+   }
+  },
+  {
+   "file": "CC-MAIN-20260419134048-20260419164048-00895.warc.wet.gz",
+   "written": 5683,
+   "counts": {
+    "total": 21408,
+    "length": 20424,
+    "language": 6068,
+    "gopher": 5701,
+    "nsfw": 5690,
+    "toxic": 5683,
+    "quality": 5683
+   }
+  },
+  {
+   "file": "CC-MAIN-20260419165041-20260419195041-00182.warc.wet.gz",
+   "written": 5475,
+   "counts": {
+    "total": 21174,
+    "length": 20240,
+    "language": 5857,
+    "gopher": 5491,
+    "nsfw": 5478,
+    "toxic": 5475,
+    "quality": 5475
+   }
+  },
+  {
+   "file": "CC-MAIN-20260419165041-20260419195041-00256.warc.wet.gz",
+   "written": 5491,
+   "counts": {
+    "total": 21077,
+    "length": 20161,
+    "language": 5909,
+    "gopher": 5513,
+    "nsfw": 5500,
+    "toxic": 5491,
+    "quality": 5491
+   }
+  },
+  {
+   "file": "CC-MAIN-20260419165041-20260419195041-00923.warc.wet.gz",
+   "written": 5503,
+   "counts": {
+    "total": 21572,
+    "length": 20599,
+    "language": 5884,
+    "gopher": 5522,
+    "nsfw": 5512,
+    "toxic": 5503,
+    "quality": 5503
+   }
+  },
+  {
+   "file": "CC-MAIN-20260419200040-20260419230040-00144.warc.wet.gz",
+   "written": 5510,
+   "counts": {
+    "total": 21230,
+    "length": 20240,
+    "language": 5914,
+    "gopher": 5523,
+    "nsfw": 5516,
+    "toxic": 5510,
+    "quality": 5510
+   }
+  },
+  {
+   "file": "CC-MAIN-20260419200040-20260419230040-00176.warc.wet.gz",
+   "written": 5510,
+   "counts": {
+    "total": 21295,
+    "length": 20255,
+    "language": 5911,
+    "gopher": 5524,
+    "nsfw": 5514,
+    "toxic": 5510,
+    "quality": 5510
+   }
+  },
+  {
+   "file": "CC-MAIN-20260419200040-20260419230040-00221.warc.wet.gz",
+   "written": 5588,
+   "counts": {
+    "total": 21387,
+    "length": 20429,
+    "language": 5970,
+    "gopher": 5603,
+    "nsfw": 5596,
+    "toxic": 5588,
+    "quality": 5588
+   }
+  },
+  {
+   "file": "CC-MAIN-20260419200040-20260419230040-00593.warc.wet.gz",
+   "written": 5524,
+   "counts": {
+    "total": 21243,
+    "length": 20256,
+    "language": 5874,
+    "gopher": 5534,
+    "nsfw": 5528,
+    "toxic": 5524,
+    "quality": 5524
+   }
+  },
+  {
+   "file": "CC-MAIN-20260419200040-20260419230040-00740.warc.wet.gz",
+   "written": 5556,
+   "counts": {
+    "total": 21374,
+    "length": 20419,
+    "language": 5937,
+    "gopher": 5571,
+    "nsfw": 5562,
+    "toxic": 5556,
+    "quality": 5556
+   }
+  },
+  {
+   "file": "CC-MAIN-20260419200040-20260419230040-00930.warc.wet.gz",
+   "written": 5447,
+   "counts": {
+    "total": 21014,
+    "length": 20055,
+    "language": 5859,
+    "gopher": 5464,
+    "nsfw": 5452,
+    "toxic": 5447,
+    "quality": 5447
+   }
+  },
+  {
+   "file": "CC-MAIN-20260419200040-20260419230040-00950.warc.wet.gz",
+   "written": 5617,
+   "counts": {
+    "total": 21409,
+    "length": 20421,
+    "language": 6010,
+    "gopher": 5636,
+    "nsfw": 5624,
+    "toxic": 5617,
+    "quality": 5617
+   }
+  },
+  {
+   "file": "CC-MAIN-20260419231041-20260420021041-00069.warc.wet.gz",
+   "written": 5456,
+   "counts": {
+    "total": 21366,
+    "length": 20209,
+    "language": 5871,
+    "gopher": 5470,
+    "nsfw": 5462,
+    "toxic": 5456,
+    "quality": 5456
+   }
+  },
+  {
+   "file": "CC-MAIN-20260419231041-20260420021041-00662.warc.wet.gz",
+   "written": 5485,
+   "counts": {
+    "total": 21168,
+    "length": 20073,
+    "language": 5843,
+    "gopher": 5507,
+    "nsfw": 5490,
+    "toxic": 5485,
+    "quality": 5485
+   }
+  },
+  {
+   "file": "CC-MAIN-20260420022045-20260420052045-00289.warc.wet.gz",
+   "written": 5505,
+   "counts": {
+    "total": 21310,
+    "length": 20236,
+    "language": 5903,
+    "gopher": 5528,
+    "nsfw": 5515,
+    "toxic": 5505,
+    "quality": 5505
+   }
+  },
+  {
+   "file": "CC-MAIN-20260420022045-20260420052045-00665.warc.wet.gz",
+   "written": 5530,
+   "counts": {
+    "total": 21355,
+    "length": 20299,
+    "language": 5897,
+    "gopher": 5542,
+    "nsfw": 5538,
+    "toxic": 5530,
+    "quality": 5530
+   }
+  },
+  {
+   "file": "CC-MAIN-20260420052925-20260420082925-00402.warc.wet.gz",
+   "written": 5625,
+   "counts": {
+    "total": 21277,
+    "length": 20147,
+    "language": 5977,
+    "gopher": 5647,
+    "nsfw": 5632,
+    "toxic": 5625,
+    "quality": 5625
+   }
+  },
+  {
+   "file": "CC-MAIN-20260420052925-20260420082925-00661.warc.wet.gz",
+   "written": 5476,
+   "counts": {
+    "total": 21257,
+    "length": 20183,
+    "language": 5847,
+    "gopher": 5494,
+    "nsfw": 5482,
+    "toxic": 5476,
+    "quality": 5476
+   }
+  },
+  {
+   "file": "CC-MAIN-20260420052925-20260420082925-00671.warc.wet.gz",
+   "written": 5402,
+   "counts": {
+    "total": 21053,
+    "length": 19970,
+    "language": 5796,
+    "gopher": 5421,
+    "nsfw": 5411,
+    "toxic": 5402,
+    "quality": 5402
+   }
+  },
+  {
+   "file": "CC-MAIN-20260420052925-20260420082925-00713.warc.wet.gz",
+   "written": 5416,
+   "counts": {
+    "total": 21433,
+    "length": 20397,
+    "language": 5818,
+    "gopher": 5439,
+    "nsfw": 5423,
+    "toxic": 5416,
+    "quality": 5416
+   }
+  },
+  {
+   "file": "CC-MAIN-20260420052925-20260420082925-00719.warc.wet.gz",
+   "written": 5445,
+   "counts": {
+    "total": 21308,
+    "length": 20228,
+    "language": 5830,
+    "gopher": 5466,
+    "nsfw": 5456,
+    "toxic": 5445,
+    "quality": 5445
+   }
+  },
+  {
+   "file": "CC-MAIN-20260420052925-20260420082925-00852.warc.wet.gz",
+   "written": 5482,
+   "counts": {
+    "total": 21232,
+    "length": 20121,
+    "language": 5850,
+    "gopher": 5499,
+    "nsfw": 5488,
+    "toxic": 5482,
+    "quality": 5482
+   }
+  },
+  {
+   "file": "CC-MAIN-20260420114528-20260420144528-00198.warc.wet.gz",
+   "written": 5723,
+   "counts": {
+    "total": 21554,
+    "length": 20761,
+    "language": 6125,
+    "gopher": 5731,
+    "nsfw": 5726,
+    "toxic": 5723,
+    "quality": 5723
+   }
+  },
+  {
+   "file": "CC-MAIN-20260420114528-20260420144528-00606.warc.wet.gz",
+   "written": 5629,
+   "counts": {
+    "total": 21138,
+    "length": 20378,
+    "language": 6010,
+    "gopher": 5654,
+    "nsfw": 5641,
+    "toxic": 5629,
+    "quality": 5629
+   }
+  },
+  {
+   "file": "CC-MAIN-20260420145251-20260420175251-00284.warc.wet.gz",
+   "written": 5553,
+   "counts": {
+    "total": 21323,
+    "length": 20525,
+    "language": 5953,
+    "gopher": 5571,
+    "nsfw": 5565,
+    "toxic": 5553,
+    "quality": 5553
+   }
+  },
+  {
+   "file": "CC-MAIN-20260420145251-20260420175251-00691.warc.wet.gz",
+   "written": 5559,
+   "counts": {
+    "total": 21386,
+    "length": 20540,
+    "language": 5928,
+    "gopher": 5568,
+    "nsfw": 5563,
+    "toxic": 5559,
+    "quality": 5559
+   }
+  },
+  {
+   "file": "CC-MAIN-20260420145251-20260420175251-00707.warc.wet.gz",
+   "written": 5566,
+   "counts": {
+    "total": 21215,
+    "length": 20385,
+    "language": 5945,
+    "gopher": 5593,
+    "nsfw": 5577,
+    "toxic": 5566,
+    "quality": 5566
+   }
+  },
+  {
+   "file": "CC-MAIN-20260420145251-20260420175251-00748.warc.wet.gz",
+   "written": 5654,
+   "counts": {
+    "total": 21300,
+    "length": 20459,
+    "language": 6013,
+    "gopher": 5670,
+    "nsfw": 5663,
+    "toxic": 5654,
+    "quality": 5654
+   }
+  },
+  {
+   "file": "CC-MAIN-20260420145251-20260420175251-00880.warc.wet.gz",
+   "written": 5473,
+   "counts": {
+    "total": 21301,
+    "length": 20490,
+    "language": 5861,
+    "gopher": 5493,
+    "nsfw": 5485,
+    "toxic": 5473,
+    "quality": 5473
+   }
+  },
+  {
+   "file": "CC-MAIN-20260420175623-20260420205623-00086.warc.wet.gz",
+   "written": 5515,
+   "counts": {
+    "total": 21065,
+    "length": 20246,
+    "language": 5887,
+    "gopher": 5533,
+    "nsfw": 5522,
+    "toxic": 5515,
+    "quality": 5515
+   }
+  },
+  {
+   "file": "CC-MAIN-20260420175623-20260420205623-00132.warc.wet.gz",
+   "written": 5495,
+   "counts": {
+    "total": 20981,
+    "length": 20192,
+    "language": 5878,
+    "gopher": 5513,
+    "nsfw": 5502,
+    "toxic": 5495,
+    "quality": 5495
+   }
+  },
+  {
+   "file": "CC-MAIN-20260420175623-20260420205623-00595.warc.wet.gz",
+   "written": 5540,
+   "counts": {
+    "total": 21145,
+    "length": 20335,
+    "language": 5932,
+    "gopher": 5559,
+    "nsfw": 5545,
+    "toxic": 5540,
+    "quality": 5540
+   }
+  },
+  {
+   "file": "CC-MAIN-20260420175623-20260420205623-00629.warc.wet.gz",
+   "written": 5601,
+   "counts": {
+    "total": 21310,
+    "length": 20477,
+    "language": 5984,
+    "gopher": 5623,
+    "nsfw": 5610,
+    "toxic": 5601,
+    "quality": 5601
+   }
+  },
+  {
+   "file": "CC-MAIN-20260420175623-20260420205623-00786.warc.wet.gz",
+   "written": 5508,
+   "counts": {
+    "total": 21358,
+    "length": 20546,
+    "language": 5868,
+    "gopher": 5523,
+    "nsfw": 5513,
+    "toxic": 5508,
+    "quality": 5508
+   }
+  },
+  {
+   "file": "CC-MAIN-20260420175623-20260420205623-00978.warc.wet.gz",
+   "written": 5656,
+   "counts": {
+    "total": 21212,
+    "length": 20435,
+    "language": 6052,
+    "gopher": 5669,
+    "nsfw": 5662,
+    "toxic": 5656,
+    "quality": 5656
+   }
+  },
+  {
+   "file": "CC-MAIN-20260420210113-20260421000113-00139.warc.wet.gz",
+   "written": 5573,
+   "counts": {
+    "total": 21323,
+    "length": 20494,
+    "language": 5956,
+    "gopher": 5591,
+    "nsfw": 5579,
+    "toxic": 5573,
+    "quality": 5573
+   }
+  },
+  {
+   "file": "CC-MAIN-20260420210113-20260421000113-00411.warc.wet.gz",
+   "written": 5514,
+   "counts": {
+    "total": 21433,
+    "length": 20634,
+    "language": 5902,
+    "gopher": 5527,
+    "nsfw": 5517,
+    "toxic": 5514,
+    "quality": 5514
+   }
+  },
+  {
+   "file": "CC-MAIN-20260420210113-20260421000113-00642.warc.wet.gz",
+   "written": 5601,
+   "counts": {
+    "total": 21215,
+    "length": 20454,
+    "language": 6016,
+    "gopher": 5616,
+    "nsfw": 5604,
+    "toxic": 5601,
+    "quality": 5601
+   }
+  },
+  {
+   "file": "CC-MAIN-20260421000600-20260421030600-00070.warc.wet.gz",
+   "written": 5496,
+   "counts": {
+    "total": 21391,
+    "length": 20517,
+    "language": 5847,
+    "gopher": 5516,
+    "nsfw": 5505,
+    "toxic": 5496,
+    "quality": 5496
+   }
+  },
+  {
+   "file": "CC-MAIN-20260421000600-20260421030600-00406.warc.wet.gz",
+   "written": 5711,
+   "counts": {
+    "total": 21516,
+    "length": 20631,
+    "language": 6093,
+    "gopher": 5722,
+    "nsfw": 5717,
+    "toxic": 5711,
+    "quality": 5711
+   }
+  },
+  {
+   "file": "CC-MAIN-20260421000600-20260421030600-00466.warc.wet.gz",
+   "written": 5562,
+   "counts": {
+    "total": 21229,
+    "length": 20337,
+    "language": 5956,
+    "gopher": 5582,
+    "nsfw": 5569,
+    "toxic": 5562,
+    "quality": 5562
+   }
+  },
+  {
+   "file": "CC-MAIN-20260421000600-20260421030600-00504.warc.wet.gz",
+   "written": 5661,
+   "counts": {
+    "total": 21203,
+    "length": 20319,
+    "language": 6055,
+    "gopher": 5677,
+    "nsfw": 5668,
+    "toxic": 5661,
+    "quality": 5661
+   }
+  },
+  {
+   "file": "CC-MAIN-20260421000600-20260421030600-00638.warc.wet.gz",
+   "written": 5776,
+   "counts": {
+    "total": 21366,
+    "length": 20515,
+    "language": 6160,
+    "gopher": 5794,
+    "nsfw": 5781,
+    "toxic": 5776,
+    "quality": 5776
+   }
+  },
+  {
+   "file": "CC-MAIN-20260421000600-20260421030600-00859.warc.wet.gz",
+   "written": 5519,
+   "counts": {
+    "total": 21172,
+    "length": 20288,
+    "language": 5871,
+    "gopher": 5531,
+    "nsfw": 5524,
+    "toxic": 5519,
+    "quality": 5519
+   }
+  },
+  {
+   "file": "CC-MAIN-20260421000600-20260421030600-00895.warc.wet.gz",
+   "written": 5626,
+   "counts": {
+    "total": 21281,
+    "length": 20454,
+    "language": 5998,
+    "gopher": 5643,
+    "nsfw": 5632,
+    "toxic": 5626,
+    "quality": 5626
+   }
+  },
+  {
+   "file": "CC-MAIN-20260421031443-20260421061443-00074.warc.wet.gz",
+   "written": 5486,
+   "counts": {
+    "total": 21178,
+    "length": 20222,
+    "language": 5887,
+    "gopher": 5498,
+    "nsfw": 5492,
+    "toxic": 5486,
+    "quality": 5486
+   }
+  },
+  {
+   "file": "CC-MAIN-20260421031443-20260421061443-00264.warc.wet.gz",
+   "written": 5518,
+   "counts": {
+    "total": 21237,
+    "length": 20233,
+    "language": 5911,
+    "gopher": 5538,
+    "nsfw": 5524,
+    "toxic": 5518,
+    "quality": 5518
+   }
+  },
+  {
+   "file": "CC-MAIN-20260421031443-20260421061443-00524.warc.wet.gz",
+   "written": 5666,
+   "counts": {
+    "total": 21270,
+    "length": 20306,
+    "language": 6036,
+    "gopher": 5677,
+    "nsfw": 5671,
+    "toxic": 5666,
+    "quality": 5666
+   }
+  },
+  {
+   "file": "CC-MAIN-20260421062046-20260421092046-00300.warc.wet.gz",
+   "written": 5448,
+   "counts": {
+    "total": 20975,
+    "length": 20057,
+    "language": 5825,
+    "gopher": 5459,
+    "nsfw": 5451,
+    "toxic": 5448,
+    "quality": 5448
+   }
+  },
+  {
+   "file": "CC-MAIN-20260421062046-20260421092046-00441.warc.wet.gz",
+   "written": 5629,
+   "counts": {
+    "total": 21219,
+    "length": 20250,
+    "language": 6012,
+    "gopher": 5648,
+    "nsfw": 5634,
+    "toxic": 5629,
+    "quality": 5629
+   }
+  },
+  {
+   "file": "CC-MAIN-20260421062046-20260421092046-00532.warc.wet.gz",
+   "written": 5494,
+   "counts": {
+    "total": 20736,
+    "length": 19824,
+    "language": 5872,
+    "gopher": 5513,
+    "nsfw": 5500,
+    "toxic": 5494,
+    "quality": 5494
+   }
+  },
+  {
+   "file": "CC-MAIN-20260421062046-20260421092046-00564.warc.wet.gz",
+   "written": 5661,
+   "counts": {
+    "total": 21187,
+    "length": 20293,
+    "language": 6022,
+    "gopher": 5681,
+    "nsfw": 5669,
+    "toxic": 5661,
+    "quality": 5661
+   }
+  },
+  {
+   "file": "CC-MAIN-20260421092814-20260421122814-00918.warc.wet.gz",
+   "written": 5594,
+   "counts": {
+    "total": 21136,
+    "length": 20221,
+    "language": 5982,
+    "gopher": 5622,
+    "nsfw": 5603,
+    "toxic": 5594,
+    "quality": 5594
+   }
+  },
+  {
+   "file": "CC-MAIN-20260421123315-20260421153315-00194.warc.wet.gz",
+   "written": 5518,
+   "counts": {
+    "total": 20910,
+    "length": 20052,
+    "language": 5952,
+    "gopher": 5538,
+    "nsfw": 5528,
+    "toxic": 5518,
+    "quality": 5518
+   }
+  },
+  {
+   "file": "CC-MAIN-20260421123315-20260421153315-00304.warc.wet.gz",
+   "written": 5580,
+   "counts": {
+    "total": 21179,
+    "length": 20304,
+    "language": 5983,
+    "gopher": 5602,
+    "nsfw": 5590,
+    "toxic": 5580,
+    "quality": 5580
+   }
+  },
+  {
+   "file": "CC-MAIN-20260421123315-20260421153315-00541.warc.wet.gz",
+   "written": 5509,
+   "counts": {
+    "total": 21392,
+    "length": 20421,
+    "language": 5890,
+    "gopher": 5525,
+    "nsfw": 5516,
+    "toxic": 5509,
+    "quality": 5509
+   }
+  },
+  {
+   "file": "CC-MAIN-20260421123315-20260421153315-00886.warc.wet.gz",
+   "written": 5471,
+   "counts": {
+    "total": 20522,
+    "length": 19646,
+    "language": 5839,
+    "gopher": 5491,
+    "nsfw": 5480,
+    "toxic": 5471,
+    "quality": 5471
+   }
+  },
+  {
+   "file": "CC-MAIN-20260421123315-20260421153315-00972.warc.wet.gz",
+   "written": 5462,
+   "counts": {
+    "total": 20957,
+    "length": 20101,
+    "language": 5836,
+    "gopher": 5481,
+    "nsfw": 5466,
+    "toxic": 5462,
+    "quality": 5462
+   }
+  },
+  {
+   "file": "CC-MAIN-20260421185032-20260421215032-00080.warc.wet.gz",
+   "written": 5454,
+   "counts": {
+    "total": 20994,
+    "length": 20222,
+    "language": 5835,
+    "gopher": 5469,
+    "nsfw": 5458,
+    "toxic": 5454,
+    "quality": 5454
+   }
+  },
+  {
+   "file": "CC-MAIN-20260421185032-20260421215032-00455.warc.wet.gz",
+   "written": 5621,
+   "counts": {
+    "total": 21517,
+    "length": 20668,
+    "language": 6009,
+    "gopher": 5636,
+    "nsfw": 5627,
+    "toxic": 5621,
+    "quality": 5621
+   }
+  },
+  {
+   "file": "CC-MAIN-20260421185032-20260421215032-00555.warc.wet.gz",
+   "written": 5585,
+   "counts": {
+    "total": 21189,
+    "length": 20364,
+    "language": 5980,
+    "gopher": 5602,
+    "nsfw": 5592,
+    "toxic": 5585,
+    "quality": 5585
+   }
+  },
+  {
+   "file": "CC-MAIN-20260421185032-20260421215032-00643.warc.wet.gz",
+   "written": 5644,
+   "counts": {
+    "total": 21524,
+    "length": 20741,
+    "language": 6035,
+    "gopher": 5660,
+    "nsfw": 5653,
+    "toxic": 5644,
+    "quality": 5644
+   }
+  },
+  {
+   "file": "CC-MAIN-20260421215907-20260422005907-00394.warc.wet.gz",
+   "written": 5354,
+   "counts": {
+    "total": 20934,
+    "length": 20112,
+    "language": 5724,
+    "gopher": 5369,
+    "nsfw": 5359,
+    "toxic": 5354,
+    "quality": 5354
+   }
+  },
+  {
+   "file": "CC-MAIN-20260421215907-20260422005907-00568.warc.wet.gz",
+   "written": 5635,
+   "counts": {
+    "total": 21415,
+    "length": 20538,
+    "language": 6038,
+    "gopher": 5657,
+    "nsfw": 5641,
+    "toxic": 5635,
+    "quality": 5635
+   }
+  },
+  {
+   "file": "CC-MAIN-20260421215907-20260422005907-00590.warc.wet.gz",
+   "written": 5507,
+   "counts": {
+    "total": 21133,
+    "length": 20266,
+    "language": 5902,
+    "gopher": 5521,
+    "nsfw": 5514,
+    "toxic": 5507,
+    "quality": 5507
+   }
+  },
+  {
+   "file": "CC-MAIN-20260422010744-20260422040744-00170.warc.wet.gz",
+   "written": 5401,
+   "counts": {
+    "total": 21048,
+    "length": 20050,
+    "language": 5803,
+    "gopher": 5419,
+    "nsfw": 5408,
+    "toxic": 5401,
+    "quality": 5401
+   }
+  },
+  {
+   "file": "CC-MAIN-20260422010744-20260422040744-00668.warc.wet.gz",
+   "written": 5606,
+   "counts": {
+    "total": 21369,
+    "length": 20385,
+    "language": 5989,
+    "gopher": 5624,
+    "nsfw": 5610,
+    "toxic": 5606,
+    "quality": 5606
+   }
+  },
+  {
+   "file": "CC-MAIN-20260422010744-20260422040744-00744.warc.wet.gz",
+   "written": 5397,
+   "counts": {
+    "total": 21150,
+    "length": 20121,
+    "language": 5818,
+    "gopher": 5418,
+    "nsfw": 5402,
+    "toxic": 5397,
+    "quality": 5397
+   }
+  },
+  {
+   "file": "CC-MAIN-20260422010744-20260422040744-00793.warc.wet.gz",
+   "written": 5469,
+   "counts": {
+    "total": 21386,
+    "length": 20274,
+    "language": 5853,
+    "gopher": 5489,
+    "nsfw": 5480,
+    "toxic": 5469,
+    "quality": 5469
+   }
+  },
+  {
+   "file": "CC-MAIN-20260422010744-20260422040744-00950.warc.wet.gz",
+   "written": 5620,
+   "counts": {
+    "total": 20763,
+    "length": 19784,
+    "language": 5982,
+    "gopher": 5635,
+    "nsfw": 5625,
+    "toxic": 5620,
+    "quality": 5620
+   }
+  },
+  {
+   "file": "CC-MAIN-20260422041508-20260422071508-00422.warc.wet.gz",
+   "written": 5627,
+   "counts": {
+    "total": 21177,
+    "length": 20183,
+    "language": 5987,
+    "gopher": 5638,
+    "nsfw": 5632,
+    "toxic": 5627,
+    "quality": 5627
+   }
+  },
+  {
+   "file": "CC-MAIN-20260422041508-20260422071508-00700.warc.wet.gz",
+   "written": 5423,
+   "counts": {
+    "total": 21201,
+    "length": 20243,
+    "language": 5765,
+    "gopher": 5428,
+    "nsfw": 5425,
+    "toxic": 5423,
+    "quality": 5423
+   }
+  },
+  {
+   "file": "CC-MAIN-20260422041508-20260422071508-00793.warc.wet.gz",
+   "written": 5485,
+   "counts": {
+    "total": 21392,
+    "length": 20406,
+    "language": 5842,
+    "gopher": 5495,
+    "nsfw": 5485,
+    "toxic": 5485,
+    "quality": 5485
+   }
+  },
+  {
+   "file": "CC-MAIN-20260422072350-20260422102350-00248.warc.wet.gz",
+   "written": 5450,
+   "counts": {
+    "total": 21222,
+    "length": 20225,
+    "language": 5866,
+    "gopher": 5469,
+    "nsfw": 5455,
+    "toxic": 5450,
+    "quality": 5450
+   }
+  },
+  {
+   "file": "CC-MAIN-20260422072350-20260422102350-00252.warc.wet.gz",
+   "written": 5523,
+   "counts": {
+    "total": 21195,
+    "length": 20263,
+    "language": 5881,
+    "gopher": 5531,
+    "nsfw": 5527,
+    "toxic": 5523,
+    "quality": 5523
+   }
+  },
+  {
+   "file": "CC-MAIN-20260422072350-20260422102350-00443.warc.wet.gz",
+   "written": 5438,
+   "counts": {
+    "total": 21085,
+    "length": 20156,
+    "language": 5825,
+    "gopher": 5453,
+    "nsfw": 5440,
+    "toxic": 5438,
+    "quality": 5438
+   }
+  },
+  {
+   "file": "CC-MAIN-20260422072350-20260422102350-00464.warc.wet.gz",
+   "written": 5434,
+   "counts": {
+    "total": 20919,
+    "length": 19939,
+    "language": 5831,
+    "gopher": 5452,
+    "nsfw": 5442,
+    "toxic": 5434,
+    "quality": 5434
+   }
+  },
+  {
+   "file": "CC-MAIN-20260422072350-20260422102350-00653.warc.wet.gz",
+   "written": 5510,
+   "counts": {
+    "total": 21227,
+    "length": 20217,
+    "language": 5918,
+    "gopher": 5527,
+    "nsfw": 5518,
+    "toxic": 5510,
+    "quality": 5510
+   }
+  },
+  {
+   "file": "CC-MAIN-20260422072350-20260422102350-00682.warc.wet.gz",
+   "written": 5476,
+   "counts": {
+    "total": 21288,
+    "length": 20341,
+    "language": 5890,
+    "gopher": 5498,
+    "nsfw": 5485,
+    "toxic": 5476,
+    "quality": 5476
+   }
+  },
+  {
+   "file": "CC-MAIN-20260422103113-20260422133113-00121.warc.wet.gz",
+   "written": 5457,
+   "counts": {
+    "total": 21022,
+    "length": 20160,
+    "language": 5841,
+    "gopher": 5476,
+    "nsfw": 5467,
+    "toxic": 5457,
+    "quality": 5457
+   }
+  },
+  {
+   "file": "CC-MAIN-20260422103113-20260422133113-00882.warc.wet.gz",
+   "written": 5445,
+   "counts": {
+    "total": 21305,
+    "length": 20486,
+    "language": 5847,
+    "gopher": 5456,
+    "nsfw": 5450,
+    "toxic": 5445,
+    "quality": 5445
+   }
+  },
+  {
+   "file": "CC-MAIN-20260422103113-20260422133113-00925.warc.wet.gz",
+   "written": 5600,
+   "counts": {
+    "total": 21246,
+    "length": 20411,
+    "language": 6006,
+    "gopher": 5623,
+    "nsfw": 5610,
+    "toxic": 5600,
+    "quality": 5600
+   }
+  },
+  {
+   "file": "CC-MAIN-20260422133449-20260422163449-00138.warc.wet.gz",
+   "written": 5322,
+   "counts": {
+    "total": 20937,
+    "length": 20158,
+    "language": 5719,
+    "gopher": 5336,
+    "nsfw": 5328,
+    "toxic": 5322,
+    "quality": 5322
+   }
+  },
+  {
+   "file": "CC-MAIN-20260422133449-20260422163449-00153.warc.wet.gz",
+   "written": 5526,
+   "counts": {
+    "total": 20913,
+    "length": 20195,
+    "language": 5928,
+    "gopher": 5542,
+    "nsfw": 5533,
+    "toxic": 5526,
+    "quality": 5526
+   }
+  },
+  {
+   "file": "CC-MAIN-20260422133449-20260422163449-00280.warc.wet.gz",
+   "written": 5628,
+   "counts": {
+    "total": 20857,
+    "length": 20163,
+    "language": 5970,
+    "gopher": 5655,
+    "nsfw": 5639,
+    "toxic": 5628,
+    "quality": 5628
+   }
+  },
+  {
+   "file": "CC-MAIN-20260422133449-20260422163449-00602.warc.wet.gz",
+   "written": 5462,
+   "counts": {
+    "total": 20895,
+    "length": 20124,
+    "language": 5833,
+    "gopher": 5477,
+    "nsfw": 5471,
+    "toxic": 5462,
+    "quality": 5462
+   }
+  },
+  {
+   "file": "CC-MAIN-20260422133449-20260422163449-00641.warc.wet.gz",
+   "written": 5585,
+   "counts": {
+    "total": 20926,
+    "length": 20189,
+    "language": 5967,
+    "gopher": 5599,
+    "nsfw": 5587,
+    "toxic": 5585,
+    "quality": 5585
+   }
+  },
+  {
+   "file": "CC-MAIN-20260422133449-20260422163449-00670.warc.wet.gz",
+   "written": 5548,
+   "counts": {
+    "total": 20872,
+    "length": 20179,
+    "language": 5941,
+    "gopher": 5568,
+    "nsfw": 5555,
+    "toxic": 5548,
+    "quality": 5548
+   }
+  },
+  {
+   "file": "CC-MAIN-20260422133449-20260422163449-00796.warc.wet.gz",
+   "written": 5490,
+   "counts": {
+    "total": 20686,
+    "length": 20041,
+    "language": 5859,
+    "gopher": 5501,
+    "nsfw": 5494,
+    "toxic": 5490,
+    "quality": 5490
+   }
+  },
+  {
+   "file": "CC-MAIN-20260422133449-20260422163449-00948.warc.wet.gz",
+   "written": 5572,
+   "counts": {
+    "total": 21087,
+    "length": 20341,
+    "language": 5965,
+    "gopher": 5584,
+    "nsfw": 5574,
+    "toxic": 5572,
+    "quality": 5572
+   }
+  },
+  {
+   "file": "CC-MAIN-20260422164327-20260422194327-00042.warc.wet.gz",
+   "written": 5480,
+   "counts": {
+    "total": 20920,
+    "length": 20224,
+    "language": 5858,
+    "gopher": 5493,
+    "nsfw": 5483,
+    "toxic": 5480,
+    "quality": 5480
+   }
+  },
+  {
+   "file": "CC-MAIN-20260422164327-20260422194327-00478.warc.wet.gz",
+   "written": 5550,
+   "counts": {
+    "total": 21303,
+    "length": 20544,
+    "language": 5919,
+    "gopher": 5559,
+    "nsfw": 5552,
+    "toxic": 5550,
+    "quality": 5550
+   }
+  },
+  {
+   "file": "CC-MAIN-20260422195206-20260422225206-00869.warc.wet.gz",
+   "written": 5607,
+   "counts": {
+    "total": 21050,
+    "length": 20317,
+    "language": 5975,
+    "gopher": 5618,
+    "nsfw": 5610,
+    "toxic": 5607,
+    "quality": 5607
+   }
+  },
+  {
+   "file": "CC-MAIN-20260422225539-20260423015539-00070.warc.wet.gz",
+   "written": 5571,
+   "counts": {
+    "total": 21033,
+    "length": 20275,
+    "language": 5936,
+    "gopher": 5583,
+    "nsfw": 5577,
+    "toxic": 5571,
+    "quality": 5571
+   }
+  },
+  {
+   "file": "CC-MAIN-20260422225539-20260423015539-00178.warc.wet.gz",
+   "written": 5466,
+   "counts": {
+    "total": 21058,
+    "length": 20251,
+    "language": 5887,
+    "gopher": 5488,
+    "nsfw": 5471,
+    "toxic": 5466,
+    "quality": 5466
+   }
+  },
+  {
+   "file": "CC-MAIN-20260422225539-20260423015539-00395.warc.wet.gz",
+   "written": 5586,
+   "counts": {
+    "total": 21027,
+    "length": 20270,
+    "language": 5969,
+    "gopher": 5601,
+    "nsfw": 5592,
+    "toxic": 5586,
+    "quality": 5586
+   }
+  },
+  {
+   "file": "CC-MAIN-20260422225539-20260423015539-00534.warc.wet.gz",
+   "written": 5398,
+   "counts": {
+    "total": 21011,
+    "length": 20181,
+    "language": 5778,
+    "gopher": 5409,
+    "nsfw": 5405,
+    "toxic": 5398,
+    "quality": 5398
+   }
+  },
+  {
+   "file": "CC-MAIN-20260422225539-20260423015539-00585.warc.wet.gz",
+   "written": 5541,
+   "counts": {
+    "total": 21153,
+    "length": 20359,
+    "language": 5925,
+    "gopher": 5563,
+    "nsfw": 5551,
+    "toxic": 5541,
+    "quality": 5541
+   }
+  },
+  {
+   "file": "CC-MAIN-20260422225539-20260423015539-00713.warc.wet.gz",
+   "written": 5605,
+   "counts": {
+    "total": 21277,
+    "length": 20477,
+    "language": 5950,
+    "gopher": 5614,
+    "nsfw": 5608,
+    "toxic": 5605,
+    "quality": 5605
+   }
+  },
+  {
+   "file": "CC-MAIN-20260422225539-20260423015539-00720.warc.wet.gz",
+   "written": 5548,
+   "counts": {
+    "total": 20927,
+    "length": 20117,
+    "language": 5945,
+    "gopher": 5565,
+    "nsfw": 5555,
+    "toxic": 5548,
+    "quality": 5548
+   }
+  },
+  {
+   "file": "CC-MAIN-20260423020417-20260423050417-00006.warc.wet.gz",
+   "written": 5504,
+   "counts": {
+    "total": 20951,
+    "length": 20110,
+    "language": 5875,
+    "gopher": 5513,
+    "nsfw": 5510,
+    "toxic": 5504,
+    "quality": 5504
+   }
+  },
+  {
+   "file": "CC-MAIN-20260423020417-20260423050417-00049.warc.wet.gz",
+   "written": 5474,
+   "counts": {
+    "total": 20907,
+    "length": 20107,
+    "language": 5849,
+    "gopher": 5484,
+    "nsfw": 5479,
+    "toxic": 5474,
+    "quality": 5474
+   }
+  },
+  {
+   "file": "CC-MAIN-20260423020417-20260423050417-00849.warc.wet.gz",
+   "written": 5557,
+   "counts": {
+    "total": 21167,
+    "length": 20316,
+    "language": 5974,
+    "gopher": 5584,
+    "nsfw": 5571,
+    "toxic": 5557,
+    "quality": 5557
+   }
+  },
+  {
+   "file": "CC-MAIN-20260423020417-20260423050417-00965.warc.wet.gz",
+   "written": 5436,
+   "counts": {
+    "total": 21140,
+    "length": 20337,
+    "language": 5820,
+    "gopher": 5459,
+    "nsfw": 5445,
+    "toxic": 5436,
+    "quality": 5436
+   }
+  }
+ ],
+ "elapsed_seconds": 303.92182087898254
+}
